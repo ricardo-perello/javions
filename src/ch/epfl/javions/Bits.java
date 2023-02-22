@@ -18,8 +18,20 @@ public class Bits {
         long mask = fullLong >> (64-size);
         return (int) ((mask)&(newValue));
     }
+
+    /**
+     * testBit == 1
+     * @param value type long
+     * @param index of bit of value
+     * @return true if bit = 1
+     * @throws IndexOutOfBoundsException if index not between 0-64
+     */
     public static boolean testBit(long value, int index){
-        return true;
+        if ((index < 0)||(index > 64)){
+            throw new IndexOutOfBoundsException();
+        }
+       int v = extractUInt(value, index, 1);
+        return (v == 1);
     }
 
 }
