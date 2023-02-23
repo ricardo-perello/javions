@@ -3,10 +3,10 @@ package ch.epfl.javions;
 import java.util.HexFormat;
 
 public final class ByteString{
-    //public final byte[] octetTable;
+    public final byte[] octetTable;
 
     public ByteString(byte[] bytes){
-        //octetTable = new byte[]
+        octetTable = new byte[]
     }
 
     public ByteString ofHexadecimalString(String hexString){
@@ -16,19 +16,19 @@ public final class ByteString{
         return new ByteString(hf.parseHex(hexString));
     }
 
-    //public int size(){
-        //return octetTable.length;
-    //}
+    public int size(){
+        return octetTable.length;
+    }
 
-    /**public int byteAt(int index){
+    public int byteAt(int index){
         if (index > size()){
             throw new IndexOutOfBoundsException();
         }
         return octetTable[index];
-    }**/
+    }
 
-    //public long  bytesInRange(int fromIndex, int toIndex){
-
-    //}
+    public long bytesInRange(int fromIndex, int toIndex){
+        long output =
+    }
 
 }
