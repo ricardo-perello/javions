@@ -3,10 +3,17 @@ package ch.epfl.javions;
 import java.util.HexFormat;
 
 public final class ByteString{
-    public final byte[] octetTable;
-
-    public ByteString(byte[] bytes){
-        octetTable = new byte[]
+    byte[] octetTable;
+    /**
+     * Creates an array of bytes that is final and unsigned
+     * @param bytes is byte array
+     */
+    public ByteString(byte[] bytes){ //todo check if final
+        byte[] octetTableCopy = new byte[bytes.length];
+        for (int i = 0; i < bytes.length; i++){
+            octetTableCopy[i] = (byte) Byte.toUnsignedInt(bytes[i]);
+            octetTable = octetTableCopy.clone();
+        }
     }
 
     public ByteString ofHexadecimalString(String hexString){
