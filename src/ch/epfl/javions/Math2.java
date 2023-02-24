@@ -5,9 +5,9 @@ public class Math2 {
 
     /**
      * Clamp: limits value v to interval min-max
-     * @param min
-     * @param v
-     * @param max
+     * @param min lower bound
+     * @param v value
+     * @param max higher bound
      * @return v if v lies between min and max.
      * if v lower than min, return min.
      * if v greater than max, return max.
@@ -25,7 +25,7 @@ public class Math2 {
     /**
      *
      * Arcsinh of x
-     * @param x
+     * @param x angle
      * @return arcsinh of x
      */
     public static double asinh(double x){

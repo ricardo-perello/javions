@@ -25,7 +25,7 @@ public class WebMercator {
      * @return y-coordinate of the map given the zoomlevel and the latitude
      */
     public static double y(int zoomLevel, double latitude){
-        return ((Math.scalb(1,8+zoomLevel))*(-(convert(asinh(Math.tan(latitude)),RADIAN,TURN)))+0.5);
+        return ((Math.scalb(1,8+zoomLevel))*((-(convert(asinh(Math.tan(latitude)),RADIAN,TURN)))+0.5));
     }
 
 

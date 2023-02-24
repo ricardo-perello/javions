@@ -6,9 +6,7 @@ import static ch.epfl.javions.Units.convert;
 public record GeoPos(int longitudeT32, int latitudeT32) {
 
     public GeoPos{
-        if (isValidLatitudeT32(latitudeT32)){
-            throw new IllegalArgumentException();
-        }
+        Preconditions.checkArgument(isValidLatitudeT32(latitudeT32));
     }
 
     /**
@@ -16,8 +14,8 @@ public record GeoPos(int longitudeT32, int latitudeT32) {
      * @param latitudeT32 latitude attribute of object
      * @return boolean isValidLatitude
      */
-    public static boolean isValidLatitudeT32(int latitudeT32){ return ((-(Math.scalb(1,30)) <= latitudeT32)&&
-            (Math.scalb(1,30) >= latitudeT32));}
+    public static boolean isValidLatitudeT32(int latitudeT32){ return ((-1073741824 <= latitudeT32)&&
+            1073741824 >= latitudeT32);}
 
     /**
      * longitude as radian
@@ -41,7 +39,7 @@ public record GeoPos(int longitudeT32, int latitudeT32) {
      */
     @Override
     public String toString(){
-        return ("("+convert(longitudeT32,T32,DEGREE)+"º, "+convert(longitudeT32,T32,DEGREE)+"º)");
+        return ("("+convert(longitudeT32,T32,DEGREE)+"°, "+convert(longitudeT32,T32,DEGREE)+"°)");
     }
 }
 
