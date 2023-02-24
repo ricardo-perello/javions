@@ -4,9 +4,9 @@ import java.util.regex.Pattern;
 
 import static ch.epfl.javions.Preconditions.checkArgument;
 
-public class AircraftDescription {
+public record AircraftDescription(String string) {
     static Pattern check = Pattern.compile("[ABDGHLPRSTV-][0123468][EJPT-]");
-    public AircraftDescription(String string) {
+    public AircraftDescription {
         checkArgument(check.matcher(string).matches());
     }
 }
