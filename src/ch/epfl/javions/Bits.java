@@ -12,10 +12,11 @@ public class Bits {
      */
     public static int extractUInt(long value, int start, int size){
         if (!((size > 0)&&(size < Integer.SIZE))) throw new IllegalArgumentException();
-        if (((start+size)<0)||(start+size)>=Long.SIZE) throw new IndexOutOfBoundsException(); //todo check with mateus
+        if (((start+size)<0)||(start+size)>Long.SIZE) throw new IndexOutOfBoundsException();
+        if (start < 0) throw new IndexOutOfBoundsException();
         long fullLong = -1;
-        long newValue = value >> start;
-        long mask = fullLong >> (64-size);
+        int newValue = (int)(value >>> start);
+        long mask = fullLong >>> (64-size);
         return (int) ((mask)&(newValue));
     }
 
