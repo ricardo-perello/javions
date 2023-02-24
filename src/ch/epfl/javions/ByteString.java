@@ -46,6 +46,8 @@ public final class ByteString{
      * @return long type concatenation of bytes from start byte to end byte.
      */
     public long bytesInRange(int fromIndex, int toIndex){
+        if((toIndex-fromIndex)>=64) throw new IllegalArgumentException();
+        if((toIndex>size())||(fromIndex < 0)) throw new IndexOutOfBoundsException();
         long output = 0;
         int counter = 0;
         for (int i = fromIndex; i < toIndex; i++){
