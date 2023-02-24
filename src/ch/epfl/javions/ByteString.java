@@ -16,7 +16,12 @@ public final class ByteString{
         }
     }
 
-    public ByteString ofHexadecimalString(String hexString){
+    /**
+     *
+     * @param hexString string of hexadecimals
+     * @return the byte string whose given string argument is the hexadecimal representation
+     */
+    public static ByteString ofHexadecimalString(String hexString){
         Preconditions.checkArgument(((hexString.length())%2) == 0);
         // TODO: 23/02/2023 NumberFormatException
         HexFormat hf = HexFormat.of().withUpperCase();
@@ -34,8 +39,21 @@ public final class ByteString{
         return octetTable[index];
     }
 
+    /**
+     * concatenation of bytes in a given range
+     * @param fromIndex start byte
+     * @param toIndex end byte
+     * @return long type concatenation of bytes from start byte to end byte.
+     */
     public long bytesInRange(int fromIndex, int toIndex){
-        long output =
+        if((toIndex-fromIndex)>=64) throw new IllegalArgumentException();
+        if((toIndex>size())||(fromIndex < 0)) throw new IndexOutOfBoundsException();
+        long output = 0;
+        int counter = 0;
+        for (int i = fromIndex; i < toIndex; i++){
+            output = output + ((long) octetTable[i] << (counter*8));
+            counter++;
+        }
+        return output;
     }
-
 }
