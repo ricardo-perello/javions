@@ -57,9 +57,7 @@ public final class ByteString{
         }
         return output;
     }
-    /**public long bytesInRange(int fromIndex, int toIndex){
-     long output =
-     }**/
+
 
     /**
      * method that compares two byteStringd
