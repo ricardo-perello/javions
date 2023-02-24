@@ -1,5 +1,6 @@
 package ch.epfl.javions;
 
+import java.util.Arrays;
 import java.util.HexFormat;
 
 public final class ByteString{
@@ -9,11 +10,7 @@ public final class ByteString{
      * @param bytes is byte array
      */
     public ByteString(byte[] bytes){ //todo check if final
-        byte[] octetTableCopy = new byte[bytes.length];
-        for (int i = 0; i < bytes.length; i++){
-            octetTableCopy[i] = (byte) Byte.toUnsignedInt(bytes[i]);
-            octetTable = octetTableCopy.clone();
-        }
+        octetTable = bytes.clone();
     }
 
     /**
@@ -28,15 +25,19 @@ public final class ByteString{
         return new ByteString(hf.parseHex(hexString));
     }
 
+    /**
+     * size of octetTable
+     * @return int lenght of octetTable
+     */
     public int size(){
         return octetTable.length;
     }
 
     public int byteAt(int index){
-        if (index > size()){
+        if (index >= octetTable.length | index < 0){
             throw new IndexOutOfBoundsException();
         }
-        return octetTable[index];
+        return  Byte.toUnsignedInt(octetTable[index]);
     }
 
     /**
@@ -49,11 +50,45 @@ public final class ByteString{
         if((toIndex-fromIndex)>=64) throw new IllegalArgumentException();
         if((toIndex>size())||(fromIndex < 0)) throw new IndexOutOfBoundsException();
         long output = 0;
-        int counter = 0;
+        //int counter = 0;
         for (int i = fromIndex; i < toIndex; i++){
-            output = output + ((long) octetTable[i] << (counter*8));
-            counter++;
+            output = (output << 8  | Byte.toUnsignedInt(octetTable[i]));
+            //counter++;
         }
         return output;
     }
+    /**public long bytesInRange(int fromIndex, int toIndex){
+     long output =
+     }**/
+
+    /**
+     * method that compares two byteStringd
+     * @param comparedObject Object, element compared to
+     * @return a boolean, true if same, false if different
+     */
+    public boolean equals(Object comparedObject){
+        if (comparedObject instanceof ByteString byteStringCompared
+                && Arrays.equals(byteStringCompared.octetTable ,octetTable)){
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * method for hashcode of octetTable
+     * @return int, hashCode of octetTable
+     */
+    public int hashCode(){
+        return Arrays.hashCode(octetTable);
+    }
+
+    /**
+     * method turns octetTable into String
+     * @return string related to octerTable
+     */
+    public String toString(){
+        HexFormat hf = HexFormat.of().withUpperCase();
+        return hf.formatHex(octetTable);
+    }
+
 }
