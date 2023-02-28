@@ -11,7 +11,7 @@ public class Bits {
      * @return subset of the 64 bits
      */
     public static int extractUInt(long value, int start, int size){
-        Preconditions.checkArgument(!((size > 0)&&(size < Integer.SIZE)));
+        Preconditions.checkArgument(((size > 0)&&(size < Integer.SIZE)));
         if (((start+size)<0)||(start+size)>Long.SIZE) throw new IndexOutOfBoundsException();
         if (start < 0) throw new IndexOutOfBoundsException();
         long fullLong = -1;
