@@ -65,11 +65,8 @@ public final class ByteString{
      * @return a boolean, true if same, false if different
      */
     public boolean equals(Object comparedObject){
-        if (comparedObject instanceof ByteString byteStringCompared
-                && Arrays.equals(byteStringCompared.octetTable ,octetTable)){
-            return true;
-        }
-        return false;
+        return comparedObject instanceof ByteString byteStringCompared
+                && Arrays.equals(byteStringCompared.octetTable, octetTable);
     }
 
     /**

@@ -6,8 +6,10 @@ public final class Crc24 {
     public static int GENERATOR = 0xFFF409;
     private final int generator;
     private static final int mask = 16_777_215;
+    private final int [] table;
     public Crc24 (int generator){
-        this.generator = generator;
+        this.generator = generator & mask;
+        table = new int[]{0, generator & mask};
     }
 
     public int crc(int generator, byte[] bytes){
@@ -25,7 +27,7 @@ public final class Crc24 {
     }
 
     public static int crc_bitwise(int generator, byte[] bytes){
-        int[] table = {0, generator & mask};
+        int[] table = {0,generator & mask};
         int crc = 0;
         for(byte b: bytes){
             for(int i=7;i>=0;i--){
@@ -41,7 +43,6 @@ public final class Crc24 {
         return crc;
     }
 
-
     public int crc_Basic (int generator, byte[] bytes){
         return crc_bitwise(generator, bytes);
     }
@@ -53,6 +54,4 @@ public final class Crc24 {
         }
         return table;
     }
-
-
 }
