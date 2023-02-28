@@ -11,7 +11,7 @@ public final class Crc24 {
         this.generator = generator & mask;
         table = buildTable(this.generator);
     }
-
+//todo add comments
     public int crc(byte[] bytes){
         int crc = 0;
         for (byte b: bytes){
