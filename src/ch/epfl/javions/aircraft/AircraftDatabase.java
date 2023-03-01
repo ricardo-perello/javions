@@ -16,7 +16,7 @@ public final class AircraftDatabase {
 
     /**
      *
-     * @param address input icao address of the plane you want to know about
+     * @param address input ICAO address of the plane you want to know about
      * @return AircraftDatabase with the information about the plane with the input ICAO address.
      * @throws IOException when there is an error while reading
      */
