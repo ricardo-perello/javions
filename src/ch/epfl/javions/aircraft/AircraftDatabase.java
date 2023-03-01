@@ -13,7 +13,13 @@ public final class AircraftDatabase {
         requireNonNull(fileName);
         this.fileName = fileName;
     }
-//todo add documentation
+
+    /**
+     *
+     * @param address input icao address of the plane you want to know about
+     * @return AircraftDatabase with the information about the plane with the input ICAO address.
+     * @throws IOException when there is an error while reading
+     */
     public AircraftData get(IcaoAddress address) throws IOException {
         //String zipName = requireNonNull(getClass().getResource("/resources/aircraft.zip")).getFile();//todo ask about this
         boolean found = false;
