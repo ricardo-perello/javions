@@ -2,6 +2,7 @@ package ch.epfl.javions.aircraft;
 
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class AircraftDataTest {
@@ -14,7 +15,7 @@ public class AircraftDataTest {
         String model = "AIRBUS A-320neo";
         AircraftDescription description = new AircraftDescription("L2J");
         WakeTurbulenceCategory wakeTurbulenceCategory = WakeTurbulenceCategory.of("M");
-        assertThrows(NullPointerException.class, () -> {
+        assertDoesNotThrow(() -> {
             new AircraftData(registration, typeDesignator, model, description, wakeTurbulenceCategory);
         });
     }
