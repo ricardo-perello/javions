@@ -82,7 +82,7 @@ public class TestCrc24 {
     void testCrc24_6_WorksWithExpectedValue(){
         Crc24 crc24 = new Crc24(Crc24.GENERATOR);
         String mS = "8D495293F82300020049B8";
-        String cS = "111203";
+        String cS = "1112033";
         int c = Integer.parseInt(cS, 16); // == 0x035DB8
 
         byte[] mAndC = HexFormat.of().parseHex(mS + cS);
