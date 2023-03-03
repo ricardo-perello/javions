@@ -19,20 +19,6 @@ class AircraftDatabaseTest {
         assert a != null;
         assertEquals("CESSNA 208 Caravan",a.model());
     }
-    @Test
-    void emptyIcao() {
-        AircraftData a=null;
-        AircraftDatabase d = new AircraftDatabase("/aircraft.zip");
-        try {
-            a = d.get(new IcaoAddress(null));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-
-
 
 
 

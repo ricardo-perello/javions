@@ -9,7 +9,7 @@ public final class ByteString{
      * Creates an array of bytes that is final and unsigned
      * @param bytes is byte array
      */
-    public ByteString(byte[] bytes){ //todo check if final
+    public ByteString(byte[] bytes){
         octetTable = bytes.clone();
     }
 
@@ -20,7 +20,6 @@ public final class ByteString{
      */
     public static ByteString ofHexadecimalString(String hexString){
         Preconditions.checkArgument(((hexString.length())%2) == 0);
-        // TODO: 23/02/2023 NumberFormatException
         HexFormat hf = HexFormat.of().withUpperCase();
         return new ByteString(hf.parseHex(hexString));
     }
