@@ -15,8 +15,7 @@ public class Math2 {
     public static int clamp(int min, int v, int max){
         Preconditions.checkArgument(min < max);
         if (v < min) return min;
-        else if (v > max) return max;
-        else return v;
+        else return Math.min(v, max);
     }
 
     /**
