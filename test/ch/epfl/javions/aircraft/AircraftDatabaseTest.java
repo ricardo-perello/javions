@@ -15,6 +15,7 @@ class AircraftDatabaseTest {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
         assert a != null;
         assertEquals("CESSNA 208 Caravan",a.model());
     }
