@@ -8,7 +8,14 @@ public record AircraftData (AircraftRegistration registration,
                             AircraftDescription description,
                             WakeTurbulenceCategory wakeTurbulenceCategory) {
 
-
+    /**
+     * Aircraft data record that models all the static data of the airplane
+     * @param registration
+     * @param typeDesignator
+     * @param model
+     * @param description
+     * @param wakeTurbulenceCategory
+     */
     public AircraftData{
 
         requireNonNull(registration);
