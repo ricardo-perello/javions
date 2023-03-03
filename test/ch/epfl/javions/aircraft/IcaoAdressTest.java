@@ -9,7 +9,7 @@ public class IcaoAdressTest {
 
     @Test
     void IcaoAdressDoesNotThrowErrorWithNull() {
-        String string = null;
+        String string = "";
         assertThrows(IllegalArgumentException.class, () -> {
             new IcaoAddress(string);
         });

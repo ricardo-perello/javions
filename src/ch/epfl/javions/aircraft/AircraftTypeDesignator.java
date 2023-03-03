@@ -6,6 +6,6 @@ import static ch.epfl.javions.Preconditions.checkArgument;
 public record AircraftTypeDesignator(String string) {
     static Pattern check = Pattern.compile("[A-Z0-9]{2,4}");
     public AircraftTypeDesignator{
-        checkArgument((string == null )|| (check.matcher(string).matches()));
+        checkArgument(string.isEmpty() || (check.matcher(string).matches()));
     }
 }

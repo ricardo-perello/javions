@@ -11,7 +11,7 @@ public class AircraftRegistrationTest {
 
     @Test
     void AircraftRegistrationDoesNotThrowErrorWithNull() {
-        String string = null;
+        String string = "";
         assertThrows(IllegalArgumentException.class, () -> {
             new AircraftRegistration(string);
         });

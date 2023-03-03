@@ -8,6 +8,6 @@ import static java.util.Objects.requireNonNull;
 public record AircraftRegistration(String string) {
     static Pattern check = Pattern.compile("[A-Z0-9 .?/_+-]+");
     public AircraftRegistration{
-        checkArgument((string != null) && (check.matcher(string).matches()));
+        checkArgument((!string.isEmpty()) && (check.matcher(string).matches()));
     }
 }

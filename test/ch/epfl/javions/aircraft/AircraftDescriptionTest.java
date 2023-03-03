@@ -11,7 +11,7 @@ public class AircraftDescriptionTest {
 
     @Test
     void AircraftDescriptionDoesNotThrowErrorWithNull() {
-        String string = null;
+        String string = "";
         assertDoesNotThrow( () -> {
             new AircraftDescription(string);
         });

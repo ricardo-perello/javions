@@ -11,7 +11,7 @@ public class AircraftTypeDesignatorTest {
 
     @Test
     void AircraftTypeDesignatorDoesNotThrowErrorWithNull() {
-        String string = null;
+        String string = "";
         assertDoesNotThrow( () -> {
             new AircraftTypeDesignator(string);
         });
