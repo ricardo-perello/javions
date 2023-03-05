@@ -5,43 +5,34 @@ import ch.epfl.javions.Preconditions;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Objects;
 
-public final class SamplesDecoder{
+public final class SamplesDecoder {
     private InputStream stream;
     private int batchSize;
-    private Byte[] sampleDecoder;
+    private byte[] sampleDecoder;
 
-    public SamplesDecoder(InputStream stream, int batchSize){
-        if (batchSize == 0){
-            throw new NullPointerException();
-        }
+    public SamplesDecoder(InputStream stream, int batchSize) {
+        Objects.requireNonNull(stream);
         Preconditions.checkArgument(batchSize > 0);
         this.stream = stream;
         this.batchSize = batchSize;
-        sampleDecoder = new Byte[batchSize * 2];
+        sampleDecoder = new byte[batchSize * 2];
     }
 
     public int readBatch(short[] Batch) throws IOException {
         Preconditions.checkArgument(Batch.length == batchSize);
-        //TODO lève IOException en cas d'erreur d'entrée/sortie
         int lengthStream = stream.available();
-        byte[] nBytesRead = stream.readNBytes(batchSize);
+        int nBytesRead = stream.readNBytes(sampleDecoder, 0, batchSize);
         for (int i = 0; i < batchSize; i++) {
-            byte littleEdian = (byte) (nBytesRead[i] << 8);
-            byte bigEdian = (byte) (nBytesRead[i]>>>8);
-            //Batch[i] = (short) (littleEdian | bigEdian);
-            Batch[2 * i] =  littleEdian;
-            Batch[2 * i + 1] = bigEdian;
+            byte littleEdian = (byte) (sampleDecoder[2 * i] << 8);
+            byte bigEdian = (byte) (sampleDecoder[2 * i + 1] >>> 8);
+            Batch[i] = (short) (littleEdian | bigEdian);
         }
         if (lengthStream == sampleDecoder.length) {
-            return sampleDecoder.length;
-        }else {
-            return lengthStream / 2;
+            return batchSize / 2;
+        } else {
+            return (int) Math.floor(lengthStream / 2);
         }
-        /*int byteFromStream = 0;
-        byteFromStream = stream.read();
-        long hexByteFull = Long.parseLong(Integer.toHexString(byteFromStream));
-        sampleDecoder[2*i] = (byte) Bits.extractUInt(hexByteFull, 2, 2);*/
-
     }
 }

@@ -14,4 +14,6 @@ public final class PowerComputer {
         PowerComputer = new Byte[2 * batchSize];
     }
 
+    //public int readBatch(int[] Batch)
+
 }
