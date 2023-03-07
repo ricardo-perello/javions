@@ -14,7 +14,7 @@ public final class PowerComputer {
     /**
      * constructor of PowerComputer,
      * we verify that batchSize is possible and a multiple of 8
-     * we initialise the private attributs batch, samplesDecoded, samplesDecoder
+     * we initialise the private attributes batch, samplesDecoded, samplesDecoder
      * batch => int table that we will use to store the values of readBatch
      * samplesDecoded => short table where we store all the value of SamplesDecoded
      * samplesDecoder => SamplesDecoder attribute that allows us to use SamplesDecoder.readBatch(...)
@@ -34,7 +34,6 @@ public final class PowerComputer {
 
     /**
      * method that does the calculation to give the power of the values we have sampled
-     *
      * @param Batch table where we put in the value the power for every i
      * @return int, the number of batches of power that have been placed in the Batch[]
      * @throws IOException exception in case of error in the input / output
