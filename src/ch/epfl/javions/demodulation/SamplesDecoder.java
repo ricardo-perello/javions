@@ -11,6 +11,7 @@ public final class SamplesDecoder {
     private int batchSize;
     private byte[] littleEndian;
     private int[] bigEndian;
+    private int RECENTER = 2048;
 
     public SamplesDecoder(InputStream stream, int batchSize) {
         Objects.requireNonNull(stream);
@@ -25,20 +26,10 @@ public final class SamplesDecoder {
         Preconditions.checkArgument(Batch.length == batchSize);
         int lengthStream = stream.available();
         int nBytesRead = stream.readNBytes(littleEndian, 0,2 * batchSize);
-        for (int i = 0; i < batchSize; i++) {
-            bigEndian[2*i] = littleEndian[2*i+1];
-            bigEndian[2*i+1] = littleEndian[2*i];
-            System.out.println(bigEndian[2*i]<<8);
-            Batch[i] = (short) (((bigEndian[2*i]<<8)|bigEndian[2*i+1])-2048);
+        for (int i = 0; i < nBytesRead/2 ; i++) {
+            Batch[i] = (short) ((((littleEndian[i * 2 + 1] & 0xFF) << 8) | (littleEndian[i * 2] & 0xFF))-RECENTER);
+            //todo change to const
         }
-        /*
-        for (int i = 0; i < batchSize; i++) {
-            byte littleEndian = (byte) (sampleDecoder[2 * i] << 8);
-            byte bigEndian = (byte) (sampleDecoder[2 * i + 1] >>> 8);
-            Batch[i] = (short) (littleEndian | bigEndian);
-        }
-
-         */
         if (lengthStream == littleEndian.length) {
             return batchSize / 2;
         } else {
