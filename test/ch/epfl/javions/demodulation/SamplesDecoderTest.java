@@ -37,7 +37,7 @@ public class SamplesDecoderTest {
         stream2 = URLDecoder.decode(stream2, StandardCharsets.UTF_8);
         InputStream stream = new FileInputStream(stream2);
         SamplesDecoder test = new SamplesDecoder(stream, 2402);
-
+        System.out.println(8 << 8);
         short[] batch = new short[2402];
         test.readBatch(batch);
         assertEquals(-3, batch[0]);

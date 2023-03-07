@@ -28,7 +28,6 @@ public final class SamplesDecoder {
         int nBytesRead = stream.readNBytes(littleEndian, 0,2 * batchSize);
         for (int i = 0; i < nBytesRead/2 ; i++) {
             Batch[i] = (short) ((((littleEndian[i * 2 + 1] & 0xFF) << 8) | (littleEndian[i * 2] & 0xFF))-RECENTER);
-            //todo change to const
         }
         if (lengthStream == littleEndian.length) {
             return batchSize / 2;
