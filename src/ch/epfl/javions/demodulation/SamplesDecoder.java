@@ -12,7 +12,7 @@ public final class SamplesDecoder {
     private byte[] littleEndian;
     private int[] bigEndian;
     private int RECENTER = 2048;
-
+//todo add comments
     public SamplesDecoder(InputStream stream, int batchSize) {
         Objects.requireNonNull(stream);
         Preconditions.checkArgument(batchSize > 0);

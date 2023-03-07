@@ -10,7 +10,7 @@ public final class PowerComputer {
     private short[] samplesDecoded;
     private int batchSize;
     private SamplesDecoder samplesDecoder;
-
+//todo add comments
     /**
      * constructor of PowerComputer,
      * we verify that batchSize is possible and a multiple of 8
