@@ -9,7 +9,7 @@ import static java.util.Objects.requireNonNull;
 public final class AircraftDatabase {
     String fileName;
 
-    public AircraftDatabase(String fileName) {
+    public AircraftDatabase(String fileName){
         requireNonNull(fileName);
         this.fileName = fileName;
     }
@@ -26,7 +26,7 @@ public final class AircraftDatabase {
         String model;
         AircraftDescription description;
         WakeTurbulenceCategory wakeTurbulenceCategory;
-        try (ZipFile zip = new ZipFile("resources"+fileName);
+        try (ZipFile zip = new ZipFile(fileName);
              InputStream stream = zip.getInputStream(zip.getEntry(address.string().substring(4,6)+".csv"));
              Reader reader = new InputStreamReader(stream, UTF_8);
              BufferedReader buffer = new BufferedReader(reader)) {

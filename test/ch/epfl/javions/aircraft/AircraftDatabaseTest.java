@@ -9,7 +9,7 @@ class AircraftDatabaseTest {
     @Test
     void findIcaoAddressInZipFileTest(){
         AircraftData a=null;
-        AircraftDatabase d = new AircraftDatabase("/aircraft.zip");
+        AircraftDatabase d = new AircraftDatabase("resources/aircraft.zip");
         try {
              a = d.get(new IcaoAddress("0AB014"));
         } catch (IOException e) {
