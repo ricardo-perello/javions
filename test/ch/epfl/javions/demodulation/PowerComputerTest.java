@@ -17,9 +17,9 @@ public class PowerComputerTest {
         String stream2 = getClass().getResource("/samples.bin").getFile();
         stream2 = URLDecoder.decode(stream2, StandardCharsets.UTF_8);
         InputStream stream = new FileInputStream(stream2);
-        PowerComputer test = new PowerComputer(stream, 32);
+        PowerComputer test = new PowerComputer(stream, 2400);
         //System.out.println(8 << 8);
-        int[] batch = new int[32];
+        int[] batch = new int[2400];
         test.readBatch(batch);
         assertEquals(73, batch[0]);
         assertEquals(292, batch[1]);
