@@ -42,7 +42,7 @@ public final class PowerWindow {
         }
         else{
             int newIndex = numOfSamples-(windowPosition+i);
-            switchBoolean(isEvenTable);
+            switchArray(isEvenTable);
             return currentArray[newIndex];
         }
     }
@@ -50,7 +50,7 @@ public final class PowerWindow {
     public void advance() throws IOException{
         windowPosition++;
         if (windowPosition + windowSize > numOfSamples) {
-            switchBoolean(isEvenTable);
+            switchArray(isEvenTable);
             windowPosition = 0;
             numOfSamples = powerComputer.readBatch(currentArray);
         }
@@ -62,7 +62,7 @@ public final class PowerWindow {
             advance();
         }
     }
-    private void switchBoolean(boolean b){
+    private void switchArray(boolean b){
         if (b){
             b = false;
             currentArray = odd;
