@@ -51,7 +51,7 @@ public final class SamplesDecoder {
         if (lengthStream == littleEndian.length) {
             return batchSize / 2;
         } else {
-            return (int) Math.floor(lengthStream / 2);
+            return (int) Math.floor((double)lengthStream / 2);
         }
     }
 }
