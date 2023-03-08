@@ -10,7 +10,6 @@ public final class PowerComputer {
     private short[] samplesDecoded;
     private int batchSize;
     private SamplesDecoder samplesDecoder;
-//todo add comments
     /**
      * constructor of PowerComputer,
      * we verify that batchSize is possible and a multiple of 8
@@ -40,7 +39,7 @@ public final class PowerComputer {
      */
 
     public int readBatch(int[] Batch) throws IOException {
-        Preconditions.checkArgument(Batch.length == batchSize);
+        Preconditions.checkArgument(Batch.length == (batchSize/2));
         samplesDecoder.readBatch(samplesDecoded);
         short[] values = new short[8];
         int counter = 0;

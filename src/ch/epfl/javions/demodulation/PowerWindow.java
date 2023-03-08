@@ -58,7 +58,7 @@ public final class PowerWindow {
     }
 
     public void advanceBy(int offset) throws IOException{
-        for (int i = 0; i < offset; i++) {
+        for (int i = 0; i < offset; i++) { 
             advance();
         }
     }
