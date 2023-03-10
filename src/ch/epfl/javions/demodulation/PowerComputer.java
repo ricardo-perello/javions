@@ -6,8 +6,8 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public final class PowerComputer {
-    private short[] samplesDecoded;
-    private SamplesDecoder samplesDecoder;
+    private final short[] samplesDecoded;
+    private final SamplesDecoder samplesDecoder;
     /**
      * constructor of PowerComputer,
      * we verify that batchSize is possible and a multiple of 8

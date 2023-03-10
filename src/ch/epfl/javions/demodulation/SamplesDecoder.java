@@ -7,10 +7,10 @@ import java.io.InputStream;
 import java.util.Objects;
 
 public final class SamplesDecoder {
-    private InputStream stream;
-    private int batchSize;
-    private byte[] littleEndian;
-    private int RECENTER = 2048;
+    private final InputStream stream;
+    private final int batchSize;
+    private final byte[] littleEndian;
+    private final int RECENTER = 2048;
 
     /**
      * constructor of SampleDecoder

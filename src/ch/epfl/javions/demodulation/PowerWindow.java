@@ -7,13 +7,12 @@ import java.io.InputStream;
 
 public final class PowerWindow {
     final static int BATCH_SIZE = (int) Math.pow(2, 16);
-    private int windowSize;
+    private final int windowSize;
     private int windowPositionInsideBatch;
     private int absoluteWindowPosition;
-    private PowerComputer powerComputer;
+    private final PowerComputer powerComputer;
     private int[] array1 = new int[BATCH_SIZE];
     private int[] array2 = new int[BATCH_SIZE];
-    private int numOfSamples;
     private int SamplesLeft;
 
 
@@ -28,8 +27,7 @@ public final class PowerWindow {
         Preconditions.checkArgument((windowSize > 0) && (windowSize <= BATCH_SIZE));
         this.windowSize = windowSize;
         powerComputer = new PowerComputer(stream, BATCH_SIZE);
-        numOfSamples = powerComputer.readBatch(array1);
-        SamplesLeft = numOfSamples;
+        SamplesLeft = powerComputer.readBatch(array1);
     }
 
     /**

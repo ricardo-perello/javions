@@ -4,14 +4,13 @@ import static ch.epfl.javions.Bits.extractUInt;
 
 public final class Crc24 {
     public static int GENERATOR = 0xFFF409;
-    private final int generator;
     private static final int mask = 16777215;
     private final int [] table;
 
 
     public Crc24 (int generator){
-        this.generator = generator & mask;
-        table = buildTable(this.generator);
+        int generator1 = generator & mask;
+        table = buildTable(generator1);
     }
 
     /**

@@ -307,15 +307,15 @@ public class all_test {
         int[] tabTest =  {585,740,360,1130,3370};
         assertEquals(tabTest[0],powerWindow.get(4));
         powerWindow.advance();
-        assertEquals(tabTest[1],powerWindow.get(3));
+        assertEquals(tabTest[0],powerWindow.get(3));
         powerWindow.advance();
-        assertEquals(tabTest[2],powerWindow.get(2));
+        assertEquals(tabTest[0],powerWindow.get(2));
         powerWindow.advance();
-        assertEquals(tabTest[3],powerWindow.get(1));
+        assertEquals(tabTest[0],powerWindow.get(1));
         powerWindow.advance();
-        assertEquals(tabTest[4],powerWindow.get(0));
+        assertEquals(tabTest[0],powerWindow.get(0));
         powerWindow.advance();
-        //assertEquals(5,powerWindow.get(0));
+        assertEquals(0,powerWindow.get(0));
     }
 
 }
