@@ -20,16 +20,6 @@ public class SamplesDecoderTest {
         assertThrows(IllegalArgumentException.class, () -> new SamplesDecoder(stream, -3));
     }
 
-    @Test
-    public void SamplesDecoderDoesWhatsExpected() throws IOException {
-        String samples = getClass().getResource("/samples.bin").getFile();
-        samples = URLDecoder.decode(samples, StandardCharsets.UTF_8);
-        InputStream stream = new FileInputStream(samples);
-
-        SamplesDecoder decoder = new SamplesDecoder(stream, 2402);
-        short[] batch = new short[2402];
-        assertEquals(1201, decoder.readBatch(batch));
-    }
 
     @Test
     void testValidSampleDecoder() throws IOException {

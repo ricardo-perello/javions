@@ -39,7 +39,7 @@ public final class PowerComputer {
         int batchSize = samplesDecoder.readBatch(samplesDecoded);
         short[] values = new short[8];
         int counter = 0;
-        for (int i = 0; i < batchSize; i += 2) {
+        for (int i = 0; i < batchSize-1; i += 2) {
             //For every i in the loop, we add two new values into the table values from the table decodedSampleTable found
             //using samplesDecoder.readBatch .
             //They are placed at their position using the modulo of 8, this allows us to take out the values of the

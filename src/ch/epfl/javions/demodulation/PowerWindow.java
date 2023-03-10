@@ -75,11 +75,11 @@ public final class PowerWindow {
         windowPosition++;
         absoluteWindowPosition++;
         SamplesLeft--;
-        if (windowPosition + windowSize == BATCH_SIZE) {
+        if (windowPosition + windowSize == BATCH_SIZE - 1) {
             numOfSamples = powerComputer.readBatch(array2);
             SamplesLeft += numOfSamples;
         }
-        if (windowPosition == BATCH_SIZE){
+        if (windowPosition == BATCH_SIZE - 1){
             switchArray();
             windowPosition = 0;
         }
