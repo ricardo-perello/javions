@@ -59,6 +59,7 @@ public final class PowerWindow {
 
     /**
      * method get, that allows to find the value of the power at the index i
+     *
      * @param i, int, position we are interested in
      * @return the value of the power at index i
      */
@@ -93,6 +94,7 @@ public final class PowerWindow {
 
     /**
      * method that allows to advance by offsetposition
+     *
      * @param offset int, the number of position we want to move by
      * @throws IOException exception related to advance()
      */
@@ -103,7 +105,10 @@ public final class PowerWindow {
         }
     }
 
-    private void switchArray(){
+    /**
+     * method that allows to invert the main array and the secondary array
+     */
+    private void switchArray() {
         int[] tempArray = array2;
         array2 = array1;
         array1 = tempArray;
