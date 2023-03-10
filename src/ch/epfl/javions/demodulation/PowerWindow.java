@@ -6,17 +6,16 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public final class PowerWindow {
-    final static int POW16 = (int) Math.pow(2, 16);
-    final static int POW17 = (int) Math.pow(2, 17);
+    final static int BATCH_SIZE = (int) Math.pow(2, 16);
     private InputStream stream;
     private int windowSize;
     private int windowPosition;
+    private int absoluteWindowPosition;
     private PowerComputer powerComputer;
-    private int[] even = new int[POW16];
-    private int[] odd = new int[POW16];
-    private int[] currentArray = even;
-    boolean isEvenTable = true;
+    private int[] array1 = new int[BATCH_SIZE];
+    private int[] array2 = new int[BATCH_SIZE];
     private int numOfSamples;
+    private int SamplesLeft;
 
 //todo add comments
 
@@ -28,11 +27,12 @@ public final class PowerWindow {
      * @throws IOException exception thrown if error in intput/output
      */
     public PowerWindow(InputStream stream, int windowSize) throws IOException {
-        Preconditions.checkArgument((windowSize > 0) && (windowSize <= POW16));
+        Preconditions.checkArgument((windowSize > 0) && (windowSize <= BATCH_SIZE));
         this.stream = stream;
         this.windowSize = windowSize;
-        powerComputer = new PowerComputer(stream, POW17);
-        numOfSamples = powerComputer.readBatch(even);
+        powerComputer = new PowerComputer(stream, BATCH_SIZE);
+        numOfSamples = powerComputer.readBatch(array1);
+        SamplesLeft = numOfSamples;
     }
 
     /**
@@ -49,57 +49,53 @@ public final class PowerWindow {
      *
      * @return int, position of the window in the stream
      */
-    public long position() {
-        return windowPosition;
-    }
+    public long position(){return absoluteWindowPosition;}
 
     /**
      * method to determine if window is full
      *
      * @return boolean, true while windowPosition and windowSize is smaller than the numOfSample
      */
-    public boolean isFull() {
-        return (windowPosition + windowSize < numOfSamples);
-    }
+    public boolean isFull() {return (windowPosition+windowSize < SamplesLeft);}
 
-
-    public int get(int i) {
-        if (!((i >= 0) && (i < windowSize))) {
+    public int get(int i){
+        if (!((i >= 0)&&(i < windowSize))){
             throw new IndexOutOfBoundsException();
         }
-        if (windowPosition + i < numOfSamples) {
-            return currentArray[windowPosition + i];
-        } else {
-            int newIndex = numOfSamples - (windowPosition + i);
-            switchArray(isEvenTable);
-            return currentArray[newIndex];
+        if (windowPosition + i < numOfSamples){
+            return array1[windowPosition+i];
+        }
+        else{
+            int newIndex =(i - (numOfSamples-windowPosition));
+            return array2[newIndex];
         }
     }
 
-    public void advance() throws IOException {
+    public void advance() throws IOException{
         windowPosition++;
-        if (windowPosition + windowSize > numOfSamples) {
-            switchArray(isEvenTable);
-            windowPosition = 0;
-            numOfSamples = powerComputer.readBatch(currentArray);
+        absoluteWindowPosition++;
+        SamplesLeft--;
+        if (windowPosition + windowSize == BATCH_SIZE) {
+            numOfSamples = powerComputer.readBatch(array2);
+            SamplesLeft += numOfSamples;
         }
+        if (windowPosition == BATCH_SIZE){
+            switchArray();
+            windowPosition = 0;
+        }
+
 
     }
 
-    public void advanceBy(int offset) throws IOException {
-        for (int i = 0; i < offset; i++) {
+    public void advanceBy(int offset) throws IOException{
+        for (int i = 0; i < offset; i++) { 
             advance();
         }
     }
-
-    private void switchArray(boolean b) {
-        if (b) {
-            b = false;
-            currentArray = odd;
-        } else {
-            b = true;
-            currentArray = even;
-        }
+    private void switchArray(){
+        int[] tempArray = array2;
+        array2 = array1;
+        array1 = tempArray;
     }
 
 }
