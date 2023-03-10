@@ -27,10 +27,22 @@ public final class PowerWindow {
         numOfSamples = powerComputer.readBatch(even);
     }
 
+    /**
+     *method for the size of the window
+     * @return int, window size
+     */
     public int size(){return windowSize;}
 
+    /**
+     * method for the position
+     * @return int, position of the window in the stream
+     */
     public long position(){return windowPosition;}
 
+    /**
+     * method to determine if window is full
+     * @return boolean, true while windowPosition and windowSize is smaller than the numOfSample
+     */
     public boolean isFull() {return (windowPosition+windowSize < numOfSamples);}
 
     public int get(int i){
