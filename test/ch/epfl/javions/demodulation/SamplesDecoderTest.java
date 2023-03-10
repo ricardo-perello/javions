@@ -72,18 +72,29 @@ public class SamplesDecoderTest {
 
     }
 
+    @Test
+    void readBatchWorks() throws IOException {
+        InputStream stream = new FileInputStream("resources/samples.bin");
+        try {
+            short[] tab = new short[4804];
+            SamplesDecoder decode = new SamplesDecoder(stream, 4804);
+            decode.readBatch(tab);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 
     @Test
-    void readBatchTest1() throws IOException {
-        short[] expected = new short[]{-3, 8 ,-9 ,-8, -5 ,-8, -12, -16, -23 ,-9};
+    void readBatchTest1 () throws IOException {
+        short[] expected = new short[]{-3, 8, -9, -8, -5, -8, -12, -16, -23, -9};
         short[] actual = new short[1200];
 
         InputStream stream = new FileInputStream("resources/samples.bin");
-        SamplesDecoder a = new SamplesDecoder(stream,1200);
+        SamplesDecoder a = new SamplesDecoder(stream, 1200);
         int b = a.readBatch(actual);
         for (int i = 0; i < 10; i++) {
-            assertEquals(expected[i],actual[i]);
+            assertEquals(expected[i], actual[i]);
         }
     }
 }
