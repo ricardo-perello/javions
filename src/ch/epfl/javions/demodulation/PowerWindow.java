@@ -6,54 +6,59 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public final class PowerWindow {
-    final static int POW16 = (int) Math.pow(2, 16);
-    final static int POW17 = (int) Math.pow(2, 17);
+    final static int BATCH_SIZE = (int) Math.pow(2, 16);
     private InputStream stream;
     private int windowSize;
     private int windowPosition;
+    private int absoluteWindowPosition;
     private PowerComputer powerComputer;
-    private int[] even = new int[POW16];
-    private int[] odd = new int[POW16];
-    private int[] currentArray = even;
-    boolean isEvenTable = true;
+    private int[] array1 = new int[BATCH_SIZE];
+    private int[] array2 = new int[BATCH_SIZE];
     private int numOfSamples;
+    private int SamplesLeft;
 
 //todo add comments
     public PowerWindow(InputStream stream, int windowSize) throws IOException {
-        Preconditions.checkArgument((windowSize > 0) && (windowSize <= POW16));
+        Preconditions.checkArgument((windowSize > 0) && (windowSize <= BATCH_SIZE));
         this.stream = stream;
         this.windowSize = windowSize;
-        powerComputer = new PowerComputer(stream, POW17);
-        numOfSamples = powerComputer.readBatch(even);
+        powerComputer = new PowerComputer(stream, BATCH_SIZE);
+        numOfSamples = powerComputer.readBatch(array1);
+        SamplesLeft = numOfSamples;
     }
 
     public int size(){return windowSize;}
 
-    public long position(){return windowPosition;}
+    public long position(){return absoluteWindowPosition;}
 
-    public boolean isFull() {return (windowPosition+windowSize < numOfSamples);}
+    public boolean isFull() {return (windowPosition+windowSize < SamplesLeft);}
 
     public int get(int i){
         if (!((i >= 0)&&(i < windowSize))){
             throw new IndexOutOfBoundsException();
         }
         if (windowPosition + i < numOfSamples){
-            return currentArray[windowPosition+i];
+            return array1[windowPosition+i];
         }
         else{
-            int newIndex = numOfSamples-(windowPosition+i);
-            switchArray(isEvenTable);
-            return currentArray[newIndex];
+            int newIndex =(i - (numOfSamples-windowPosition));
+            return array2[newIndex];
         }
     }
 
     public void advance() throws IOException{
         windowPosition++;
-        if (windowPosition + windowSize > numOfSamples) {
-            switchArray(isEvenTable);
-            windowPosition = 0;
-            numOfSamples = powerComputer.readBatch(currentArray);
+        absoluteWindowPosition++;
+        SamplesLeft--;
+        if (windowPosition + windowSize == BATCH_SIZE) {
+            numOfSamples = powerComputer.readBatch(array2);
+            SamplesLeft += numOfSamples;
         }
+        if (windowPosition == BATCH_SIZE){
+            switchArray();
+            windowPosition = 0;
+        }
+
 
     }
 
@@ -62,15 +67,22 @@ public final class PowerWindow {
             advance();
         }
     }
-    private void switchArray(boolean b){
+    
+    private void switchArray(){
+        /*
         if (b){
             b = false;
-            currentArray = odd;
+            currentArray = array2;
         }
         else{
             b = true;
-            currentArray = even;
+            currentArray = array1;
         }
+
+         */
+        int[] tempArray = array2;
+        array2 = array1;
+        array1 = tempArray;
     }
 
 }

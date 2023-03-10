@@ -6,9 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public final class PowerComputer {
-    private int[] batch;
     private short[] samplesDecoded;
-    private int batchSize;
     private SamplesDecoder samplesDecoder;
     /**
      * constructor of PowerComputer,
@@ -23,12 +21,10 @@ public final class PowerComputer {
      */
 
     public PowerComputer(InputStream stream, int batchSize) {
-        this.batchSize = batchSize;
         Preconditions.checkArgument(batchSize > 0);
         Preconditions.checkArgument((batchSize % 8) == 0);
-        batch = new int[batchSize];
-        samplesDecoded = new short[batchSize];
-        samplesDecoder = new SamplesDecoder(stream, batchSize);
+        samplesDecoded = new short[batchSize*2];
+        samplesDecoder = new SamplesDecoder(stream, 2*batchSize);
     }
 
     /**
@@ -37,17 +33,19 @@ public final class PowerComputer {
      * @return int, the number of batches of power that have been placed in the Batch[]
      * @throws IOException exception in case of error in the input / output
      */
-
+// todo check if powercomputer works
     public int readBatch(int[] Batch) throws IOException {
-        Preconditions.checkArgument(Batch.length == (batchSize/2));
-        samplesDecoder.readBatch(samplesDecoded);
+        Preconditions.checkArgument(Batch.length == (samplesDecoded.length/2));
+        int batchSize = samplesDecoder.readBatch(samplesDecoded);
         short[] values = new short[8];
         int counter = 0;
         for (int i = 0; i < batchSize; i += 2) {
             values[i % 8] = samplesDecoded[i];
             values[(i + 1) % 8] = samplesDecoded[i + 1];
-            int evenNums = (int) Math.pow((values[(i + 2) % 8]) - (values[(i + 4) % 8]) + (values[(i + 6) % 8]) - (values[(i) % 8]), 2);
-            int oddNums = (int) Math.pow((values[(i + 1) % 8]) - (values[(i + 3) % 8]) + (values[(i + 5) % 8]) - (values[(i + 7) % 8]), 2);
+            int evenNums = (int) Math.pow((values[(i + 2) % 8]) - (values[(i + 4) % 8]) + (values[(i + 6) % 8]) -
+                    (values[(i) % 8]), 2);
+            int oddNums = (int) Math.pow((values[(i + 1) % 8]) - (values[(i + 3) % 8]) + (values[(i + 5) % 8]) -
+                    (values[(i + 7) % 8]), 2);
             Batch[i / 2] = evenNums + oddNums;
             counter++;
 
