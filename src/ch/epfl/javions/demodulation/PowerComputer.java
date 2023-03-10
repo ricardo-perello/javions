@@ -38,8 +38,7 @@ public final class PowerComputer {
         Preconditions.checkArgument(Batch.length == (samplesDecoded.length/2));
         int batchSize = samplesDecoder.readBatch(samplesDecoded);
         short[] values = new short[8];
-        int counter = 0;
-        for (int i = 0; i < batchSize-1; i += 2) {
+        for (int i = 1; i < batchSize; i += 2) {
             //For every i in the loop, we add two new values into the table values from the table decodedSampleTable found
             //using samplesDecoder.readBatch .
             //They are placed at their position using the modulo of 8, this allows us to take out the values of the
@@ -48,17 +47,16 @@ public final class PowerComputer {
             //It does not matter if they are not in order since a sum commutative.
 
             values[i % 8] = samplesDecoded[i];
-            values[(i + 1) % 8] = samplesDecoded[i + 1];
+            values[(i - 1) % 8] = samplesDecoded[i - 1];
             //We then select the values that interest us using the ints evenNumbers & oddNumbers
             int evenNums = (int) Math.pow((values[(i + 2) % 8]) - (values[(i + 4) % 8]) + (values[(i + 6) % 8]) -
                     (values[(i) % 8]), 2);
             int oddNums = (int) Math.pow((values[(i + 1) % 8]) - (values[(i + 3) % 8]) + (values[(i + 5) % 8]) -
                     (values[(i + 7) % 8]), 2);
-            Batch[i / 2] = evenNums + oddNums;
-            counter++;
+            Batch[(i-1) / 2] = evenNums + oddNums;
 
         }
-        return counter;
+        return batchSize/2;
     }
 
 
