@@ -18,6 +18,14 @@ public final class PowerWindow {
     private int SamplesLeft;
 
 //todo add comments
+
+    /**
+     * constructor for PowerWindow
+     *
+     * @param stream     the InputStream from where we are going to get the values
+     * @param windowSize the size of the window we are going to study
+     * @throws IOException exception thrown if error in intput/output
+     */
     public PowerWindow(InputStream stream, int windowSize) throws IOException {
         Preconditions.checkArgument((windowSize > 0) && (windowSize <= BATCH_SIZE));
         this.stream = stream;
@@ -27,10 +35,27 @@ public final class PowerWindow {
         SamplesLeft = numOfSamples;
     }
 
-    public int size(){return windowSize;}
+    /**
+     * method for the size of the window
+     *
+     * @return int, window size
+     */
+    public int size() {
+        return windowSize;
+    }
 
+    /**
+     * method for the position
+     *
+     * @return int, position of the window in the stream
+     */
     public long position(){return absoluteWindowPosition;}
 
+    /**
+     * method to determine if window is full
+     *
+     * @return boolean, true while windowPosition and windowSize is smaller than the numOfSample
+     */
     public boolean isFull() {return (windowPosition+windowSize < SamplesLeft);}
 
     public int get(int i){
@@ -67,19 +92,7 @@ public final class PowerWindow {
             advance();
         }
     }
-    
     private void switchArray(){
-        /*
-        if (b){
-            b = false;
-            currentArray = array2;
-        }
-        else{
-            b = true;
-            currentArray = array1;
-        }
-
-         */
         int[] tempArray = array2;
         array2 = array1;
         array1 = tempArray;

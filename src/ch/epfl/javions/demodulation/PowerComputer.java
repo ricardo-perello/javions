@@ -40,8 +40,16 @@ public final class PowerComputer {
         short[] values = new short[8];
         int counter = 0;
         for (int i = 0; i < batchSize; i += 2) {
+            //For every i in the loop, we add two new values into the table values from the table decodedSampleTable found
+            //using samplesDecoder.readBatch .
+            //They are placed at their position using the modulo of 8, this allows us to take out the values of the
+            //previous batch at the same position.
+            //His allows us to always have the eight values that interest us in the same table.
+            //It does not matter if they are not in order since a sum commutative.
+
             values[i % 8] = samplesDecoded[i];
             values[(i + 1) % 8] = samplesDecoded[i + 1];
+            //We then select the values that interest us using the ints evenNumbers & oddNumbers
             int evenNums = (int) Math.pow((values[(i + 2) % 8]) - (values[(i + 4) % 8]) + (values[(i + 6) % 8]) -
                     (values[(i) % 8]), 2);
             int oddNums = (int) Math.pow((values[(i + 1) % 8]) - (values[(i + 3) % 8]) + (values[(i + 5) % 8]) -
