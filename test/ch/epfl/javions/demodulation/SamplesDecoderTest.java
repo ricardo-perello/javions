@@ -52,4 +52,17 @@ public class SamplesDecoderTest {
         assertEquals(-9, batch[9]);
 
     }
+
+    @Test
+    void readBatchTest() throws IOException {
+        short[] expected = new short[]{-3, 8, -9, -8, -5, -8, -12, -16, -23, -9};
+        short[] actual = new short[1200];
+
+        InputStream stream = new FileInputStream("resources/samples.bin");
+        SamplesDecoder a = new SamplesDecoder(stream, 1200);
+        int b = a.readBatch(actual);
+        for (int i = 0; i < 10; i++) {
+            assertEquals(expected[i], actual[i]);
+        }
+    }
 }
