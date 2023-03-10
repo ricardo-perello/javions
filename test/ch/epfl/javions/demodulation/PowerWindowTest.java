@@ -3,8 +3,10 @@ import org.junit.jupiter.api.Test;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class PowerWindowTest {
     @Test
@@ -48,4 +50,116 @@ public class PowerWindowTest {
 
 
     }
+    @Test
+    public void isFull() throws IOException{
+        InputStream stream = new FileInputStream("resources/Samples.bin");
+        PowerWindow window1 = new PowerWindow(stream, 6);
+        window1.advanceBy(1194);
+        assertTrue(window1.isFull());
+        window1.advance();
+        assertTrue(window1.isFull());
+        window1.advance();
+        assertFalse(window1.isFull());
+    }
+    @Test
+    void checkGet() throws IOException {
+
+        String d = getClass().getResource("/samples.bin").getFile();
+        d = URLDecoder.decode(d, StandardCharsets.UTF_8);
+        InputStream file = new FileInputStream(d);
+        PowerWindow powerWindow = new PowerWindow(file, 2);
+        powerWindow.advanceBy(8);
+        assertEquals(23825, powerWindow.get(1));
+        file.close();
+    }
+
+
+    @Test
+    void checkIsFull() throws IOException {
+
+        String d = getClass().getResource("/samples.bin").getFile();
+        d = URLDecoder.decode(d, StandardCharsets.UTF_8);
+        InputStream file = new FileInputStream(d);
+        PowerWindow powerWindow = new PowerWindow(file, 2);
+        powerWindow.advanceBy(1198);
+        assertTrue(powerWindow.isFull());
+        file.close();
+
+
+    }
+
+
+    @Test
+    void returnTheGoodWindowSize() throws IOException {
+
+        String d = getClass().getResource("/samples.bin").getFile();
+        d = URLDecoder.decode(d, StandardCharsets.UTF_8);
+        InputStream stream = new FileInputStream(d);
+        PowerWindow powerWindow = new PowerWindow(stream, 5);
+        assertEquals(5, powerWindow.size());
+
+    }
+
+
+    @Test
+    void position() throws IOException {
+
+        String d = getClass().getResource("/samples.bin").getFile();
+        d = URLDecoder.decode(d, StandardCharsets.UTF_8);
+        InputStream stream = new FileInputStream(d);
+        PowerWindow powerWindow = new PowerWindow(stream, 5);
+        for (int i = 0; i < 100; i++) {
+
+            assertEquals(i, powerWindow.position());
+            powerWindow.advance();
+
+        }
+
+    }
+
+
+    @Test
+    void get() throws IOException {//je change les tableaux à une taille de 8 genre la batchsize des échantillons de puissance
+
+        String d = getClass().getResource("/samples.bin").getFile();
+        d = URLDecoder.decode(d, StandardCharsets.UTF_8);
+
+        InputStream stream = new FileInputStream(d);
+
+        PowerWindow powerWindow = new PowerWindow(stream, 3);
+
+        powerWindow.advanceBy(6);
+
+        assertEquals(36818, powerWindow.get(2));
+
+    }
+
+
+    @Test
+    void isFull1() throws IOException {//je change les tableaux à une taille de 800 (batchsize des échantillons de puissances
+
+        String d = getClass().getResource("/samples.bin").getFile();
+
+        d = URLDecoder.decode(d, StandardCharsets.UTF_8);
+
+        InputStream stream = new FileInputStream(d);
+
+        PowerWindow powerWindow = new PowerWindow(stream, 5);
+
+        for (int i = 0; i < 1197; i++) {
+
+            if (i == 797) {
+
+                powerWindow.isFull();
+
+            }
+
+            powerWindow.advance();
+
+        }
+
+        assertFalse(powerWindow.isFull());
+
+    }
+
 }
