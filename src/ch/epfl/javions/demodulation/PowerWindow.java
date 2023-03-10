@@ -30,7 +30,7 @@ public final class PowerWindow {
         Preconditions.checkArgument((windowSize > 0) && (windowSize <= BATCH_SIZE));
         this.stream = stream;
         this.windowSize = windowSize;
-        powerComputer = new PowerComputer(stream, BATCH_SIZE);
+        powerComputer = new PowerComputer(this.stream, BATCH_SIZE);
         numOfSamples = powerComputer.readBatch(array1);
         SamplesLeft = numOfSamples;
     }
@@ -58,6 +58,11 @@ public final class PowerWindow {
      */
     public boolean isFull() {return (windowSize <= SamplesLeft);}
 
+    /**
+     * method get, that allows to find the value of the power at the index i
+     * @param i, int, position we are interested in
+     * @return the value of the power at index i
+     */
     public int get(int i){
         if (!((i >= 0)&&(i < windowSize))){
             throw new IndexOutOfBoundsException();
@@ -71,6 +76,10 @@ public final class PowerWindow {
         }
     }
 
+    /**
+     * method that allows us to advance the window by 1
+     * @throws IOException error of the input / output from the powerComputer.readBatch
+     */
     public void advance() throws IOException{
         windowPosition++;
         absoluteWindowPosition++;
@@ -83,15 +92,20 @@ public final class PowerWindow {
             switchArray();
             windowPosition = 0;
         }
-
-
     }
 
+    /**
+     * method that allows to advance by offsetposition
+     * @param offset int, the number of position we want to move by
+     * @throws IOException exception related to advance()
+     */
     public void advanceBy(int offset) throws IOException{
+        Preconditions.checkArgument(offset > 0);
         for (int i = 0; i < offset; i++) { 
             advance();
         }
     }
+
     private void switchArray(){
         int[] tempArray = array2;
         array2 = array1;
