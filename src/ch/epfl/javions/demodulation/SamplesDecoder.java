@@ -43,15 +43,15 @@ public final class SamplesDecoder {
      */
     public int readBatch(short[] Batch) throws IOException {
         Preconditions.checkArgument(Batch.length == batchSize);
-        int lengthStream = stream.available();
+        int initialLengthStream = stream.available();
         int nBytesRead = stream.readNBytes(littleEndian, 0, 2 * batchSize);
         for (int i = 0; i < nBytesRead / 2; i++) {
             Batch[i] = (short) ((((littleEndian[i * 2 + 1] & 0xFF) << 8) | (littleEndian[i * 2] & 0xFF)) - RECENTER);
         }
-        if (lengthStream == littleEndian.length) {
-            return batchSize / 2;
+        if (initialLengthStream == littleEndian.length) {
+            return batchSize;
         } else {
-            return (int) Math.floor((double)lengthStream / 2);
+            return (int) Math.floor((double)initialLengthStream / 2);
         }
     }
 }
