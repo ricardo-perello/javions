@@ -14,14 +14,8 @@ public final class SamplesDecoder {
 
     /**
      * constructor of SampleDecoder
-     * we verify that the stream is not null and the stream is a positive number
-     * if not we throw a NullPointerException or an IllegalArgumentException
-     * we initialise the private attributes stream, batchSize
-     * stream => InputStream, we save the value given as parameter
-     * batchSize => int, we save the value given as parameter
      *
-     *
-     * @param stream the InputStream from where we are going to get the values
+     * @param stream    the InputStream from where we are going to get the values
      * @param batchSize the size of the batch we are going to study
      */
     public SamplesDecoder(InputStream stream, int batchSize) {
@@ -34,8 +28,7 @@ public final class SamplesDecoder {
 
     /**
      * method that allows to decode the values that we have sampled
-     * we initialise the values of littleEndian
-     * littleEndian, byte[] table that allows us to keep the values of stream.readNBytes(...)
+     *
      * @param Batch table where we put in the value decoded for every i
      * @return int, number of batches decoded
      * or length of the stream devided by two (and rounded downwards) if there are not enough in the stream to fill the batchSize
@@ -51,7 +44,7 @@ public final class SamplesDecoder {
         if (initialLengthStream == littleEndian.length) {
             return batchSize;
         } else {
-            return (int) Math.floor((double)initialLengthStream / 2);
+            return (int) Math.floor((double) initialLengthStream / 2);
         }
     }
 }

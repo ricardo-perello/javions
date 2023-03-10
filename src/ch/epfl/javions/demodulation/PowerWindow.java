@@ -19,6 +19,14 @@ public final class PowerWindow {
     private int numOfSamples;
 
 //todo add comments
+
+    /**
+     * constructor for PowerWindow
+     *
+     * @param stream     the InputStream from where we are going to get the values
+     * @param windowSize the size of the window we are going to study
+     * @throws IOException exception thrown if error in intput/output
+     */
     public PowerWindow(InputStream stream, int windowSize) throws IOException {
         Preconditions.checkArgument((windowSize > 0) && (windowSize <= POW16));
         this.stream = stream;
@@ -28,38 +36,47 @@ public final class PowerWindow {
     }
 
     /**
-     *method for the size of the window
+     * method for the size of the window
+     *
      * @return int, window size
      */
-    public int size(){return windowSize;}
+    public int size() {
+        return windowSize;
+    }
 
     /**
      * method for the position
+     *
      * @return int, position of the window in the stream
      */
-    public long position(){return windowPosition;}
+    public long position() {
+        return windowPosition;
+    }
 
     /**
      * method to determine if window is full
+     *
      * @return boolean, true while windowPosition and windowSize is smaller than the numOfSample
      */
-    public boolean isFull() {return (windowPosition+windowSize < numOfSamples);}
+    public boolean isFull() {
+        return (windowPosition + windowSize < numOfSamples);
+    }
 
-    public int get(int i){
-        if (!((i >= 0)&&(i < windowSize))){
+
+    public int get(int i) {
+        if (!((i >= 0) && (i < windowSize))) {
             throw new IndexOutOfBoundsException();
         }
-        if (windowPosition + i < numOfSamples){
-            return currentArray[windowPosition+i];
-        }
-        else{
-            int newIndex = numOfSamples-(windowPosition+i);
+        if (windowPosition + i < numOfSamples) {
+            return currentArray[windowPosition + i];
+        } else {
+            int newIndex = numOfSamples - (windowPosition + i);
             switchArray(isEvenTable);
             return currentArray[newIndex];
         }
     }
 
-    public void advance() throws IOException{
+    public void advance() throws IOException {
         windowPosition++;
         if (windowPosition + windowSize > numOfSamples) {
             switchArray(isEvenTable);
@@ -69,17 +86,17 @@ public final class PowerWindow {
 
     }
 
-    public void advanceBy(int offset) throws IOException{
-        for (int i = 0; i < offset; i++) { 
+    public void advanceBy(int offset) throws IOException {
+        for (int i = 0; i < offset; i++) {
             advance();
         }
     }
-    private void switchArray(boolean b){
-        if (b){
+
+    private void switchArray(boolean b) {
+        if (b) {
             b = false;
             currentArray = odd;
-        }
-        else{
+        } else {
             b = true;
             currentArray = even;
         }
