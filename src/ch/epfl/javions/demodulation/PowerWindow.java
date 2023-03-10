@@ -49,38 +49,43 @@ public final class PowerWindow {
      *
      * @return int, position of the window in the stream
      */
-    public long position(){return absoluteWindowPosition;}
+    public long position() {
+        return absoluteWindowPosition;
+    }
 
     /**
      * method to determine if window is full
      *
      * @return boolean, true while windowPosition and windowSize is smaller than the numOfSample
      */
-    public boolean isFull() {return (windowSize <= SamplesLeft);}
+    public boolean isFull() {
+        return (windowSize <= SamplesLeft);
+    }
 
     /**
      * method get, that allows to find the value of the power at the index i
+     *
      * @param i, int, position we are interested in
      * @return the value of the power at index i
      */
-    public int get(int i){
-        if (!((i >= 0)&&(i < windowSize))){
+    public int get(int i) {
+        if (!((i >= 0) && (i < windowSize))) {
             throw new IndexOutOfBoundsException();
         }
-        if (windowPosition + i < numOfSamples){
-            return array1[windowPosition+i];
-        }
-        else{
-            int newIndex =(i - (numOfSamples-windowPosition));
+        if (windowPosition + i < numOfSamples) {
+            return array1[windowPosition + i];
+        } else {
+            int newIndex = (i - (numOfSamples - windowPosition));
             return array2[newIndex];
         }
     }
 
     /**
      * method that allows us to advance the window by 1
+     *
      * @throws IOException error of the input / output from the powerComputer.readBatch
      */
-    public void advance() throws IOException{
+    public void advance() throws IOException {
         windowPosition++;
         absoluteWindowPosition++;
         SamplesLeft--;
@@ -88,7 +93,7 @@ public final class PowerWindow {
             numOfSamples = powerComputer.readBatch(array2);
             SamplesLeft += numOfSamples;
         }
-        if (windowPosition == BATCH_SIZE - 1){
+        if (windowPosition == BATCH_SIZE - 1) {
             switchArray();
             windowPosition = 0;
         }
@@ -96,17 +101,21 @@ public final class PowerWindow {
 
     /**
      * method that allows to advance by offsetposition
+     *
      * @param offset int, the number of position we want to move by
      * @throws IOException exception related to advance()
      */
-    public void advanceBy(int offset) throws IOException{
+    public void advanceBy(int offset) throws IOException {
         Preconditions.checkArgument(offset > 0);
-        for (int i = 0; i < offset; i++) { 
+        for (int i = 0; i < offset; i++) {
             advance();
         }
     }
 
-    private void switchArray(){
+    /**
+     * method that allows to invert the main array and the secondary array
+     */
+    private void switchArray() {
         int[] tempArray = array2;
         array2 = array1;
         array1 = tempArray;
