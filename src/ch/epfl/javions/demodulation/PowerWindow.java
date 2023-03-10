@@ -9,7 +9,7 @@ public final class PowerWindow {
     final static int BATCH_SIZE = (int) Math.pow(2, 16);
     private InputStream stream;
     private int windowSize;
-    private int windowPosition;
+    private int windowPositionInsideBatch;
     private int absoluteWindowPosition;
     private PowerComputer powerComputer;
     private int[] array1 = new int[BATCH_SIZE];
@@ -17,7 +17,6 @@ public final class PowerWindow {
     private int numOfSamples;
     private int SamplesLeft;
 
-//todo add comments
 
     /**
      * constructor for PowerWindow
@@ -67,12 +66,11 @@ public final class PowerWindow {
         if (!((i >= 0)&&(i < windowSize))){
             throw new IndexOutOfBoundsException();
         }
-        if (windowPosition + i < numOfSamples){
-            return array1[windowPosition+i];
+        if (windowPositionInsideBatch + i < BATCH_SIZE){
+            return array1[windowPositionInsideBatch +i];
         }
         else{
-            int newIndex =(i - (numOfSamples-windowPosition));
-            return array2[newIndex];
+            return array2[i - (BATCH_SIZE- windowPositionInsideBatch)];
         }
     }
 
@@ -81,16 +79,15 @@ public final class PowerWindow {
      * @throws IOException error of the input / output from the powerComputer.readBatch
      */
     public void advance() throws IOException{
-        windowPosition++;
+        windowPositionInsideBatch++;
         absoluteWindowPosition++;
         SamplesLeft--;
-        if (windowPosition + windowSize == BATCH_SIZE - 1) {
-            numOfSamples = powerComputer.readBatch(array2);
-            SamplesLeft += numOfSamples;
+        if (windowPositionInsideBatch + windowSize -1 == BATCH_SIZE) {
+            SamplesLeft += powerComputer.readBatch(array2);
         }
-        if (windowPosition == BATCH_SIZE - 1){
+        if (windowPositionInsideBatch == BATCH_SIZE){
             switchArray();
-            windowPosition = 0;
+            windowPositionInsideBatch = 0;
         }
     }
 
@@ -100,7 +97,7 @@ public final class PowerWindow {
      * @throws IOException exception related to advance()
      */
     public void advanceBy(int offset) throws IOException{
-        Preconditions.checkArgument(offset > 0);
+        Preconditions.checkArgument(offset >= 0);
         for (int i = 0; i < offset; i++) { 
             advance();
         }
