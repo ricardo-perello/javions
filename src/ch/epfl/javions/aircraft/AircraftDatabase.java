@@ -31,25 +31,21 @@ public final class AircraftDatabase {
              Reader reader = new InputStreamReader(stream, UTF_8);
              BufferedReader buffer = new BufferedReader(reader)) {
             String line;
-            String string = null;
             while (((line = buffer.readLine()) != null)) {
-                string = line;
+                if (line.startsWith(address.string())) {
+                    String[] data = line.split(",",-1);
+                    registration = new AircraftRegistration(data[1]);
+                    typeDesignator = new AircraftTypeDesignator(data[2]);
+                    model = data[3];
+                    description = new AircraftDescription(data[4]);
+                    wakeTurbulenceCategory = WakeTurbulenceCategory.of(data[5]);
+                    return new AircraftData(registration, typeDesignator, model, description, wakeTurbulenceCategory);
+                }
                 if ((line.compareTo(address.string()) > 0)) {
                     break;
                 }
             }
-            assert line != null;
-            if (string.startsWith(address.string())) {
-                String[] data = line.split(",");
-                registration = new AircraftRegistration(data[1]);
-                typeDesignator = new AircraftTypeDesignator(data[2]);
-                model = data[3];
-                description = new AircraftDescription(data[4]);
-                wakeTurbulenceCategory = WakeTurbulenceCategory.of(data[5]);
-                return new AircraftData(registration, typeDesignator, model, description, wakeTurbulenceCategory);
-            } else {
-                return null;
-            }
+            return null;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
