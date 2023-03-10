@@ -56,7 +56,7 @@ public final class PowerWindow {
      *
      * @return boolean, true while windowPosition and windowSize is smaller than the numOfSample
      */
-    public boolean isFull() {return (windowPosition+windowSize < SamplesLeft);}
+    public boolean isFull() {return (windowSize <= SamplesLeft);}
 
     public int get(int i){
         if (!((i >= 0)&&(i < windowSize))){

@@ -7,6 +7,7 @@ import java.io.*;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -14,7 +15,7 @@ public class SamplesDecoderTest {
     @Test
     public void SamplesDecodeThrowsExceptions() throws FileNotFoundException {
         String samples = getClass().getResource("/samples.bin").getFile();
-        samples = URLDecoder.decode(samples, StandardCharsets.UTF_8);
+        samples = URLDecoder.decode(samples, UTF_8);
         InputStream stream = new FileInputStream(samples);
         assertThrows(NullPointerException.class, () -> new SamplesDecoder(null, 3));
         assertThrows(IllegalArgumentException.class, () -> new SamplesDecoder(stream, -3));
@@ -24,7 +25,7 @@ public class SamplesDecoderTest {
     @Test
     void testValidSampleDecoder() throws IOException {
         String stream2 = getClass().getResource("/samples.bin").getFile();
-        stream2 = URLDecoder.decode(stream2, StandardCharsets.UTF_8);
+        stream2 = URLDecoder.decode(stream2, UTF_8);
         InputStream stream = new FileInputStream(stream2);
         SamplesDecoder test = new SamplesDecoder(stream, 2402);
         System.out.println(8 << 8);
@@ -53,6 +54,36 @@ public class SamplesDecoderTest {
         int b = a.readBatch(actual);
         for (int i = 0; i < 10; i++) {
             assertEquals(expected[i], actual[i]);
+        }
+    }
+
+    @Test
+    void testValidSampleDecoder1() throws IOException {
+        String stream2 = getClass().getResource("/samples.bin").getFile();
+        stream2 = URLDecoder.decode(stream2, UTF_8);
+        InputStream stream = new FileInputStream(stream2);
+        SamplesDecoder test = new SamplesDecoder(stream, 2402);
+
+        short[] batch = new short[2402];
+        test.readBatch(batch);
+        for (int i = 0; i < 10; ++i) {
+            System.out.println(batch[i]);
+        }
+
+    }
+
+
+
+    @Test
+    void readBatchTest1() throws IOException {
+        short[] expected = new short[]{-3, 8 ,-9 ,-8, -5 ,-8, -12, -16, -23 ,-9};
+        short[] actual = new short[1200];
+
+        InputStream stream = new FileInputStream("resources/samples.bin");
+        SamplesDecoder a = new SamplesDecoder(stream,1200);
+        int b = a.readBatch(actual);
+        for (int i = 0; i < 10; i++) {
+            assertEquals(expected[i],actual[i]);
         }
     }
 }
