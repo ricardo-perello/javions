@@ -7,7 +7,7 @@ import ch.epfl.javions.Preconditions;
 import ch.epfl.javions.aircraft.IcaoAddress;
 
 public record RawMessage(long timeStampsNs, ByteString bytes) {
-
+    //TODO comentarios
     private static final int LENGTH = 14;
 
     public RawMessage{
