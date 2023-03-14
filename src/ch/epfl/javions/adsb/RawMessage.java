@@ -41,7 +41,7 @@ public record RawMessage(long timeStampNs, ByteString bytes) {
     }
 
     public int downLinkFormat(){
-        return (bytes().byteAt(0)>>>3);
+        return (byte)(bytes().byteAt(0)>>>3);
     }
 
     public IcaoAddress icaoAddress(){
