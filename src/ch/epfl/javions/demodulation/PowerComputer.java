@@ -8,6 +8,7 @@ import java.io.InputStream;
 public final class PowerComputer {
     private final short[] samplesDecoded;
     private final SamplesDecoder samplesDecoder;
+    private final short[] values = new short[8];
     /**
      * constructor of PowerComputer,
      * we verify that batchSize is possible and a multiple of 8
@@ -37,7 +38,6 @@ public final class PowerComputer {
     public int readBatch(int[] Batch) throws IOException {
         Preconditions.checkArgument(Batch.length == (samplesDecoded.length/2));
         int batchSize = samplesDecoder.readBatch(samplesDecoded);
-        short[] values = new short[8];
         for (int i = 1; i < batchSize; i += 2) {
             //For every i in the loop, we add two new values into the table values from the table decodedSampleTable found
             //using samplesDecoder.readBatch .
