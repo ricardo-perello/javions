@@ -23,6 +23,7 @@ public final class AdsbDemodulator {
             //tenemos que decalarlo
             // tenemos que desde el powerWindow coger todos los 1200
             // demodulado
+            //comparar con DF
             byte[] Df = new byte[8];
             for (int i = 0; i <8; i++) {
                 if((powerWindow.get(80 + (10 * i))) < powerWindow.get(85 + (10 * i))){
@@ -31,6 +32,7 @@ public final class AdsbDemodulator {
                     Df[i] = 1;
                 }
             }
+
 
 
 
