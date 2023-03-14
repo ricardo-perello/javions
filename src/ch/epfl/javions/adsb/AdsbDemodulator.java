@@ -32,7 +32,8 @@ public final class AdsbDemodulator {
                     Df[i] = 1;
                 }
             }
-
+            //meter en un tablo
+            //hacer rawMessage of(...)
 
 
 
