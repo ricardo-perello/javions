@@ -1,5 +1,7 @@
-package ch.epfl.javions.adsb;
+package ch.epfl.javions.demodulation;
 
+import ch.epfl.javions.ByteString;
+import ch.epfl.javions.adsb.RawMessage;
 import ch.epfl.javions.demodulation.PowerWindow;
 
 import java.io.IOException;
@@ -10,7 +12,6 @@ public final class AdsbDemodulator {
     private int previousSumPics = 0;
     public AdsbDemodulator (InputStream samplesStream) throws IOException{
         powerWindow = new PowerWindow(samplesStream, 1200);
-
     }
 
     public RawMessage nextMessage() throws IOException{
@@ -24,21 +25,29 @@ public final class AdsbDemodulator {
             // tenemos que desde el powerWindow coger todos los 1200
             // demodulado
             //comparar con DF
-            byte[] Df = new byte[8];
+            byte[] bytes = new byte[14];
             for (int i = 0; i <8; i++) {
-                if((powerWindow.get(80 + (10 * i))) < powerWindow.get(85 + (10 * i))){
-                    Df[i] = 0;
-                }else{
-                    Df[i] = 1;
+                if(!((powerWindow.get(80 + (10 * i))) < powerWindow.get(85 + (10 * i)))){
+                    bytes[0]  = (byte) (bytes[0] & 1 <<(7-i));
                 }
             }
+            ByteString byteString = new ByteString(bytes);
+            RawMessage rawMessage = new RawMessage(powerWindow.position()*100, byteString);
+            if(rawMessage.downLinkFormat() == 17){
+                for (int i = 1; i < 14; i++) {
+                    for (int j = 0; j < 8; j++) {
+                        if(!((powerWindow.get(80 + (80 * i)+ (10 * j))) < powerWindow.get(85 + (80 * i) + (10 * j)))){
+                            bytes[i]  = (byte) (bytes[i] | 1 <<(7-j));
+                        }
+                    }
+                }
+            }
+            RawMessage newRawMessage = RawMessage.of(powerWindow.position()*100, bytes);
             //meter en un tablo
             //hacer rawMessage of(...)
-
-
-
-            previousSumPics = 0;
+            previousSumPics = sumPics;
             powerWindow.advanceBy(1200);
+            return newRawMessage;
         }else{
             previousSumPics = sumPics;
             powerWindow.advance();

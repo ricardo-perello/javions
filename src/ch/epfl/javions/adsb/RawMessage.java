@@ -6,17 +6,17 @@ import ch.epfl.javions.Crc24;
 import ch.epfl.javions.Preconditions;
 import ch.epfl.javions.aircraft.IcaoAddress;
 
-public record RawMessage(long timeStampsNs, ByteString bytes) {
+public record RawMessage(long timeStampNs, ByteString bytes) {
     //TODO comentarios
-    private static final int LENGTH = 14;
+    public static final int LENGTH = 14;
 
     /**
      * constructor of RawMessage
-     * @param timeStampsNs, long, time of the message in nanoseconds
+     * @param timeStampNs, long, time of the message in nanoseconds
      * @param bytes, ByteString, bytes of message
      */
     public RawMessage{
-        Preconditions.checkArgument(timeStampsNs > 0);
+        Preconditions.checkArgument(timeStampNs > 0);
         Preconditions.checkArgument(bytes.size() == LENGTH);
     }
 
@@ -41,7 +41,7 @@ public record RawMessage(long timeStampsNs, ByteString bytes) {
     }
 
     public int downLinkFormat(){
-        return bytes().byteAt(0);
+        return (bytes().byteAt(0)>>>3);
     }
 
     public IcaoAddress icaoAddress(){
