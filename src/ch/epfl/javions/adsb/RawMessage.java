@@ -10,11 +10,23 @@ public record RawMessage(long timeStampsNs, ByteString bytes) {
     //TODO comentarios
     private static final int LENGTH = 14;
 
+    /**
+     * constructor of RawMessage
+     * @param timeStampsNs, long, time of the message in nanoseconds
+     * @param bytes, ByteString, bytes of message
+     */
     public RawMessage{
         Preconditions.checkArgument(timeStampsNs > 0);
         Preconditions.checkArgument(bytes.size() == LENGTH);
     }
 
+    /**
+     * method that verifies if the Crc24 works
+     * @param timerStampsNS long, time of the message in nanoseconds
+     * @param bytes byte[], byte of message
+     * @return iff the result of crc24 is 0 then a new RawMessage with parameter timerStampsNS
+     * and a byteString derived from bytes; if not, null
+     */
     public static RawMessage of(long timerStampsNS, byte[] bytes){
         Crc24 crc24 = new Crc24(Crc24.GENERATOR);
         return crc24.crc(bytes) == 0 ? new RawMessage(timerStampsNS, new ByteString(bytes)) : null;
