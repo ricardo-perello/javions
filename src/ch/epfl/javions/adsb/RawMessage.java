@@ -33,7 +33,7 @@ public record RawMessage(long timeStampNs, ByteString bytes) {
     }
 
     public static int size(byte byte0){
-        return byte0 == 17 ? LENGTH : 0;
+        return  Byte.toUnsignedInt(byte0)>>3 ==  17 ? LENGTH : 0;
     }
 
     public static int typeCode(long payload){

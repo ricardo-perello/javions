@@ -30,19 +30,23 @@ public final class AdsbDemodulator {
                     byte[] bytes = new byte[14];
                     byte test = 0;
                     for (int i = 0; i < 8; i++) {
-                        if (!((powerWindow.get(80 + (10 * i))) < powerWindow.get(85 + (10 * i)))) {
-                            bytes[0] = (byte) (bytes[0] | 1 << (7 - i));
+                        if ((powerWindow.get(80 + (10 * i))) < powerWindow.get(85 + (10 * i))) {
+                            bytes[0] = (byte) (bytes[0] | (0 << (7 - i)));
+                        }
+                        else if((powerWindow.get(80 + (10 * i))) >= powerWindow.get(85 + (10 * i)) ){
+                            bytes[0] = (byte) (bytes[0] | (1 <<(7-i)));
                         }
                     }
-                    for (int i = 0; i < 5; i++) {
+                    /*for (int i = 0; i < 5; i++) {
                         if ((powerWindow.get(80 + (10 * i))) >= powerWindow.get(85 + (10 * i))) {
                             test = (byte) (test | 1 << (4 - i));
                         }
-                    }
-                    ByteString byteString = new ByteString(bytes);
-                    RawMessage rawMessage = new RawMessage(powerWindow.position() * 100, byteString);
+                    }*/
+                    //ByteString byteString = new ByteString(bytes);
+                    //RawMessage rawMessage = new RawMessage(powerWindow.position() * 100, byteString);
                     //if (Byte.toUnsignedInt((byte) rawMessage.downLinkFormat()) == 17) {
-                    if(Byte.toUnsignedInt(test) == 17){
+                    //if(Byte.toUnsignedInt(test) == 17){
+                    if(RawMessage.size(bytes[0]) == 14){
                         for (int i = 1; i < 14; i++) {
                             for (int j = 0; j < 8; j++) {
                                 if (!((powerWindow.get(80 + (80 * i) + (10 * j))) < powerWindow.get(85 + (80 * i) + (10 * j)))) {
@@ -50,12 +54,17 @@ public final class AdsbDemodulator {
                                 }
                             }
                         }
-                        RawMessage newRawMessage = RawMessage.of(powerWindow.position() * 100, bytes);
+                        if (RawMessage.of(powerWindow.position() * 100, bytes) != null){
+                            previousSumPics = 0;
+                            powerWindow.advanceBy(1200);
+                            return RawMessage.of(powerWindow.position()*100, bytes);
+                        }
+                        else{
+                            previousSumPics = sumPics;
+                            powerWindow.advance();
+                        }
                         //meter en un tablo
                         //hacer rawMessage of(...)
-                        previousSumPics = 0;
-                        powerWindow.advanceBy(1200);
-                        return newRawMessage;
                     }
                     else {
                         previousSumPics = sumPics;
