@@ -4,7 +4,7 @@ import ch.epfl.javions.GeoPos;
 
 public interface AircraftStateSetter {
     //TODO comentarios
-    void setLastMessageTimeStampsNs(long timeStampsNs);
+    void setLastMessageTimeStampNs(long timeStampsNs);
 
     void setCategory(int category);
 

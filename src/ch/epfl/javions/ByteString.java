@@ -35,7 +35,7 @@ public final class ByteString {
     }
 
     public int byteAt(int index) {
-        if (index >= octetTable.length | index < 0) {
+        if (index >= octetTable.length || index < 0) {
             throw new IndexOutOfBoundsException();
         }
         return Byte.toUnsignedInt(octetTable[index]);
@@ -54,7 +54,7 @@ public final class ByteString {
         long output = 0;
         //int counter = 0;
         for (int i = fromIndex; i < toIndex; i++) {
-            output = (output << 8 | Byte.toUnsignedInt(octetTable[i]));
+            output = ((output << 8) | byteAt(i));
             //counter++;
         }
         return output;
