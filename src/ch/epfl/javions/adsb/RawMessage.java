@@ -9,6 +9,7 @@ import ch.epfl.javions.aircraft.IcaoAddress;
 public record RawMessage(long timeStampNs, ByteString bytes) {
     //TODO comentarios
     public static final int LENGTH = 14;
+    private static final Crc24 crc24 = new Crc24(Crc24.GENERATOR);
 
     /**
      * constructor of RawMessage
@@ -28,7 +29,6 @@ public record RawMessage(long timeStampNs, ByteString bytes) {
      * and a byteString derived from bytes; if not, null
      */
     public static RawMessage of(long timerStampsNS, byte[] bytes){
-        Crc24 crc24 = new Crc24(Crc24.GENERATOR);
         return crc24.crc(bytes) == 0 ? new RawMessage(timerStampsNS, new ByteString(bytes)) : null;
     }
 
