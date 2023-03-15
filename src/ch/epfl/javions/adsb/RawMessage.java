@@ -17,7 +17,7 @@ public record RawMessage(long timeStampNs, ByteString bytes) {
      * @param bytes, ByteString, bytes of message
      */
     public RawMessage{
-        Preconditions.checkArgument(timeStampNs > 0);
+        Preconditions.checkArgument(timeStampNs >= 0);
         Preconditions.checkArgument(bytes.size() == LENGTH);
     }
 
@@ -37,19 +37,19 @@ public record RawMessage(long timeStampNs, ByteString bytes) {
     }
 
     public static int typeCode(long payload){
-        return Bits.extractUInt(payload, 51,1);
+        return Bits.extractUInt(payload, 51,5);
     }
 
     public int downLinkFormat(){
-        return (byte)(bytes().byteAt(0)>>>3);
+        return (byte)(bytes.byteAt(0)>>3);
     }
 
     public IcaoAddress icaoAddress(){
-        return new IcaoAddress(Long.toString(bytes().bytesInRange(1,4)));
+        return new IcaoAddress(Long.toString(bytes.bytesInRange(1,4)).toUpperCase());
     }
 
     public long payload(){
-        return bytes().bytesInRange(4,11);
+        return bytes.bytesInRange(4,11);
     }
 
     public int typeCode(){

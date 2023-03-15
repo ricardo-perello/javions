@@ -22,9 +22,11 @@ public final class AdsbDemodulator {
             if ((sumPics > previousSumPics) && (sumPics > nextSumPics)) {
                 int sumValleys = powerWindow.get(5) + powerWindow.get(15) + powerWindow.get(20)
                         + powerWindow.get(25) + powerWindow.get(30) + powerWindow.get(40);
+
                 if (sumPics >= (2 * sumValleys)) {
                     byte[] bytes = new byte[14];
                     for (int i = 0; i < 8; i++) {
+                        
                         if ((powerWindow.get(80 + (10 * i))) >= powerWindow.get(85 + (10 * i))) {
                             bytes[0] |= (byte) (1 << (7 - i));
                         }
@@ -32,12 +34,14 @@ public final class AdsbDemodulator {
                     if (RawMessage.size(bytes[0]) == 14) {
                         for (int i = 1; i < 14; i++) {
                             for (int j = 0; j < 8; j++) {
+
                                 if ((powerWindow.get(80 + (80 * i) + (10 * j))) >= powerWindow.get(85 + (80 * i) + (10 * j))) {
-                                    bytes[i] |= (byte)(1 << (7 - j));
+                                    bytes[i] |= (byte) (1 << (7 - j));
                                 }
                             }
                         }
                         RawMessage result = RawMessage.of(powerWindow.position() * 100, bytes);
+
                         if (result != null) {
                             previousSumPics = 0;
                             powerWindow.advanceBy(1200);
