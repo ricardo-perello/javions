@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public final class AdsbDemodulator {
-    private PowerWindow powerWindow;
+    private final PowerWindow powerWindow;
 
     public AdsbDemodulator(InputStream samplesStream) throws IOException {
         powerWindow = new PowerWindow(samplesStream, 1200);
@@ -35,7 +35,7 @@ public final class AdsbDemodulator {
                         for (int i = 1; i < 14; i++) {
                             for (int j = 0; j < 8; j++) {
 
-                                if ((powerWindow.get(80 + (80 * i) + (10 * j))) >= powerWindow.get(85 + (80 * i) + (10 * j))) {
+                                if (powerWindow.get(80 + (80 * i) + (10 * j)) >= powerWindow.get(85 + (80 * i) + (10 * j))) {
                                     bytes[i] |= (byte) (1 << (7 - j));
                                 }
                             }

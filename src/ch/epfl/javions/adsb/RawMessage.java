@@ -23,13 +23,13 @@ public record RawMessage(long timeStampNs, ByteString bytes) {
 
     /**
      * method that verifies if the Crc24 works
-     * @param timerStampsNS long, time of the message in nanoseconds
+     * @param timerStampNS long, time of the message in nanoseconds
      * @param bytes byte[], byte of message
      * @return iff the result of crc24 is 0 then a new RawMessage with parameter timerStampsNS
      * and a byteString derived from bytes; if not, null
      */
-    public static RawMessage of(long timerStampsNS, byte[] bytes){
-        return crc24.crc(bytes) == 0 ? new RawMessage(timerStampsNS, new ByteString(bytes)) : null;
+    public static RawMessage of(long timerStampNS, byte[] bytes){
+        return crc24.crc(bytes) == 0 ? new RawMessage(timerStampNS, new ByteString(bytes)) : null;
     }
 
     public static int size(byte byte0){
