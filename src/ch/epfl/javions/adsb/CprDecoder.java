@@ -1,14 +1,17 @@
 package ch.epfl.javions.adsb;
 
 import ch.epfl.javions.GeoPos;
+import ch.epfl.javions.Preconditions;
 import ch.epfl.javions.Units;
 
 public class CprDecoder {
 
     private static final double NORMALIZER = Math.pow(2, -17);
+    private static final double MAXLATITUDE = Units.convertTo(Math.PI/2, Units.Angle.TURN);
 
 
     public static GeoPos decodePosition(double x0, double y0, double x1, double y1, int mostRecent) {
+        Preconditions.checkArgument(mostRecent == 0 || mostRecent == 1);
         double latitude0 = y0 * NORMALIZER;
         double latitude1 = y1 * NORMALIZER;
         double zlatitude = Math.rint(latitude0 * 59 - latitude1 * 60);
@@ -17,6 +20,9 @@ public class CprDecoder {
             latitudeTurn = 1 / 60 * (zlatitude + latitude0);
         } else {
             latitudeTurn = 1 / 59 * (zlatitude + latitude1);
+        }
+        if (Math.abs(latitudeTurn) > MAXLATITUDE){
+            return null;
         }
 
         double A = Math.acos(1 - (1 - Math.cos(2 * Math.PI * 1 / 60)) /
