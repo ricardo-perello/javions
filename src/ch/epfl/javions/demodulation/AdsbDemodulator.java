@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public final class AdsbDemodulator {
-    private PowerWindow powerWindow;
+    private final PowerWindow powerWindow;
 
     public AdsbDemodulator(InputStream samplesStream) throws IOException {
         powerWindow = new PowerWindow(samplesStream, 1200);
@@ -25,17 +25,19 @@ public final class AdsbDemodulator {
 
                 if (sumPics >= (2 * sumValleys)) {
                     byte[] bytes = new byte[14];
-                    for (int i = 0; i < 8; i++) {
-                        
+                    for (int i = 0; i < 8; ++i) {
+
                         if ((powerWindow.get(80 + (10 * i))) >= powerWindow.get(85 + (10 * i))) {
                             bytes[0] |= (byte) (1 << (7 - i));
                         }
                     }
-                    if (RawMessage.size(bytes[0]) == 14) {
-                        for (int i = 1; i < 14; i++) {
-                            for (int j = 0; j < 8; j++) {
 
-                                if ((powerWindow.get(80 + (80 * i) + (10 * j))) >= powerWindow.get(85 + (80 * i) + (10 * j))) {
+                    if (RawMessage.size(bytes[0]) == 14) {
+                        for (int i = 1; i < 14; ++i) {
+                            for (int j = 0; j < 8; ++j) {
+
+                                if (powerWindow.get(80 + (80 * i) + (10 * j)) >=
+                                        powerWindow.get(85 + (80 * i) + (10 * j))) {
                                     bytes[i] |= (byte) (1 << (7 - j));
                                 }
                             }
@@ -43,7 +45,7 @@ public final class AdsbDemodulator {
                         RawMessage result = RawMessage.of(powerWindow.position() * 100, bytes);
 
                         if (result != null) {
-                            previousSumPics = 0;
+                            //previousSumPics = 0;
                             powerWindow.advanceBy(1200);
                             return result;
                         }

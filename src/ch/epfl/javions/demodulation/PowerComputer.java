@@ -34,7 +34,6 @@ public final class PowerComputer {
      * @return int, the number of batches of power that have been placed in the Batch[]
      * @throws IOException exception in case of error in the input / output
      */
-// todo check if powercomputer works
     public int readBatch(int[] Batch) throws IOException {
         Preconditions.checkArgument(Batch.length == (samplesDecoded.length/2));
         int batchSize = samplesDecoder.readBatch(samplesDecoded);
@@ -49,12 +48,11 @@ public final class PowerComputer {
             values[i % 8] = samplesDecoded[i];
             values[(i - 1) % 8] = samplesDecoded[i - 1];
             //We then select the values that interest us using the ints evenNumbers & oddNumbers
-            int evenNums = (int) Math.pow((values[(i + 2) % 8]) - (values[(i + 4) % 8]) + (values[(i + 6) % 8]) -
-                    (values[(i) % 8]), 2);
-            int oddNums = (int) Math.pow((values[(i + 1) % 8]) - (values[(i + 3) % 8]) + (values[(i + 5) % 8]) -
-                    (values[(i + 7) % 8]), 2);
-            Batch[(i-1) / 2] = evenNums + oddNums;
-
+            int evenNums = (values[(i + 2) % 8]) - (values[(i + 4) % 8]) + (values[(i + 6) % 8]) -
+                    (values[(i) % 8]);
+            int oddNums = (values[(i + 1) % 8]) - (values[(i + 3) % 8]) + (values[(i + 5) % 8]) -
+                    (values[(i + 7) % 8]);
+            Batch[(i-1) / 2] = evenNums * evenNums + oddNums * oddNums;
         }
         return batchSize/2;
     }

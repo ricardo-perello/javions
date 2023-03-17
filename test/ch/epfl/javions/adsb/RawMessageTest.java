@@ -14,6 +14,7 @@ public class RawMessageTest {
             (byte) 0x00, (byte) 0x4B, (byte) 0xB8, (byte) 0xB1,
             (byte) 0xF1, (byte) 0xAC});
 
+
     @Test
     void rawMessageConstructorsThrowsOnNegativeTimestamp() {
         assertThrows(IllegalArgumentException.class, () -> new RawMessage(-1, rawMessage1));
@@ -44,6 +45,7 @@ public class RawMessageTest {
     void icaoAddressWorksOnTrivialValues() {
         RawMessage rawMessage = new RawMessage(8096200, rawMessage1);
         IcaoAddress expected = new IcaoAddress("4B17E5");
+        System.out.println("");
         IcaoAddress actual = rawMessage.icaoAddress();
         assertEquals(expected, actual);
     }
