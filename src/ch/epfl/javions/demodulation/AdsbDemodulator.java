@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public final class AdsbDemodulator {
-    private PowerWindow powerWindow;
+    private final PowerWindow powerWindow;
 
     public AdsbDemodulator(InputStream samplesStream) throws IOException {
         powerWindow = new PowerWindow(samplesStream, 1200);
