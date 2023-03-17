@@ -26,7 +26,7 @@ public final class AdsbDemodulator {
                 if (sumPics >= (2 * sumValleys)) {
                     byte[] bytes = new byte[14];
                     for (int i = 0; i < 8; ++i) {
-                        
+
                         if ((powerWindow.get(80 + (10 * i))) >= powerWindow.get(85 + (10 * i))) {
                             bytes[0] |= (byte) (1 << (7 - i));
                         }
