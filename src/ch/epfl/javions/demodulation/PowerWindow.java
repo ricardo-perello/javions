@@ -63,12 +63,8 @@ public final class PowerWindow {
         if (!((i >= 0)&&(i < windowSize))){
             throw new IndexOutOfBoundsException();
         }
-        if (windowPositionInsideBatch + i < BATCH_SIZE){
-            return array1[windowPositionInsideBatch +i];
-        }
-        else{
-            return array2[i - (BATCH_SIZE- windowPositionInsideBatch)];
-        }
+        return windowPositionInsideBatch + i < BATCH_SIZE ? array1[windowPositionInsideBatch +i] :
+                array2[i - (BATCH_SIZE- windowPositionInsideBatch)];
     }
 
     /**
@@ -76,9 +72,9 @@ public final class PowerWindow {
      * @throws IOException error of the input / output from the powerComputer.readBatch
      */
     public void advance() throws IOException{
-        windowPositionInsideBatch++;
-        absoluteWindowPosition++;
-        SamplesLeft--;
+        ++windowPositionInsideBatch;
+        ++absoluteWindowPosition;
+        --SamplesLeft;
         if (windowPositionInsideBatch + windowSize -1 == BATCH_SIZE) {
             SamplesLeft += powerComputer.readBatch(array2);
         }
