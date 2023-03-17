@@ -8,10 +8,20 @@ import java.io.InputStream;
 public final class AdsbDemodulator {
     private final PowerWindow powerWindow;
 
+    /**
+     * constructor for AdsbDemodulator
+     * @param samplesStream, InputStream, document from where we are going to extract the values
+     * @throws IOException error if mistake in entry
+     */
     public AdsbDemodulator(InputStream samplesStream) throws IOException {
         powerWindow = new PowerWindow(samplesStream, 1200);
     }
 
+    /**
+     * method that demodulates the stream
+     * @return raw message or null if window is not full
+     * @throws IOException error from input or output
+     */
     public RawMessage nextMessage() throws IOException {
         int sumPics = powerWindow.get(0) + powerWindow.get(10) + powerWindow.get(35) + powerWindow.get(45);
         int previousSumPics = 0;
