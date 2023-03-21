@@ -13,9 +13,9 @@ public record AircraftIdentificationMessage(long timeStampNs,IcaoAddress icaoAdd
         Objects.requireNonNull(callSign);
     }
 
-    AircraftIdentificationMessage of(RawMessage rawMessage){
+    /*AircraftIdentificationMessage of(RawMessage rawMessage){
 
-    }
+    }*/
 
     @Override
     public long timeStampNs() {
