@@ -9,9 +9,16 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class CprDecoderTest {
 
     @Test
-    void decodePositionWorkOnTrivialNumbers(){
+    void decodePositionWorkOnTrivialNumbers1(){
         GeoPos expected = new GeoPos((int) Units.convert(0.020767, Units.Angle.TURN, Units.Angle.T32),
-                (int) Units.convert(0.020764, Units.Angle.TURN, Units.Angle.T32));
+                (int) Units.convert(0.128676, Units.Angle.TURN, Units.Angle.T32));
         assertEquals(expected, CprDecoder.decodePosition(111600,94445,108865,77558,0));
+    }
+
+    @Test
+    void decodePositionWorkOnTrivialNumbers2(){
+        GeoPos expected = new GeoPos((int) Units.convert(0.020764, Units.Angle.TURN, Units.Angle.T32),
+                (int) Units.convert(0.128673, Units.Angle.TURN, Units.Angle.T32));
+        assertEquals(expected, CprDecoder.decodePosition(111600,94445,108865,77558,1));
     }
 }

@@ -14,6 +14,7 @@ class UnitsTest {
 
     @Test
     void unitConvertWorksOnSomeUnits() {
+        System.out.println(Units.convert(0.128676, Units.Angle.TURN, Units.Angle.T32));
         var actual1 = Units.convert(2.34, Units.Angle.TURN, Units.Angle.DEGREE);
         var expected1 = 842.4;
         assertEquals(expected1, actual1, DELTA);

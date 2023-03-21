@@ -21,7 +21,8 @@ public class CprDecoder {
         } else {
             latitudeTurn = 1 / 59 * (zlatitude + latitude1);
         }
-        if (Math.abs(latitudeTurn) > MAXLATITUDE){
+
+        if(!GeoPos.isValidLatitudeT32((int) latitudeTurn)){
             return null;
         }
 
