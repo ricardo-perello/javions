@@ -16,8 +16,11 @@ public class AircraftIdentificationMessageTest {
         try (InputStream s = new FileInputStream(f)) {
             AdsbDemodulator d = new AdsbDemodulator(s);
             RawMessage m;
-            while ((m = d.nextMessage()) != null){
-                System.out.println(AircraftIdentificationMessage.of(m));
+            for (int i = 0; i < 384; i++) {
+                m = d.nextMessage();
+                if(AircraftIdentificationMessage.of(m)!=null){
+                    System.out.println(AircraftIdentificationMessage.of(m));
+                }
                 idx++;
             }
 
