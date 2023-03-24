@@ -8,8 +8,17 @@ public class CprDecoder {
 
     private static final double NORMALIZER = Math.pow(2, -17);
 
-
+    /**
+     * constructor for CprDecoder
+     * @param x0 double, local longitude of an even message
+     * @param y0 double, local latitude of an even message
+     * @param x1 double, local longitude of an odd message
+     * @param y1 double, local latitude of an odd message
+     * @param mostRecent int tells us the parity of the message
+     * @return GeoPos, the position of the plane
+     */
     public static GeoPos decodePosition(double x0, double y0, double x1, double y1, int mostRecent) {
+        // calculation for latitude
         Preconditions.checkArgument(mostRecent == 0 || mostRecent == 1);
         double latitude0 = y0 * NORMALIZER;
         double latitude1 = y1 * NORMALIZER;
