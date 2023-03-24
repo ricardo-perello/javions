@@ -67,7 +67,7 @@ public record RawMessage(long timeStampNs, ByteString bytes) {
 
     /**
      * method that finds the important part of the message ( the ME)
-     * @return long, the ME found from the 4rth to thr 11th(excluded) byte s od the message
+     * @return long, the ME found from the 4rth to thr 11th(excluded) bytes of the message
      */
     public long payload(){
         return  bytes.bytesInRange(4,11);
