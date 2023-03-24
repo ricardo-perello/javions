@@ -35,7 +35,8 @@ public record AirbornePositionMessage(long timeStampNs, IcaoAddress icaoAddress,
         long rawMessageAltitude = Bits.extractUInt(rawMessageME, 36,12);
         boolean qAltitude = Bits.testBit(rawMessageAltitude, 4);
         if(qAltitude){
-            rawMessageAltitude = (rawMessageAltitude & 0b111111100000)>>>1 | (rawMessageAltitude & 0b000000001111);
+            rawMessageAltitude = Bits.extractUInt(rawMessageAltitude, 5,7)<<4 |
+                    Bits.extractUInt(rawMessageAltitude,0,4);
             double altitudeFeet = 25 * rawMessageAltitude -1000;
             return Units.convert(altitudeFeet,Units.Length.FOOT,Units.Length.METER);
         }else{
@@ -60,10 +61,7 @@ public record AirbornePositionMessage(long timeStampNs, IcaoAddress icaoAddress,
                 decodedGraySMALLEST =5;
             }
             if(decodedGrayBIGGEST % 2 == 1){
-                decodedGraySMALLEST -=6;
-                if(decodedGraySMALLEST < 0 ){
-                    decodedGraySMALLEST += 8;
-                }
+                decodedGraySMALLEST = 6- decodedGraySMALLEST;
             }
             double altitudeFEET = decodedGraySMALLEST * 100 + decodedGrayBIGGEST * 500 - 1300;
             return Units.convert(altitudeFEET, Units.Length.FOOT , Units.Length.METER);
