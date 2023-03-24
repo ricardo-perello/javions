@@ -1,7 +1,12 @@
 package ch.epfl.javions.adsb;
 
 import ch.epfl.javions.ByteString;
+import ch.epfl.javions.demodulation.AdsbDemodulator;
 import org.junit.jupiter.api.Test;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -17,9 +22,23 @@ public class AirbornePositionMessageTest {
         AirbornePositionMessage m1 = AirbornePositionMessage.of(mess1);
         AirbornePositionMessage m2 = AirbornePositionMessage.of(mess2);
 
-        //assertEquals(3474.72,m1.altitude(), 0.01);
+        assertEquals(3474.72,m1.altitude(), 0.01);
         assertEquals( 7315.20, m2.altitude(), 0.01);
     }
 
+    @Test
+    void TestRawMessage() throws IOException {
+        String f = "resources/samples_20230304_1442.bin";
+        int idx=0;
+        try (InputStream s = new FileInputStream(f)) {
+            AdsbDemodulator d = new AdsbDemodulator(s);
+            RawMessage m;
+            while ((m = d.nextMessage()) != null){
+                System.out.println(AirbornePositionMessage.of(m));
+                idx++;
+            }
 
+        }
+        System.out.println(idx);
+    }
 }

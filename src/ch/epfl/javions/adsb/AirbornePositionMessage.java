@@ -24,7 +24,7 @@ public record AirbornePositionMessage(long timeStampNs, IcaoAddress icaoAddress,
         int parity = Bits.extractUInt(rawMessageME, 34, 1);
         double latitude = Bits.extractUInt(rawMessageME, 17, 17) * Math.pow(2,-17);
         double longitude = Bits.extractUInt(rawMessageME, 0, 17) * Math.pow(2,-17);
-        if(altitude == Double.NaN){
+        if(Double.isNaN(altitude)){
             return null;
         }
         return new AirbornePositionMessage(timeStampNs, icaoAddress,altitude,parity,longitude, latitude);
