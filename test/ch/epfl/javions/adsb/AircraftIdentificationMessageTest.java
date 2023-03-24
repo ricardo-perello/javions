@@ -17,8 +17,8 @@ public class AircraftIdentificationMessageTest {
             AdsbDemodulator d = new AdsbDemodulator(s);
             RawMessage m;
             while ((m = d.nextMessage()) != null){
-            System.out.println(AircraftIdentificationMessage.of(m));
-            idx++;
+                System.out.println(AircraftIdentificationMessage.of(m));
+                idx++;
             }
 
         }
