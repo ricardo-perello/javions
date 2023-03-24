@@ -14,8 +14,7 @@ final class SignatureChecks_5 {
 
     void checkAircraftIdentificationMessage() throws Exception {
         v04 = new ch.epfl.javions.adsb.AircraftIdentificationMessage(v05, v06, v02, v07);
-        //TODO quitar el comentario
-        //v04 = ch.epfl.javions.adsb.AircraftIdentificationMessage.of(v08);
+        v04 = ch.epfl.javions.adsb.AircraftIdentificationMessage.of(v08);
         v07 = v04.callSign();
         v02 = v04.category();
         v10 = v04.equals(v09);
