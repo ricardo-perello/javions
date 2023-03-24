@@ -3,6 +3,7 @@ package ch.epfl.javions.adsb;
 import ch.epfl.javions.ByteString;
 import ch.epfl.javions.GeoPos;
 import ch.epfl.javions.Units;
+import ch.epfl.javions.aircraft.IcaoAddress;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -19,7 +20,7 @@ public class CprDecoderTest {
     }
 
     @Test
-    void decodePositionWorkOnTrivialNumbers2(){
+    void decodePositionWorkOnTrivialNumbers2() {
         GeoPos expected = new GeoPos((int) Units.convert(0.020764, Units.Angle.TURN, Units.Angle.T32),
                 (int) Units.convert(0.128673, Units.Angle.TURN, Units.Angle.T32));
         assertEquals(expected, CprDecoder.decodePosition(111600, 94445, 108865, 77558, 1));

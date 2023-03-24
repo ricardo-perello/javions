@@ -25,8 +25,9 @@ public class CprDecoder {
             return null;
         }
 
-        double A = Math.acos(1 - ((1 - Math.cos(2 * Math.PI * (1.0 / 60.0))) /(
-                Math.pow(Math.cos(Units.convert(latitudeTurn0, Units.Angle.TURN, Units.Angle.DEGREE)),2))));
+        double A = Math.acos(1 - ((1 - Math.cos(2 * Math.PI * (1.0 / 60.0)))
+                /(Math.cos(Units.convert(latitudeTurn0, Units.Angle.TURN, Units.Angle.DEGREE))
+                *(Math.cos(Units.convert(latitudeTurn0, Units.Angle.TURN, Units.Angle.DEGREE))))));
 
         double numberOfLongitudeSections0 = Math.floor((2.0 * Math.PI) / A);
         if (A >1 || A<-1){
