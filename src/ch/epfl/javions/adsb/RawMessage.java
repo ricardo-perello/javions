@@ -6,6 +6,8 @@ import ch.epfl.javions.Crc24;
 import ch.epfl.javions.Preconditions;
 import ch.epfl.javions.aircraft.IcaoAddress;
 
+import java.util.HexFormat;
+
 public record RawMessage(long timeStampNs, ByteString bytes) {
     public static final int LENGTH = 14;
     private static final Crc24 crc24 = new Crc24(Crc24.GENERATOR);
@@ -62,7 +64,7 @@ public record RawMessage(long timeStampNs, ByteString bytes) {
      * @return IcaoAdress, the icao addres of the message found from the 1st to 3rd (included) bytes
      */
     public IcaoAddress icaoAddress(){
-        return new IcaoAddress(Long.toHexString(bytes.bytesInRange(1,4)).toUpperCase());
+        return new IcaoAddress(HexFormat.of().withUpperCase().toHexDigits(bytes.bytesInRange(1,4),6));
     }
 
     /**
