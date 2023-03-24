@@ -39,7 +39,7 @@ public record GeoPos(int longitudeT32, int latitudeT32) {
      */
     @Override
     public String toString(){
-        return ("("+convert(longitudeT32,T32,DEGREE)+"°, "+convert(longitudeT32,T32,DEGREE)+"°)");
+        return ("("+convert(longitudeT32,T32,DEGREE)+"°, "+convert(latitudeT32,T32,DEGREE)+"°)");
     }
 }
 

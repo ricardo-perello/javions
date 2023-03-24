@@ -28,6 +28,13 @@ class BitsTest {
     }
 
     @Test
+    void bitsExtractUIntCanExtractAllNibbles2() {
+        long v = 0b01;
+        var n = Bits.testBit(v,0);
+        assertEquals(true, n);
+    }
+
+    @Test
     void bitsExtractCanExtract31Bits() {
         var v = 0xFFFF_7654_ABCD_FFFFL;
         var n = Bits.extractUInt(v, 16, 31);
