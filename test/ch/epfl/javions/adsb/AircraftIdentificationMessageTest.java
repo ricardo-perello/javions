@@ -16,7 +16,6 @@ public class AircraftIdentificationMessageTest {
         try (InputStream s = new FileInputStream(f)) {
             AdsbDemodulator d = new AdsbDemodulator(s);
             RawMessage m;
-            m = d.nextMessage();
             while ((m = d.nextMessage()) != null){
             System.out.println(AircraftIdentificationMessage.of(m));
             idx++;
