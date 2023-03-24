@@ -16,17 +16,22 @@ public record AirbornePositionMessage(long timeStampNs, IcaoAddress icaoAddress,
         Preconditions.checkArgument((parity == 0) || (parity == 1));
     }
 
-    public AirbornePositionMessage of(RawMessage rawMessage){
+    public static AirbornePositionMessage of(RawMessage rawMessage){
         long rawMessageME = rawMessage.payload();
-
-
-
-
-
+        long timeStampNs = rawMessage.timeStampNs();
+        IcaoAddress icaoAddress = rawMessage.icaoAddress();
+        double altitude = altitudeFinder(rawMessageME);
+        int parity = Bits.extractUInt(rawMessageME, 34, 1);
+        double latitude = Bits.extractUInt(rawMessageME, 17, 17) * Math.pow(2,-17);
+        double longitude = Bits.extractUInt(rawMessageME, 0, 17) * Math.pow(2,-17);
+        if(altitude == Double.NaN){
+            return null;
+        }
+        return new AirbornePositionMessage(timeStampNs, icaoAddress,altitude,parity,longitude, latitude);
     }
 
 
-    private double altitudeFinder(long rawMessageME){
+    private static double altitudeFinder(long rawMessageME){
         long rawMessageAltitude = Bits.extractUInt(rawMessageME, 36,12);
         boolean qAltitude = Bits.testBit(rawMessageAltitude, 4);
         if(qAltitude){
@@ -34,17 +39,17 @@ public record AirbornePositionMessage(long timeStampNs, IcaoAddress icaoAddress,
             double altitudeFeet = 25 * rawMessageAltitude -1000;
             return Units.convert(altitudeFeet,Units.Length.FOOT,Units.Length.METER);
         }else{
-            long rawMessageAltitudeUnraveledBIGGEST = (long) Bits.extractUInt(rawMessageAltitude, 4, 1) <<8 &
-                    (long) Bits.extractUInt(rawMessageAltitude, 2, 1) <<7 &
-                    (long) Bits.extractUInt(rawMessageAltitude, 0, 1) <<6 &
-                    (long) Bits.extractUInt(rawMessageAltitude, 10, 1) <<5 &
-                    (long) Bits.extractUInt(rawMessageAltitude, 8, 1) <<4 &
-                    (long) Bits.extractUInt(rawMessageAltitude, 6, 1) <<3 &
-                    (long) Bits.extractUInt(rawMessageAltitude, 5, 1) <<2 &
-                    (long) Bits.extractUInt(rawMessageAltitude, 3, 1) <<1 &
+            long rawMessageAltitudeUnraveledBIGGEST = (long) Bits.extractUInt(rawMessageAltitude, 4, 1) <<8 |
+                    (long) Bits.extractUInt(rawMessageAltitude, 2, 1) <<7 |
+                    (long) Bits.extractUInt(rawMessageAltitude, 0, 1) <<6 |
+                    (long) Bits.extractUInt(rawMessageAltitude, 10, 1) <<5 |
+                    (long) Bits.extractUInt(rawMessageAltitude, 8, 1) <<4 |
+                    (long) Bits.extractUInt(rawMessageAltitude, 6, 1) <<3 |
+                    (long) Bits.extractUInt(rawMessageAltitude, 5, 1) <<2 |
+                    (long) Bits.extractUInt(rawMessageAltitude, 3, 1) <<1 |
                     (long) Bits.extractUInt(rawMessageAltitude, 1, 1);
-            long rawMessageAltitudeUnraveledSMALLEST = (long) Bits.extractUInt(rawMessageAltitude, 11, 1) <<2 &
-                    (long) Bits.extractUInt(rawMessageAltitude, 9, 1) <<1 &
+            long rawMessageAltitudeUnraveledSMALLEST = (long) Bits.extractUInt(rawMessageAltitude, 11, 1) <<2 |
+                    (long) Bits.extractUInt(rawMessageAltitude, 9, 1) <<1 |
                     Bits.extractUInt(rawMessageAltitude, 7, 1);
             int decodedGrayBIGGEST = decodeGray(rawMessageAltitudeUnraveledBIGGEST,9);
             int decodedGraySMALLEST = decodeGray(rawMessageAltitudeUnraveledSMALLEST, 3);
@@ -65,7 +70,7 @@ public record AirbornePositionMessage(long timeStampNs, IcaoAddress icaoAddress,
         }
     }
 
-    private int decodeGray(long grayCode, int lenght){
+    private static int decodeGray(long grayCode, int lenght){
         int decodedGray = 0;
         for (int i = 0; i < lenght; i++) {
             decodedGray ^= grayCode>>i;
