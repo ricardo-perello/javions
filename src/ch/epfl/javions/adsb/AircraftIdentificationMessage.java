@@ -38,16 +38,16 @@ public record AircraftIdentificationMessage(long timeStampNs,IcaoAddress icaoAdd
         if ((typeCode < 0) || (typeCode >4)) {return null;}
 
         int cat = (((14-typeCode)<<4)|(extractUInt(payload, 48, 3)));
-        String string = "";
+        StringBuilder string = new StringBuilder();
         for (int i = 7; i >= 0; i--) {
-            string += ALPHABET.charAt(extractUInt(payload, i*6, 6));
+            string.append(ALPHABET.charAt(extractUInt(payload, i * 6, 6)));
 
         }
-        string = string.stripTrailing();
-        if (string.contains("?")) {return null;}
+        string = new StringBuilder(string.toString().stripTrailing());
+        if (string.toString().contains("?")) {return null;}
 
         return new AircraftIdentificationMessage(rawMessage.timeStampNs(), rawMessage.icaoAddress(),
-                cat, new CallSign(string));
+                cat, new CallSign(string.toString()));
     }
 
     /**
