@@ -11,12 +11,27 @@ import static ch.epfl.javions.adsb.RawMessage.typeCode;
 public record AircraftIdentificationMessage(long timeStampNs,IcaoAddress icaoAddress, int category,
                                             CallSign callSign) implements Message {
     private final static String ALPHABET = "?ABCDEFGHIJKLMNOPQRSTUVWXYZ????? ???????????????0123456789??????";
+
+    /**
+     * Register that takes in a RawMessage and returns timeStamp, icao address, category and callsign.
+     * Compact constructor checks if the timestamp is bigger than 0. Also checks that ICAO address and
+     * callsign are not null.
+     * @param timeStampNs timestamp
+     * @param icaoAddress ICAO address
+     * @param category category
+     * @param callSign callSign
+     */
     public AircraftIdentificationMessage{
         Preconditions.checkArgument(timeStampNs >= 0);
         Objects.requireNonNull(icaoAddress);
         Objects.requireNonNull(callSign);
     }
 
+    /**
+     * Creates an instance of an AircraftIdentificationMessage using the RawMessage as an input.
+     * @param rawMessage raw message which contains all the information needed to create the message.
+     * @return AircraftIdentificationMessage of RawMessage.
+     */
     public static AircraftIdentificationMessage of(RawMessage rawMessage){
         long payload = rawMessage.payload();
         int typeCode = typeCode(payload);
@@ -35,11 +50,19 @@ public record AircraftIdentificationMessage(long timeStampNs,IcaoAddress icaoAdd
                 cat, new CallSign(string));
     }
 
+    /**
+     * timestamp
+     * @return timestamp
+     */
     @Override
     public long timeStampNs() {
         return timeStampNs;
     }
 
+    /**
+     * ICAO address
+     * @return icao Address
+     */
     @Override
     public IcaoAddress icaoAddress() {
         return icaoAddress;
