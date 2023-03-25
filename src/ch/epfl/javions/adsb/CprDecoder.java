@@ -24,76 +24,42 @@ public class CprDecoder {
      * @return GeoPos, the position of the plane
      */
     public static GeoPos decodePosition(double x0, double y0, double x1, double y1, int mostRecent) {
-        // calculation for latitude
+        // TODO null si position ne peut pas Être déterminé en raison de changement de bande de latitude
+
         Preconditions.checkArgument(mostRecent == 0 || mostRecent == 1);
-        double zlatitude0 = 0;
-        double zlatitude1 = 0;
-        double zlatitude = Math.rint(y0 * NUMBER_ZONES_LATITUDE_1 - y1 * NUMBER_ZONES_LATITUDE_0);
-        if(zlatitude <0 ){
-            zlatitude0 = zlatitude + NUMBER_ZONES_LATITUDE_0;
-            zlatitude1 = zlatitude + NUMBER_ZONES_LATITUDE_1;
-        }else{
-            zlatitude0 = zlatitude;
-            zlatitude1 = zlatitude;
-        }
-        double latitudeTurn0 = WIDTH_ZONES_LATITUDE_0 * (zlatitude0 + y0);
-        double latitudeTurn1 = WIDTH_ZONES_LATITUDE_1 * (zlatitude1 + y1);
-        latitudeTurn0 = turnConvert(latitudeTurn0);
-        latitudeTurn1 = turnConvert(latitudeTurn1);
 
-
-        if(!GeoPos.isValidLatitudeT32((int) Units.convert(latitudeTurn0,Units.Angle.TURN, Units.Angle.T32))){
-            return null;
-        }
-        if(!GeoPos.isValidLatitudeT32((int) Units.convert( latitudeTurn1,Units.Angle.TURN, Units.Angle.T32))){
+        double zLatitude = Math.rint(y0 * NUMBER_ZONES_LATITUDE_1 - y1 * NUMBER_ZONES_LATITUDE_0);
+        double zLatitude0 = (zLatitude<0) ? zLatitude + NUMBER_ZONES_LATITUDE_0 : zLatitude;
+        double zLatitude1 = (zLatitude<0) ? zLatitude + NUMBER_ZONES_LATITUDE_1 : zLatitude;
+        double latitudeTurn = (mostRecent == 0) ? WIDTH_ZONES_LATITUDE_0 * (zLatitude0 + y0) : WIDTH_ZONES_LATITUDE_1 * (zLatitude1 + y1);
+        latitudeTurn = turnConvert(latitudeTurn);
+        int latitudeT34 = (int) Units.convert(latitudeTurn, Units.Angle.TURN, Units.Angle.T32);
+        if(!GeoPos.isValidLatitudeT32(latitudeT34)){
             return null;
         }
 
-        double A = Math.acos(1 - (1 - Math.cos(2 * Math.PI * WIDTH_ZONES_LATITUDE_0)
-                /Math.pow(Math.cos(Units.convert(latitudeTurn0, Units.Angle.TURN, Units.Angle.RADIAN)),2)));
+        double A = Math.acos(1-(1-Math.cos(2*Math.PI*WIDTH_ZONES_LATITUDE_0))/Math.pow(Math.cos(Units.convert(latitudeTurn, Units.Angle.TURN,Units.Angle.RADIAN)),2));
+        double numberZonesLongitude0 = Double.isNaN(A) ? 1 : Math.floor((2 * Math.PI)/A);
+        double numberZonesLongitude1 = numberZonesLongitude0 -1;
+        double widthZoneLongitude0 = 1/numberZonesLongitude0;
+        double widthZoneLongitude1 = 1/numberZonesLongitude1;
 
-        double numberOfLongitudeSections0 = Math.floor((2 * Math.PI) / A);
-        if (Double.isNaN(A)){
-            numberOfLongitudeSections0 = 1;
-        }
-        double numberOfLongitudeSections1 = numberOfLongitudeSections0 - 1;
 
-        if(numberOfLongitudeSections0 ==1 ){
-            if (mostRecent==0){
-                return new GeoPos((int) x0, (int) Units.convert(latitudeTurn0, Units.Angle.TURN, Units.Angle.T32));
-            }
-            else{
-                return  new GeoPos((int) x1, (int) Units.convert(latitudeTurn1, Units.Angle.TURN, Units.Angle.T32));
-            }
+        if(numberZonesLongitude0 == 1){
+            return new GeoPos((int) x0, latitudeT34);
         }
 
+        double zLongitude = Math.rint(x0 * numberZonesLongitude1 - x1 * numberZonesLongitude0);
+        double zLongitude0 = (zLongitude<0) ? zLongitude + numberZonesLongitude0 : zLongitude;
+        double zLongitude1 = (zLongitude<0) ? zLongitude + numberZonesLongitude1 : zLongitude;
+        double longitudeTurn = (mostRecent == 0) ? widthZoneLongitude0 * (zLongitude0 + x0) : widthZoneLongitude1 * (zLongitude1 + x1);
+        longitudeTurn = turnConvert(longitudeTurn);
+        int longitudeT34 = (int) Units.convert(longitudeTurn, Units.Angle.TURN, Units.Angle.T32);
 
-        double zlongitude = Math.rint(x0 * numberOfLongitudeSections1 - x1 * numberOfLongitudeSections0);
-        double zlongitude0 = 0;
-        double zlongitude1 = 0;
-        if(zlongitude <0 ){
-            zlongitude0 = zlongitude + numberOfLongitudeSections0;
-            zlongitude1 = zlongitude + numberOfLongitudeSections1;
-        }else{
-            zlongitude0 = zlongitude;
-            zlongitude1 = zlongitude;
-        }
-
-        double longitudeTurn;
-        if (mostRecent == 0){
-            longitudeTurn = (1/ numberOfLongitudeSections0) * (zlongitude0 + x0);
-            longitudeTurn = turnConvert(longitudeTurn);
-            return new GeoPos((int) Math.rint( Units.convert(longitudeTurn, Units.Angle.TURN, Units.Angle.T32)),
-                    (int) Math.rint(Units.convert(latitudeTurn0, Units.Angle.TURN, Units.Angle.T32)));
-        }else{
-            longitudeTurn = (1/ numberOfLongitudeSections1) * (zlongitude1 + x1);
-            longitudeTurn = turnConvert(longitudeTurn);
-            return new GeoPos((int) Math.rint(Units.convert(longitudeTurn, Units.Angle.TURN, Units.Angle.T32)),
-                    (int) Math.rint(Units.convert(latitudeTurn1, Units.Angle.TURN, Units.Angle.T32)));
-        }
+        return new GeoPos(longitudeT34, latitudeT34);
     }
 
     private static double turnConvert(double turn){
-        return turn >= Units.Angle.TURN/2.0 ? turn-1 : turn;
+        return turn >= 0.5 ? turn-1 : turn;
     }
 }

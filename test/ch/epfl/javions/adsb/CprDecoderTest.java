@@ -20,8 +20,8 @@ public class CprDecoderTest {
     @Test
     public void testEd() {
         GeoPos pos = CprDecoder.decodePosition(0.62, 0.42, 0.6200000000000000001, 0.4200000000000000001, 0);
-        assertEquals(-2.3186440486460924, Units.convert((pos.longitudeT32()), Units.Angle.T32, Units.Angle.DEGREE));
-        assertEquals(2.5199999939650297, Units.convert((pos.latitudeT32()), Units.Angle.T32, Units.Angle.DEGREE));
+        assertEquals(-2.3186440486460924, Units.convert((pos.longitudeT32()), Units.Angle.T32, Units.Angle.DEGREE),0.000001);
+        assertEquals(2.5199999939650297, Units.convert((pos.latitudeT32()), Units.Angle.T32, Units.Angle.DEGREE),0.000001);
     }
 
     @Test
@@ -29,13 +29,13 @@ public class CprDecoderTest {
         GeoPos a = CprDecoder.decodePosition(0.3, 0.3, 0.3, 0.3, 0);
         GeoPos b = CprDecoder.decodePosition(0.3, 0.3, 0.3, 0.3, 1);
         GeoPos decodedPosition = CprDecoder.decodePosition(0.3, 0.3, 0.3, 0.3, 1);
-        assertEquals(1.862068958580494, Units.convert((decodedPosition.longitudeT32()), Units.Angle.T32, Units.Angle.DEGREE));
-        assertEquals(1.8305084947496653, Units.convert((decodedPosition.latitudeT32()), Units.Angle.T32, Units.Angle.DEGREE));
+        assertEquals(1.862068958580494, Units.convert((decodedPosition.longitudeT32()), Units.Angle.T32, Units.Angle.DEGREE),0.0000001);
+        assertEquals(1.8305084947496653, Units.convert((decodedPosition.latitudeT32()), Units.Angle.T32, Units.Angle.DEGREE),0.0000001);
         GeoPos decodedPosition0 = CprDecoder.decodePosition(0.3, 0.3, 0.3, 0.3, 0);
         assertEquals(1.8305084947496653, Units.convert((decodedPosition0.longitudeT32()), Units.Angle.T32,
-                Units.Angle.DEGREE));
+                Units.Angle.DEGREE),0.0000001);
         assertEquals(1.7999999597668648, Units.convert((decodedPosition0.latitudeT32()), Units.Angle.T32,
-                Units.Angle.DEGREE));
+                Units.Angle.DEGREE),0.0000001);
         assertNull(CprDecoder.decodePosition(0, 0.3, 0, 0, 0));
     }
 
@@ -58,8 +58,8 @@ public class CprDecoderTest {
         double y1 = Math.scalb(77558, -17);
         int mostRecent = 0;
         GeoPos decodedPosition = CprDecoder.decodePosition(x0, y0, x1, y1, mostRecent);
-        assertEquals(7.476062346249819, Units.convert((decodedPosition.longitudeT32()), Units.Angle.T32, Units.Angle.DEGREE));
-        assertEquals(46.323349038138986, Units.convert((decodedPosition.latitudeT32()), Units.Angle.T32, Units.Angle.DEGREE));
+        assertEquals(7.476062346249819, Units.convert((decodedPosition.longitudeT32()), Units.Angle.T32, Units.Angle.DEGREE),0.0000001);
+        assertEquals(46.323349038138986, Units.convert((decodedPosition.latitudeT32()), Units.Angle.T32, Units.Angle.DEGREE),0.0000001);
     }
 
     private final static double DIVIDER = Math.scalb(1.0, 17);
@@ -162,8 +162,8 @@ public class CprDecoderTest {
         assertEquals(0, Units.convert((pos.latitudeT32()), Units.Angle.T32,
                 Units.Angle.DEGREE));
         GeoPos pos1 = CprDecoder.decodePosition(0, 0, 0, 0, 0);
-        assertEquals(0, Units.convert((pos1.longitudeT32()), Units.Angle.T32, Units.Angle.DEGREE));
-        assertEquals(0, Units.convert((pos1.latitudeT32()), Units.Angle.T32, Units.Angle.DEGREE));
+        assertEquals(0, Units.convert((pos1.longitudeT32()), Units.Angle.T32, Units.Angle.DEGREE),0.00001);
+        assertEquals(0, Units.convert((pos1.latitudeT32()), Units.Angle.T32, Units.Angle.DEGREE),0.00001);
     }
 
     @Test
@@ -181,8 +181,8 @@ public class CprDecoderTest {
         AirbornePositionMessage m1 = AirbornePositionMessage.of(mess1);
         AirbornePositionMessage m2 = AirbornePositionMessage.of(mess2);
 
-        assertEquals(3474.72, m1.altitude(), 0.01);
-        assertEquals(7315.20, m2.altitude(), 0.01);
+        assertEquals(3474.72, m1.altitude(), 0.00001);
+        assertEquals(7315.20, m2.altitude(), 0.00001);
     }
 
     @Test
