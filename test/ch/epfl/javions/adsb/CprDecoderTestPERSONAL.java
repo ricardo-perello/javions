@@ -3,13 +3,12 @@ package ch.epfl.javions.adsb;
 import ch.epfl.javions.ByteString;
 import ch.epfl.javions.GeoPos;
 import ch.epfl.javions.Units;
-import ch.epfl.javions.aircraft.IcaoAddress;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class CprDecoderTest {
+public class CprDecoderTestPERSONAL {
 
     @Test
     public void test112() {

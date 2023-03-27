@@ -7,7 +7,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class AircraftIdentificationMessageTest {
+public class AircraftIdentificationMessageTestPERSONAL {
 
     @Test
     void TestRawMessage() throws IOException {

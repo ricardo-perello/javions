@@ -3,7 +3,6 @@ package ch.epfl.javions.adsb;
 import ch.epfl.javions.ByteString;
 import ch.epfl.javions.aircraft.IcaoAddress;
 import ch.epfl.javions.demodulation.AdsbDemodulator;
-import ch.epfl.javions.demodulation.PowerWindow;
 import org.junit.jupiter.api.Test;
 
 import java.io.FileInputStream;
@@ -12,7 +11,7 @@ import java.io.InputStream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class AirbornePositionMessageTest {
+public class AirbornePositionMessageTestPERSONAL {
 
     @Test
     public void testWithQEqualToZero() {
