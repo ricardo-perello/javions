@@ -39,7 +39,8 @@ public class AircraftStateAccumulator<T extends AircraftStateSetter> {
                 switch (parity){
                     case 0 -> {
                         if(aim.timeStampNs() - lastMessageTimeStampNsOdd <= Math.pow(10,10)){
-                            state.setPosition(CprDecoder.decodePosition(normalizeCoordinates(aim.x()), normalizeCoordinates(aim.y()),xOdd, yOdd, 0));
+                            state.setPosition(CprDecoder.decodePosition(normalizeCoordinates(aim.x()),
+                                    normalizeCoordinates(aim.y()),xOdd, yOdd, 0));
                             xEven = normalizeCoordinates(aim.x());
                             yEven = normalizeCoordinates(aim.y());
                             lastMessageTimeStampNsEven = aim.timeStampNs();
@@ -47,7 +48,8 @@ public class AircraftStateAccumulator<T extends AircraftStateSetter> {
                     }
                     case 1 ->{
                         if(aim.timeStampNs() - lastMessageTimeStampNsEven <= Math.pow(10,10)){
-                            state.setPosition(CprDecoder.decodePosition(xEven,yEven, normalizeCoordinates(aim.x()), normalizeCoordinates(aim.y()), 1));
+                            state.setPosition(CprDecoder.decodePosition(xEven,yEven, normalizeCoordinates(aim.x()),
+                                    normalizeCoordinates(aim.y()), 1));
                             xOdd = normalizeCoordinates(aim.x());
                             yOdd = normalizeCoordinates(aim.y());
                             lastMessageTimeStampNsOdd = aim.timeStampNs();
