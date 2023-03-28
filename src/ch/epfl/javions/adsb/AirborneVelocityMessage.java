@@ -7,7 +7,7 @@ import ch.epfl.javions.aircraft.IcaoAddress;
 
 import java.util.Objects;
 
-import static ch.epfl.javions.Units.Angle.DEGREE;
+import static ch.epfl.javions.Units.Speed.KNOT;
 
 public record AirborneVelocityMessage (long timeStampNs, IcaoAddress icaoAddress,
                                        double speed, double trackOrHeading) implements Message {
@@ -16,6 +16,7 @@ public record AirborneVelocityMessage (long timeStampNs, IcaoAddress icaoAddress
         Preconditions.checkArgument((timeStampNs >= 0) && (speed >= 0) && (trackOrHeading >= 0));
     }
 
+    // TODO: 28/3/23 add comments
     public static AirborneVelocityMessage of(RawMessage rawMessage){
         long payload = rawMessage.payload();
         long timeStampNs = rawMessage.timeStampNs();
@@ -37,12 +38,13 @@ public record AirborneVelocityMessage (long timeStampNs, IcaoAddress icaoAddress
                 if (Vew == -1 || Vns == -1) return null;
                 //speed
                 double vel = Math.hypot(Vew, Vns);
+                vel = Units.convertFrom(vel, KNOT);
                 //angle
                 int x = (Dew == 0) ? Vew : Vew * -1;
                 int y = (Dns == 0) ? Vns : Vns * -1;
                 double dir = Math.atan2(x, y);
                 dir = (dir < 0) ? (2 * Math.PI) + dir : dir;
-                dir = Units.convertTo(dir, DEGREE);
+                //dir = Units.convertTo(dir, DEGREE);
                 //adjusting for case
                 if (subtype == 2) vel += 4;
                 return new AirborneVelocityMessage(timeStampNs,icaoAddress,vel,dir);
@@ -53,7 +55,7 @@ public record AirborneVelocityMessage (long timeStampNs, IcaoAddress icaoAddress
                 double heading;
                 if (headingAvailable == 1) {
                     heading = (Bits.extractUInt(contentOfMessage, 11, 10) / Math.pow(2, 10));
-                    heading = Units.convertTo(heading, DEGREE);
+                    //heading = Units.convertTo(heading, DEGREE);
                 }
                 else {return null;}
 
@@ -62,6 +64,7 @@ public record AirborneVelocityMessage (long timeStampNs, IcaoAddress icaoAddress
                 if (airspeed == -1) return null;
                 //adjusting for case
                 airspeed = (subtype == 3) ? airspeed : airspeed * 4;
+                airspeed = Units.convertFrom(airspeed, KNOT);
                 return new AirborneVelocityMessage(timeStampNs,icaoAddress,airspeed,heading);
             }
             default -> {
