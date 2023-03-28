@@ -6,7 +6,6 @@ import static java.util.Objects.requireNonNull;
 
 public class AircraftStateAccumulator<T extends AircraftStateSetter> {
     private T state;
-    private  final double NORMALIZER = Math.pow(2,-17);
     private double xEven = 0.0;
     private double xOdd = 0.0;
     private double yEven = 0.0;
@@ -39,19 +38,19 @@ public class AircraftStateAccumulator<T extends AircraftStateSetter> {
                 switch (parity){
                     case 0 -> {
                         if(aim.timeStampNs() - lastMessageTimeStampNsOdd <= Math.pow(10,10)){
-                            state.setPosition(CprDecoder.decodePosition(normalizeCoordinates(aim.x()),
-                                    normalizeCoordinates(aim.y()),xOdd, yOdd, 0));
-                            xEven = normalizeCoordinates(aim.x());
-                            yEven = normalizeCoordinates(aim.y());
+                            state.setPosition(CprDecoder.decodePosition(aim.x(),
+                                    aim.y(),xOdd, yOdd, 0));
+                            xEven = aim.x();
+                            yEven = aim.y();
                             lastMessageTimeStampNsEven = aim.timeStampNs();
                         }
                     }
                     case 1 ->{
                         if(aim.timeStampNs() - lastMessageTimeStampNsEven <= Math.pow(10,10)){
-                            state.setPosition(CprDecoder.decodePosition(xEven,yEven, normalizeCoordinates(aim.x()),
-                                    normalizeCoordinates(aim.y()), 1));
-                            xOdd = normalizeCoordinates(aim.x());
-                            yOdd = normalizeCoordinates(aim.y());
+                            state.setPosition(CprDecoder.decodePosition(xEven,yEven,aim.x(),
+                                    aim.y(), 1));
+                            xOdd = aim.x();
+                            yOdd = aim.y();
                             lastMessageTimeStampNsOdd = aim.timeStampNs();
                         }
                     }
@@ -68,7 +67,4 @@ public class AircraftStateAccumulator<T extends AircraftStateSetter> {
         }
     }
 
-    private double normalizeCoordinates(double coordinate){
-        return coordinate * NORMALIZER;
-    }
 }
