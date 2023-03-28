@@ -4,19 +4,30 @@ import ch.epfl.javions.Bits;
 import ch.epfl.javions.Preconditions;
 import ch.epfl.javions.Units;
 import ch.epfl.javions.aircraft.IcaoAddress;
-
 import java.util.Objects;
-
 import static ch.epfl.javions.Units.Speed.KNOT;
 
 public record AirborneVelocityMessage (long timeStampNs, IcaoAddress icaoAddress,
                                        double speed, double trackOrHeading) implements Message {
+    /**
+     * Compact constructor for AirborneVelocityMessage
+     * @param timeStampNs timestamp
+     * @param icaoAddress icaoAddress
+     * @param speed speed of the airplane
+     * @param trackOrHeading direction of the airplane
+     */
     public AirborneVelocityMessage{
         Objects.requireNonNull(icaoAddress);
         Preconditions.checkArgument((timeStampNs >= 0) && (speed >= 0) && (trackOrHeading >= 0));
     }
 
-    // TODO: 28/3/23 add comments
+    /**
+     * Of method for AirborneVelocityMessage
+     * Creates an instance of an AirborneVelocityMessage from the
+     * rawMessage which returns (timestamp, ICAO, velocity, direction)
+     * @param rawMessage rawMessage
+     * @return instance of AirborneVelocityMessage
+     */
     public static AirborneVelocityMessage of(RawMessage rawMessage){
         long payload = rawMessage.payload();
         long timeStampNs = rawMessage.timeStampNs();
