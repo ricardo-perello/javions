@@ -51,13 +51,13 @@ public record AirborneVelocityMessage (long timeStampNs, IcaoAddress icaoAddress
                 double vel = Math.hypot(Vew, Vns);
                 vel = Units.convertFrom(vel, KNOT);
                 //angle
-                int x = (Dew == 0) ? Vew : Vew * -1;
-                int y = (Dns == 0) ? Vns : Vns * -1;
+                int x = (Dew == 0) ? Vew : -Vew;
+                int y = (Dns == 0) ? Vns : -Vns;
                 double dir = Math.atan2(x, y);
                 dir = (dir < 0) ? (2 * Math.PI) + dir : dir;
                 //dir = Units.convertTo(dir, DEGREE);
                 //adjusting for case
-                if (subtype == 2) vel += 4;
+                if (subtype == 2) vel *= 4;
                 return new AirborneVelocityMessage(timeStampNs,icaoAddress,vel,dir);
             }
             case 3, 4 -> {
