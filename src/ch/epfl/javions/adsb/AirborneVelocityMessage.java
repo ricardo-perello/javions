@@ -7,7 +7,7 @@ import ch.epfl.javions.aircraft.IcaoAddress;
 
 import java.util.Objects;
 
-import static ch.epfl.javions.Units.Angle.DEGREE;
+import static ch.epfl.javions.Units.Speed.KNOT;
 
 public record AirborneVelocityMessage (long timeStampNs, IcaoAddress icaoAddress,
                                        double speed, double trackOrHeading) implements Message {
@@ -17,7 +17,6 @@ public record AirborneVelocityMessage (long timeStampNs, IcaoAddress icaoAddress
     }
 
     // TODO: 28/3/23 add comments
-    // TODO: 28/3/23 velocity doesnt work
     public static AirborneVelocityMessage of(RawMessage rawMessage){
         long payload = rawMessage.payload();
         long timeStampNs = rawMessage.timeStampNs();
@@ -39,6 +38,7 @@ public record AirborneVelocityMessage (long timeStampNs, IcaoAddress icaoAddress
                 if (Vew == -1 || Vns == -1) return null;
                 //speed
                 double vel = Math.hypot(Vew, Vns);
+                vel = Units.convertFrom(vel, KNOT);
                 //angle
                 int x = (Dew == 0) ? Vew : Vew * -1;
                 int y = (Dns == 0) ? Vns : Vns * -1;
@@ -64,6 +64,7 @@ public record AirborneVelocityMessage (long timeStampNs, IcaoAddress icaoAddress
                 if (airspeed == -1) return null;
                 //adjusting for case
                 airspeed = (subtype == 3) ? airspeed : airspeed * 4;
+                airspeed = Units.convertFrom(airspeed, KNOT);
                 return new AirborneVelocityMessage(timeStampNs,icaoAddress,airspeed,heading);
             }
             default -> {
