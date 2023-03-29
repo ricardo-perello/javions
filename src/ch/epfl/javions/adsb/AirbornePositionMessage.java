@@ -25,7 +25,6 @@ public record AirbornePositionMessage(long timeStampNs, IcaoAddress icaoAddress,
         Preconditions.checkArgument((parity == 0) || (parity == 1));
         Preconditions.checkArgument(x >= 0 && x < 1);
         Preconditions.checkArgument(y >= 0 && y < 1);
-
     }
 
     /**

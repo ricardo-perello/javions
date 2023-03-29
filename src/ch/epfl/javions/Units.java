@@ -32,7 +32,7 @@ public class Units {
         }
 
         public static final double RADIAN = 1;
-        public static final double TURN = 2 * Math.PI ;
+        public static final double TURN = 2 * Math.PI * RADIAN ;
         public static final double DEGREE = TURN / 360;
         public static final double T32 = Math.scalb(TURN, -32);
     }
@@ -78,6 +78,7 @@ public class Units {
      * @param fromUnit double, initial unit
      * @return a double which is the new value
      */
+    //TODO usar convert
     public static double convertFrom(double value, double fromUnit) {
         return value * fromUnit;
     }
@@ -88,6 +89,7 @@ public class Units {
      * @param toUnit double, final unit
      * @return a double which is the new value
      */
+    //TODO usar convert
     public static double convertTo(double value, double toUnit) {
         return value * (1 / toUnit);
     }

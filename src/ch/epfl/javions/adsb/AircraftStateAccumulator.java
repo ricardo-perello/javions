@@ -6,10 +6,10 @@ import static java.util.Objects.requireNonNull;
 
 public class AircraftStateAccumulator<T extends AircraftStateSetter> {
     private T state;
-    private double xEven = 0.0;
-    private double xOdd = 0.0;
-    private double yEven = 0.0;
-    private double yOdd= 0.0;
+    private double xEven = Double.NaN;
+    private double xOdd = Double.NaN;
+    private double yEven = Double.NaN;
+    private double yOdd= Double.NaN;
     private long lastMessageTimeStampNsEven = 0;
     private long lastMessageTimeStampNsOdd = 0;
 
@@ -37,21 +37,23 @@ public class AircraftStateAccumulator<T extends AircraftStateSetter> {
                 int parity = aim.parity();
                 switch (parity){
                     case 0 -> {
-                        if(aim.timeStampNs() - lastMessageTimeStampNsOdd <= Math.pow(10,10)){
-                            state.setPosition(CprDecoder.decodePosition(aim.x(),
-                                    aim.y(),xOdd, yOdd, 0));
-                            xEven = aim.x();
-                            yEven = aim.y();
-                            lastMessageTimeStampNsEven = aim.timeStampNs();
+                        xEven = aim.x();
+                        yEven = aim.y();
+                        if(!Double.isNaN(xOdd) && !Double.isNaN(yOdd)){
+                            if(aim.timeStampNs() - lastMessageTimeStampNsOdd <= Math.pow(10,10)){
+                                state.setPosition(CprDecoder.decodePosition(xEven, yEven, xOdd, yOdd, parity));
+                                lastMessageTimeStampNsEven = aim.timeStampNs();
+                            }
                         }
                     }
                     case 1 ->{
-                        if(aim.timeStampNs() - lastMessageTimeStampNsEven <= Math.pow(10,10)){
-                            state.setPosition(CprDecoder.decodePosition(xEven,yEven,aim.x(),
-                                    aim.y(), 1));
-                            xOdd = aim.x();
-                            yOdd = aim.y();
-                            lastMessageTimeStampNsOdd = aim.timeStampNs();
+                        xOdd = aim.x();
+                        yOdd = aim.y();
+                        if(!Double.isNaN(xEven) && !Double.isNaN(yEven)) {
+                            if (aim.timeStampNs() - lastMessageTimeStampNsEven <= Math.pow(10, 10)) {
+                                state.setPosition(CprDecoder.decodePosition(xEven, yEven, xOdd, yOdd, parity));
+                                lastMessageTimeStampNsOdd = aim.timeStampNs();
+                            }
                         }
                     }
                 }
