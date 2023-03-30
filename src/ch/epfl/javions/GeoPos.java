@@ -5,6 +5,8 @@ import static ch.epfl.javions.Units.convert;
 
 public record GeoPos(int longitudeT32, int latitudeT32) {
 
+    private static final int MAXIMUM = 1073741824;
+
     public GeoPos{
         Preconditions.checkArgument(isValidLatitudeT32(latitudeT32));
     }
@@ -14,8 +16,9 @@ public record GeoPos(int longitudeT32, int latitudeT32) {
      * @param latitudeT32 latitude attribute of object
      * @return boolean isValidLatitude
      */
-    public static boolean isValidLatitudeT32(int latitudeT32){ return ((-1073741824 <= latitudeT32)&&
-            1073741824 >= latitudeT32);}
+
+    public static boolean isValidLatitudeT32(int latitudeT32){ return ((-MAXIMUM <= latitudeT32)&&
+            MAXIMUM >= latitudeT32);}
 
     /**
      * longitude as radian

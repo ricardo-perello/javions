@@ -52,10 +52,8 @@ public final class ByteString {
         Preconditions.checkArgument((toIndex - fromIndex) < 8);
         if ((toIndex > size()) || (fromIndex < 0)) throw new IndexOutOfBoundsException();
         long output = 0;
-        //int counter = 0;
         for (int i = fromIndex; i < toIndex; i++) {
             output = ((output << 8) | byteAt(i));
-            //counter++;
         }
         return output;
     }

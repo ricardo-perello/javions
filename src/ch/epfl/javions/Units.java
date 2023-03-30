@@ -14,7 +14,6 @@ public class Units {
     public static class Length {
         private Length() {
         }
-
         public static final double METER = 1;
         public static final double CENTIMETER = CENTI * METER;
         public static final double KILOMETER = KILO * METER;
@@ -30,7 +29,6 @@ public class Units {
     public static class Angle {
         private Angle() {
         }
-
         public static final double RADIAN = 1;
         public static final double TURN = 2 * Math.PI * RADIAN ;
         public static final double DEGREE = TURN / 360;
@@ -44,7 +42,6 @@ public class Units {
     public static class Time {
         private Time() {
         }
-
         public static final double SECOND = 1;
         public static final double MINUTE = 60 * SECOND;
         public static final double HOUR = 60 * MINUTE;
@@ -56,7 +53,6 @@ public class Units {
      */
     public static class Speed {
         private Speed() {}
-
         public static final double KNOT = Length.NAUTICAL_MILE / Time.HOUR;
         public static final double KILOMETER_PER_HOUR = Length.KILOMETER / Time.HOUR;
     }
@@ -78,7 +74,6 @@ public class Units {
      * @param fromUnit double, initial unit
      * @return a double which is the new value
      */
-    //TODO usar convert
     public static double convertFrom(double value, double fromUnit) {
         return value * fromUnit;
     }
@@ -89,7 +84,6 @@ public class Units {
      * @param toUnit double, final unit
      * @return a double which is the new value
      */
-    //TODO usar convert
     public static double convertTo(double value, double toUnit) {
         return value * (1 / toUnit);
     }

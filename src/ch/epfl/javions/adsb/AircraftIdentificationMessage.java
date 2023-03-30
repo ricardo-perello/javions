@@ -11,6 +11,7 @@ import static ch.epfl.javions.adsb.RawMessage.typeCode;
 public record AircraftIdentificationMessage(long timeStampNs,IcaoAddress icaoAddress, int category,
                                             CallSign callSign) implements Message {
     private final static String ALPHABET = "?ABCDEFGHIJKLMNOPQRSTUVWXYZ????? ???????????????0123456789??????";
+    private static final int CAT_START = 48;
 
     /**
      * Register that takes in a RawMessage and returns timeStamp, icao address, category and callsign.
@@ -37,7 +38,7 @@ public record AircraftIdentificationMessage(long timeStampNs,IcaoAddress icaoAdd
         int typeCode = typeCode(payload);
         if ((typeCode < 0) || (typeCode >4)) {return null;}
 
-        int cat = (((14-typeCode)<<4)|(extractUInt(payload, 48, 3)));
+        int cat = (((14-typeCode)<<4)|(extractUInt(payload, CAT_START, 3)));
         StringBuilder string = new StringBuilder();
         for (int i = 7; i >= 0; i--) {
             string.append(ALPHABET.charAt(extractUInt(payload, i * 6, 6)));

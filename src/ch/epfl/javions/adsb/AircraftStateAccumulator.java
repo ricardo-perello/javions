@@ -1,11 +1,11 @@
 package ch.epfl.javions.adsb;
 
-import ch.epfl.javions.GeoPos;
 
 import static java.util.Objects.requireNonNull;
 
 public class AircraftStateAccumulator<T extends AircraftStateSetter> {
-    private T state;
+    private final T state;
+    private final double MAXIMUM_DISTANCE_BETWEEN_MESSAGES = Math.pow(10,10);
     private double xEven = Double.NaN;
     private double xOdd = Double.NaN;
     private double yEven = Double.NaN;
@@ -24,48 +24,46 @@ public class AircraftStateAccumulator<T extends AircraftStateSetter> {
     }
 
     public void update(Message message) {
+        state.setLastMessageTimeStampNs(message.timeStampNs());
         switch (message) {
             case AircraftIdentificationMessage aim ->{
-                state.setLastMessageTimeStampNs(aim.timeStampNs());
                 state.setCategory(aim.category());
                 state.setCallSign(aim.callSign());
             }
 
             case AirbornePositionMessage aim -> {
-                state.setLastMessageTimeStampNs(aim.timeStampNs());
                 state.setAltitude(aim.altitude());
-                int parity = aim.parity();
-                switch (parity){
-                    case 0 -> {
-                        xEven = aim.x();
-                        yEven = aim.y();
-                        if(!Double.isNaN(xOdd) && !Double.isNaN(yOdd)){
-                            if(aim.timeStampNs() - lastMessageTimeStampNsOdd <= Math.pow(10,10)){
-                                state.setPosition(CprDecoder.decodePosition(xEven, yEven, xOdd, yOdd, parity));
-                                lastMessageTimeStampNsEven = aim.timeStampNs();
-                            }
-                        }
-                    }
-                    case 1 ->{
-                        xOdd = aim.x();
-                        yOdd = aim.y();
-                        if(!Double.isNaN(xEven) && !Double.isNaN(yEven)) {
-                            if (aim.timeStampNs() - lastMessageTimeStampNsEven <= Math.pow(10, 10)) {
-                                state.setPosition(CprDecoder.decodePosition(xEven, yEven, xOdd, yOdd, parity));
-                                lastMessageTimeStampNsOdd = aim.timeStampNs();
-                            }
-                        }
-                    }
-                }
+                setPosition(aim);
             }
 
             case AirborneVelocityMessage aim -> {
-                state.setLastMessageTimeStampNs(aim.timeStampNs());
                 state.setVelocity(aim.speed());
                 state.setTrackOrHeading(aim.trackOrHeading());
             }
 
             default -> {}
+        }
+    }
+
+    private void setPosition(AirbornePositionMessage aim){
+        int parity = aim.parity();
+        switch (parity){
+            case 0 -> {
+                //TODO check what happens when decodePosition return null
+                xEven = aim.x();
+                yEven = aim.y();
+                lastMessageTimeStampNsEven = aim.timeStampNs();
+            }
+            case 1 ->{
+                xOdd = aim.x();
+                yOdd = aim.y();
+                lastMessageTimeStampNsOdd = aim.timeStampNs();
+            }
+        }
+        if(!Double.isNaN(xEven) && !Double.isNaN(yEven)) {
+            if (aim.timeStampNs() - lastMessageTimeStampNsEven <= Math.pow(10, 10)) {
+                state.setPosition(CprDecoder.decodePosition(xEven, yEven, xOdd, yOdd, parity));
+            }
         }
     }
 
