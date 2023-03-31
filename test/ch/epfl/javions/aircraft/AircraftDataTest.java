@@ -35,7 +35,7 @@ public class AircraftDataTest {
     @Test
     void constructorThrowsErrorIfTypeDesignatorIsNull(){
         AircraftRegistration registration = new AircraftRegistration("HB-JDC");
-        AircraftTypeDesignator typeDesignator = null;;
+        AircraftTypeDesignator typeDesignator = null;
         String model = "AIRBUS A-320neo";
         AircraftDescription description = new AircraftDescription("L2J");
         WakeTurbulenceCategory wakeTurbulenceCategory = WakeTurbulenceCategory.of("M");
@@ -47,7 +47,7 @@ public class AircraftDataTest {
     @Test
     void constructorThrowsErrorIfModelIsNull(){
         AircraftRegistration registration = new AircraftRegistration("HB-JDC");
-        AircraftTypeDesignator typeDesignator = new AircraftTypeDesignator("A20N");;
+        AircraftTypeDesignator typeDesignator = new AircraftTypeDesignator("A20N");
         String model = null;
         AircraftDescription description = new AircraftDescription("L2J");
         WakeTurbulenceCategory wakeTurbulenceCategory = WakeTurbulenceCategory.of("M");
@@ -59,7 +59,7 @@ public class AircraftDataTest {
     @Test
     void constructorThrowsErrorIfDescriptionIsNull(){
         AircraftRegistration registration = new AircraftRegistration("HB-JDC");
-        AircraftTypeDesignator typeDesignator = new AircraftTypeDesignator("A20N");;
+        AircraftTypeDesignator typeDesignator = new AircraftTypeDesignator("A20N");
         String model = "AIRBUS A-320neo";
         AircraftDescription description = null;
         WakeTurbulenceCategory wakeTurbulenceCategory = WakeTurbulenceCategory.of("M");
@@ -71,7 +71,7 @@ public class AircraftDataTest {
     @Test
     void constructorThrowsErrorIfWakeTurbulenceCategoryIsNull(){
         AircraftRegistration registration = new AircraftRegistration("HB-JDC");
-        AircraftTypeDesignator typeDesignator = new AircraftTypeDesignator("A20N");;
+        AircraftTypeDesignator typeDesignator = new AircraftTypeDesignator("A20N");
         String model = "AIRBUS A-320neo";
         AircraftDescription description = new AircraftDescription("L2J");
         WakeTurbulenceCategory wakeTurbulenceCategory = null;

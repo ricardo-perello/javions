@@ -234,7 +234,7 @@ public class all_test {
     void isFullWorksWithLastValidElement() throws IOException {
         String testFile = getClass().getResource("/samples.bin").getFile();
         testFile = URLDecoder.decode(testFile, UTF_8);
-        try (InputStream file = new FileInputStream(testFile);) {
+        try (InputStream file = new FileInputStream(testFile)) {
             PowerWindow powerWindow = new PowerWindow(file, 2);
             powerWindow.advanceBy(1198);
             assertTrue(powerWindow.isFull());
@@ -246,7 +246,7 @@ public class all_test {
     void isFullWorksWithInvalidElement() throws IOException {
         String testFile = getClass().getResource("/samples.bin").getFile();
         testFile = URLDecoder.decode(testFile, UTF_8);
-        try (InputStream file = new FileInputStream(testFile);) {
+        try (InputStream file = new FileInputStream(testFile)) {
             PowerWindow powerWindow = new PowerWindow(file, 2);
             powerWindow.advanceBy(1199);
             assertTrue(powerWindow.isFull());

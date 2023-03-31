@@ -10,16 +10,17 @@ import static java.util.Objects.requireNonNull;
 public record AirbornePositionMessage(long timeStampNs, IcaoAddress icaoAddress,
                                       double altitude, int parity, double x, double y) implements Message {
 
-    private static final double NORMALIZER  = Math.pow(2,-17);
+    private static final double NORMALIZER = Math.pow(2, -17);
 
     /**
      * constructor for AirbornePositionMessage
+     *
      * @param timeStampNs long, the timestamp of the message, in nanoseconds, must be non-negative
      * @param icaoAddress IcaoAdress, ICAO address of the sender of the message, must be non null
-     * @param altitude, double,  the altitude at which the aircraft was at the time the message was sent, in meters
-     * @param parity, int, parity of the message (0 if even, 1 if odd)
-     * @param x double, longitude of plane, (0<=x<1)
-     * @param y double, latitude of plane, (0<=y<1)
+     * @param altitude,   double,  the altitude at which the aircraft was at the time the message was sent, in meters
+     * @param parity,     int, parity of the message (0 if even, 1 if odd)
+     * @param x           double, longitude of plane, (0<=x<1)
+     * @param y           double, latitude of plane, (0<=y<1)
      */
     public AirbornePositionMessage {
         requireNonNull(icaoAddress);
@@ -31,6 +32,7 @@ public record AirbornePositionMessage(long timeStampNs, IcaoAddress icaoAddress,
 
     /**
      * public method of() that allows us to find the position of the plane
+     *
      * @param rawMessage RawMessage, message sent by the plane, we decode it so that we can find the important information
      * @return either null, if the altitude is NaN (look at altitudeFinder() for conditions), or a new AirbornePositionMessage
      * using the timeStampNs, icaoAddress, altitude, parity, longitude, latitude we found from the rawMessage
@@ -51,6 +53,7 @@ public record AirbornePositionMessage(long timeStampNs, IcaoAddress icaoAddress,
 
     /**
      * private method to calculte the altitude
+     *
      * @param rawMessageAltitude long, altitude extracted from the rawMessageMe
      * @return double, NaN if decodedGraySMALLEST == 0,5 or 6; or the altitude
      */
@@ -102,13 +105,14 @@ public record AirbornePositionMessage(long timeStampNs, IcaoAddress icaoAddress,
 
     /**
      * method that allows to pass from Gray code to int (Gray code is different to Binary)
+     *
      * @param grayCode long, the number we want to decode
-     * @param lenght int, length of the long
+     * @param length   int, length of the long
      * @return int, int related to the Gray code
      */
-    private static int decodeGray(long grayCode, int lenght) {
+    private static int decodeGray(long grayCode, int length) {
         int decodedGray = 0;
-        for (int i = 0; i < lenght; i++) {
+        for (int i = 0; i < length; i++) {
             decodedGray ^= grayCode >> i;
         }
         return decodedGray;

@@ -45,7 +45,7 @@ public class RawMessageTest {
     void icaoAddressWorksOnTrivialValues() {
         RawMessage rawMessage = new RawMessage(8096200, rawMessage1);
         IcaoAddress expected = new IcaoAddress("4B17E5");
-        System.out.println("");
+        System.out.println();
         IcaoAddress actual = rawMessage.icaoAddress();
         assertEquals(expected, actual);
     }

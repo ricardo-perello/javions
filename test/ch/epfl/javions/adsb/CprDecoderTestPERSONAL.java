@@ -46,7 +46,7 @@ public class CprDecoderTestPERSONAL {
         double y1 = 0.439203;
         int mostRecent = 0;
         GeoPos decodedPosition = CprDecoder.decodePosition(x0, y0, x1, y1, mostRecent);
-        assertEquals(null, decodedPosition);
+        assertNull(decodedPosition);
     }
 
     @Test
@@ -104,12 +104,9 @@ public class CprDecoderTestPERSONAL {
     @Test
     public void testDecodePositions() {
         double x0 = Math.scalb(111600, -17);
-        ;
         double x1 = Math.scalb(108865, -17);
-        ;
         double y0 = Math.scalb(94445, -17);
         double y1 = Math.scalb(77558, -17);
-        ;
         int mostRecent = 0;
         GeoPos decodedPosition = CprDecoder.decodePosition(x0, y0, x1, y1, mostRecent);
         assertEquals(7.476062, Units.convert((decodedPosition.longitudeT32()), Units.Angle.T32,
@@ -148,9 +145,9 @@ public class CprDecoderTestPERSONAL {
 
     @Test
     public void ArgumentTest2() {
-        assertEquals(null, CprDecoder.decodePosition(-5, -5, 0, 0, 0));
-        assertEquals(null, CprDecoder.decodePosition(0, 0, -5, -5, 0));
-        assertEquals(null, CprDecoder.decodePosition(0, 0, 0, -5, 0));
+        assertNull(CprDecoder.decodePosition(-5, -5, 0, 0, 0));
+        assertNull(CprDecoder.decodePosition(0, 0, -5, -5, 0));
+        assertNull(CprDecoder.decodePosition(0, 0, 0, -5, 0));
     }
 
     @Test

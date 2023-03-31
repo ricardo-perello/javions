@@ -31,7 +31,7 @@ class BitsTest {
     void bitsExtractUIntCanExtractAllNibbles2() {
         long v = 0b01;
         var n = Bits.testBit(v,0);
-        assertEquals(true, n);
+        assertTrue(n);
     }
 
     @Test
