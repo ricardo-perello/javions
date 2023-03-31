@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public final class AdsbDemodulator {
+    private static final int LENGTH_OF_WINDOW = 1200;
+    private static final int LENGTH_RAWMESSAGE = 14;
     private final PowerWindow powerWindow;
     /**
      * constructor for AdsbDemodulator
@@ -33,7 +35,7 @@ public final class AdsbDemodulator {
                         + powerWindow.get(25) + powerWindow.get(30) + powerWindow.get(40);
 
                 if (sumPics >= (2 * sumValleys)) {
-                    byte[] bytes = new byte[14];
+                    byte[] bytes = new byte[LENGTH_RAWMESSAGE];
                     for (int i = 0; i < 8; ++i) {
 
                         if ((powerWindow.get(80 + (10 * i))) >= powerWindow.get(85 + (10 * i))) {
@@ -41,8 +43,8 @@ public final class AdsbDemodulator {
                         }
                     }
 
-                    if (RawMessage.size(bytes[0]) == 14) {
-                        for (int i = 1; i < 14; ++i) {
+                    if (RawMessage.size(bytes[0]) == LENGTH_RAWMESSAGE) {
+                        for (int i = 1; i < LENGTH_RAWMESSAGE; ++i) {
                             for (int j = 0; j < 8; ++j) {
 
                                 if (powerWindow.get(80 + (80 * i) + (10 * j)) >=
@@ -55,7 +57,7 @@ public final class AdsbDemodulator {
 
                         if (result != null) {
                             //previousSumPics = 0;
-                            powerWindow.advanceBy(1200);
+                            powerWindow.advanceBy(LENGTH_OF_WINDOW);
                             return result;
                         }
                     }
