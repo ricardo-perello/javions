@@ -60,7 +60,7 @@ public record AirborneVelocityMessage (long timeStampNs, IcaoAddress icaoAddress
                 if (subtype == 2) vel *= 4;
                 return new AirborneVelocityMessage(timeStampNs,icaoAddress,vel,dir);
             }
-            case 3, 4 -> {
+            case 3, 4 -> { //todo fix airspeed
                 int headingAvailable = Bits.extractUInt(contentOfMessage, 21, 1);
                 //direction
                 double heading;
