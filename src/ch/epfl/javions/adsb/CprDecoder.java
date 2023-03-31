@@ -33,7 +33,6 @@ public class CprDecoder {
         double latitudeTurn1 = (WIDTH_ZONES_LATITUDE_1 * (zLatitude1 + y1));
 
 
-
         double A0 = Math.acos(1 - (1 - Math.cos(2 * Math.PI * WIDTH_ZONES_LATITUDE_0)) /
                 Math.pow(Math.cos(Units.convert(latitudeTurn0, Units.Angle.TURN, Units.Angle.RADIAN)), 2));
         double A1 = Math.acos(1 - (1 - Math.cos(2 * Math.PI * WIDTH_ZONES_LATITUDE_0)) /
@@ -57,8 +56,7 @@ public class CprDecoder {
         }
 
 
-
-        if(Double.isNaN(A0)){
+        if (Double.isNaN(A0)) {
             double numberZonesLongitude0 = 1;
             return (mostRecent == 0) ?
                     new GeoPos((int) convertToT32(x0), latitude0T32) :
@@ -69,15 +67,14 @@ public class CprDecoder {
         double widthZoneLongitude1 = 1 / numberZonesLongitude1;
 
         double zLongitude = Math.rint(x0 * numberZonesLongitude1 - x1 * zA0);
-        if(mostRecent == 0){
+        if (mostRecent == 0) {
             double zLongitude0 = (zLongitude < 0) ? zLongitude + zA0 : zLongitude;
-            double longitudeTurn =  widthZoneLongitude0 * (zLongitude0 + x0);
+            double longitudeTurn = widthZoneLongitude0 * (zLongitude0 + x0);
             longitudeTurn = turnConvert(longitudeTurn);
             int longitudeT32 = (int) Math.rint(convertToT32(longitudeTurn));
             return new GeoPos(longitudeT32, latitude0T32);
 
-        }
-        else{
+        } else {
             double zLongitude1 = (zLongitude < 0) ? zLongitude + numberZonesLongitude1 : zLongitude;
             double longitudeTurn = widthZoneLongitude1 * (zLongitude1 + x1);
             longitudeTurn = turnConvert(longitudeTurn);
@@ -90,7 +87,7 @@ public class CprDecoder {
         return turn >= 0.5 ? turn - 1 : turn;
     }
 
-    private static double convertToT32(double turn){
+    private static double convertToT32(double turn) {
         return Units.convert(turn, Units.Angle.TURN, Units.Angle.T32);
     }
 }

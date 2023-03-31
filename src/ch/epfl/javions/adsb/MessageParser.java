@@ -1,12 +1,9 @@
 package ch.epfl.javions.adsb;
 
-import ch.epfl.javions.Bits;
-import ch.epfl.javions.ByteString;
-
-
 public class MessageParser {
     /**
      * method allowing to determine what type of message the parameter is
+     *
      * @param rawMessage RawMessage, message we want to determine what type of message it is
      * @return AircraftIdentificationMessage.of, if the parameter's type code is between 1 and 4 included,
      * AirbornePositionMessage.of, if the parameter's type code is between 9 and 18 or 20 and 22,
@@ -22,5 +19,5 @@ public class MessageParser {
             default -> null;
         };
     }
-    
+
 }

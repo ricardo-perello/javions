@@ -9,8 +9,10 @@ public final class AdsbDemodulator {
     private static final int LENGTH_OF_WINDOW = 1200;
     private static final int LENGTH_RAWMESSAGE = 14;
     private final PowerWindow powerWindow;
+
     /**
      * constructor for AdsbDemodulator
+     *
      * @param samplesStream, InputStream, document from where we are going to extract the values
      * @throws IOException error if mistake in entry
      */
@@ -20,6 +22,7 @@ public final class AdsbDemodulator {
 
     /**
      * method that demodulates the stream
+     *
      * @return raw message or null if window is not full
      * @throws IOException error from input or output
      */

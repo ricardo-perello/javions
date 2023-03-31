@@ -9,6 +9,7 @@ public final class PowerComputer {
     private final short[] samplesDecoded;
     private final SamplesDecoder samplesDecoder;
     private final short[] values = new short[8];
+
     /**
      * constructor of PowerComputer,
      * we verify that batchSize is possible and a multiple of 8
@@ -24,18 +25,19 @@ public final class PowerComputer {
     public PowerComputer(InputStream stream, int batchSize) {
         Preconditions.checkArgument(batchSize > 0);
         Preconditions.checkArgument((batchSize % 8) == 0);
-        samplesDecoded = new short[batchSize*2];
-        samplesDecoder = new SamplesDecoder(stream, 2*batchSize);
+        samplesDecoded = new short[batchSize * 2];
+        samplesDecoder = new SamplesDecoder(stream, 2 * batchSize);
     }
 
     /**
      * method that does the calculation to give the power of the values we have sampled
+     *
      * @param Batch table where we put in the value the power for every i
      * @return int, the number of batches of power that have been placed in the Batch[]
      * @throws IOException exception in case of error in the input / output
      */
     public int readBatch(int[] Batch) throws IOException {
-        Preconditions.checkArgument(Batch.length == (samplesDecoded.length/2));
+        Preconditions.checkArgument(Batch.length == (samplesDecoded.length / 2));
         int batchSize = samplesDecoder.readBatch(samplesDecoded);
         for (int i = 1; i < batchSize; i += 2) {
             //For every i in the loop, we add two new values into the table values from the table decodedSampleTable found
@@ -52,9 +54,9 @@ public final class PowerComputer {
                     (values[(i) % 8]);
             int oddNums = (values[(i + 1) % 8]) - (values[(i + 3) % 8]) + (values[(i + 5) % 8]) -
                     (values[(i + 7) % 8]);
-            Batch[(i-1) / 2] = evenNums * evenNums + oddNums * oddNums;
+            Batch[(i - 1) / 2] = evenNums * evenNums + oddNums * oddNums;
         }
-        return batchSize/2;
+        return batchSize / 2;
     }
 
 

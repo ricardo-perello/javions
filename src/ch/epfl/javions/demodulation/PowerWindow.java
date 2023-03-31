@@ -44,14 +44,18 @@ public final class PowerWindow {
      *
      * @return int, position of the window in the stream
      */
-    public long position(){return absoluteWindowPosition;}
+    public long position() {
+        return absoluteWindowPosition;
+    }
 
     /**
      * method to determine if window is full
      *
      * @return boolean, true while windowPosition and windowSize is smaller than the numOfSample
      */
-    public boolean isFull() {return (windowSize <= SamplesLeft);}
+    public boolean isFull() {
+        return (windowSize <= SamplesLeft);
+    }
 
     /**
      * method get, that allows to find the value of the power at the index i
@@ -59,26 +63,27 @@ public final class PowerWindow {
      * @param i, int, position we are interested in
      * @return the value of the power at index i
      */
-    public int get(int i){
-        if (!((i >= 0)&&(i < windowSize))){
+    public int get(int i) {
+        if (!((i >= 0) && (i < windowSize))) {
             throw new IndexOutOfBoundsException();
         }
-        return windowPositionInsideBatch + i < BATCH_SIZE ? array1[windowPositionInsideBatch +i] :
-                array2[i - (BATCH_SIZE- windowPositionInsideBatch)];
+        return windowPositionInsideBatch + i < BATCH_SIZE ? array1[windowPositionInsideBatch + i] :
+                array2[i - (BATCH_SIZE - windowPositionInsideBatch)];
     }
 
     /**
      * method that allows us to advance the window by 1
+     *
      * @throws IOException error of the input / output from the powerComputer.readBatch
      */
-    public void advance() throws IOException{
+    public void advance() throws IOException {
         ++windowPositionInsideBatch;
         ++absoluteWindowPosition;
         --SamplesLeft;
-        if (windowPositionInsideBatch + windowSize -1 == BATCH_SIZE) {
+        if (windowPositionInsideBatch + windowSize - 1 == BATCH_SIZE) {
             SamplesLeft += powerComputer.readBatch(array2);
         }
-        if (windowPositionInsideBatch == BATCH_SIZE){
+        if (windowPositionInsideBatch == BATCH_SIZE) {
             switchArray();
             windowPositionInsideBatch = 0;
         }
@@ -90,9 +95,9 @@ public final class PowerWindow {
      * @param offset int, the number of position we want to move by
      * @throws IOException exception related to advance()
      */
-    public void advanceBy(int offset) throws IOException{
+    public void advanceBy(int offset) throws IOException {
         Preconditions.checkArgument(offset >= 0);
-        for (int i = 0; i < offset; i++) { 
+        for (int i = 0; i < offset; i++) {
             advance();
         }
     }

@@ -14,6 +14,7 @@ public class Units {
     public static class Length {
         private Length() {
         }
+
         public static final double METER = 1;
         public static final double CENTIMETER = CENTI * METER;
         public static final double KILOMETER = KILO * METER;
@@ -29,8 +30,9 @@ public class Units {
     public static class Angle {
         private Angle() {
         }
+
         public static final double RADIAN = 1;
-        public static final double TURN = 2 * Math.PI * RADIAN ;
+        public static final double TURN = 2 * Math.PI * RADIAN;
         public static final double DEGREE = TURN / 360;
         public static final double T32 = Math.scalb(TURN, -32);
     }
@@ -42,6 +44,7 @@ public class Units {
     public static class Time {
         private Time() {
         }
+
         public static final double SECOND = 1;
         public static final double MINUTE = 60 * SECOND;
         public static final double HOUR = 60 * MINUTE;
@@ -52,16 +55,19 @@ public class Units {
      * defines knot, kilometer per hour
      */
     public static class Speed {
-        private Speed() {}
+        private Speed() {
+        }
+
         public static final double KNOT = Length.NAUTICAL_MILE / Time.HOUR;
         public static final double KILOMETER_PER_HOUR = Length.KILOMETER / Time.HOUR;
     }
 
     /**
      * method that allows to convert from a unit to another
-     * @param value double, is the value of the measurement we want to convert
+     *
+     * @param value    double, is the value of the measurement we want to convert
      * @param fromUnit double, initial unit
-     * @param toUnit double, final unit
+     * @param toUnit   double, final unit
      * @return a double which is the new value converted to the new unit
      */
     public static double convert(double value, double fromUnit, double toUnit) {
@@ -70,7 +76,8 @@ public class Units {
 
     /**
      * converts from a given unit to the unit using SI
-     * @param value double, value of the measurement we want to convert
+     *
+     * @param value    double, value of the measurement we want to convert
      * @param fromUnit double, initial unit
      * @return a double which is the new value
      */
@@ -80,7 +87,8 @@ public class Units {
 
     /**
      * converts from a base unit to a given unit
-     * @param value double, value of the measurement we want to convert
+     *
+     * @param value  double, value of the measurement we want to convert
      * @param toUnit double, final unit
      * @return a double which is the new value
      */
