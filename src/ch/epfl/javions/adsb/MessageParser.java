@@ -14,7 +14,6 @@ public class MessageParser {
      * if the parameter's type code does not corresponds to one of these conditions, we return null
      */
     public static Message parse(RawMessage rawMessage) {
-        long rawMessageMe = rawMessage.payload();
         int typeOfMessage = rawMessage.typeCode();
         return switch (typeOfMessage) {
             case 1, 2, 3, 4 -> AircraftIdentificationMessage.of(rawMessage);

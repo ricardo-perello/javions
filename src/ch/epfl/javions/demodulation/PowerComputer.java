@@ -44,7 +44,7 @@ public final class PowerComputer {
             //previous batch at the same position.
             //His allows us to always have the eight values that interest us in the same table.
             //It does not matter if they are not in order since a sum commutative.
-
+            //TODO quitar modulo mirar audio enviado a ricardo
             values[i % 8] = samplesDecoded[i];
             values[(i - 1) % 8] = samplesDecoded[i - 1];
             //We then select the values that interest us using the ints evenNumbers & oddNumbers
