@@ -11,6 +11,7 @@ public record AirbornePositionMessage(long timeStampNs, IcaoAddress icaoAddress,
                                       double altitude, int parity, double x, double y) implements Message {
 
     private static final double NORMALIZER = Math.pow(2, -17);
+    private static final int[] POSITIONS = {4, 2, 0, 10, 8, 6, 5, 3, 1, 11, 9, 7};
 
     /**
      * constructor for AirbornePositionMessage
@@ -67,29 +68,19 @@ public record AirbornePositionMessage(long timeStampNs, IcaoAddress icaoAddress,
             return Units.convert(altitudeFeet, Units.Length.FOOT, Units.Length.METER);
         }
         // if qAltitude == 0
-        //we reorder rawMessageAltitude and only take the first 9
-        //TODO find a fori for that shit
-        /*long rawMessageAltitudeUnraveled = 0;
-        for (int i = 0; i < 12; i++) {
-            rawMessageAltitudeUnraveled |= (long) Bits.extractUInt(rawMessageAltitude, 4, 1) << 11-i;
+        //we reorder rawMessageAltitude
+        long sortedAltitude = sortRawMessageAltitude(rawMessageAltitude);
 
-        }*/
-        long rawMessageAltitudeUnraveledBIGGEST = (long) Bits.extractUInt(rawMessageAltitude, 4, 1) << 8 |
-                (long) Bits.extractUInt(rawMessageAltitude, 2, 1) << 7 |
-                (long) Bits.extractUInt(rawMessageAltitude, 0, 1) << 6 |
-                (long) Bits.extractUInt(rawMessageAltitude, 10, 1) << 5 |
-                (long) Bits.extractUInt(rawMessageAltitude, 8, 1) << 4 |
-                (long) Bits.extractUInt(rawMessageAltitude, 6, 1) << 3 |
-                (long) Bits.extractUInt(rawMessageAltitude, 5, 1) << 2 |
-                (long) Bits.extractUInt(rawMessageAltitude, 3, 1) << 1 |
-                (long) Bits.extractUInt(rawMessageAltitude, 1, 1);
-        //we reorder rawMessageAltitude and only take the last 3
-        long rawMessageAltitudeUnraveledSMALLEST = (long) Bits.extractUInt(rawMessageAltitude, 11, 1) << 2 |
-                (long) Bits.extractUInt(rawMessageAltitude, 9, 1) << 1 |
-                Bits.extractUInt(rawMessageAltitude, 7, 1);
+        //we take the first 9
+        long sortedAltitudeBIGGEST = Bits.extractUInt(sortedAltitude,3,9);
 
-        int decodedGrayBIGGEST = decodeGray(rawMessageAltitudeUnraveledBIGGEST, 9);
-        int decodedGraySMALLEST = decodeGray(rawMessageAltitudeUnraveledSMALLEST, 3);
+        //we take the last 3
+        long sortedAltitudeSMALLEST = Bits.extractUInt(sortedAltitude,0,3);
+
+        //tranform gray code
+        int decodedGrayBIGGEST = decodeGray(sortedAltitudeBIGGEST, 9);
+        int decodedGraySMALLEST = decodeGray(sortedAltitudeSMALLEST, 3);
+
         if (decodedGraySMALLEST == 0 || decodedGraySMALLEST == 5 || decodedGraySMALLEST == 6) {
             return Double.NaN;
         }
@@ -116,6 +107,14 @@ public record AirbornePositionMessage(long timeStampNs, IcaoAddress icaoAddress,
             decodedGray ^= grayCode >> i;
         }
         return decodedGray;
+    }
+
+    private static long sortRawMessageAltitude(long rawMessageAltitude) {
+        long sortedAltitude = 0;
+        for (int i = 0; i < 12; i++) {
+                sortedAltitude |= (long) Bits.extractUInt(rawMessageAltitude, POSITIONS[i], 1) << (11-i);
+        }
+        return sortedAltitude;
     }
 
 }
