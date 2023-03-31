@@ -6,7 +6,8 @@ import static ch.epfl.javions.Preconditions.checkArgument;
 
 public record AircraftDescription(String string) {
     static Pattern check = Pattern.compile("[ABDGHLPRSTV-][0123468][EJPT-]");
+
     public AircraftDescription {
-        checkArgument(string.isEmpty()|| (check.matcher(string).matches()));
+        checkArgument(string.isEmpty() || (check.matcher(string).matches()));
     }
 }

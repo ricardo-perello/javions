@@ -5,7 +5,8 @@ public enum WakeTurbulenceCategory {
     MEDIUM,
     HEAVY,
     UNKNOWN;
-    public static WakeTurbulenceCategory of(String s){
+
+    public static WakeTurbulenceCategory of(String s) {
         return switch (s) {
             case "L" -> LIGHT;
             case "M" -> MEDIUM;

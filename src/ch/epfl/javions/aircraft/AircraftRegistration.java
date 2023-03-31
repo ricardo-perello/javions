@@ -7,7 +7,8 @@ import static ch.epfl.javions.Preconditions.checkArgument;
 
 public record AircraftRegistration(String string) {
     static Pattern check = Pattern.compile("[A-Z0-9 .?/_+-]+");
-    public AircraftRegistration{
+
+    public AircraftRegistration {
         checkArgument((!string.isEmpty()) && (check.matcher(string).matches()));
     }
 }
