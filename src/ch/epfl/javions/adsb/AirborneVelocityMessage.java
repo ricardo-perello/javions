@@ -5,6 +5,8 @@ import ch.epfl.javions.Preconditions;
 import ch.epfl.javions.Units;
 import ch.epfl.javions.aircraft.IcaoAddress;
 import java.util.Objects;
+
+import static ch.epfl.javions.Units.Angle.TURN;
 import static ch.epfl.javions.Units.Speed.KNOT;
 
 public record AirborneVelocityMessage (long timeStampNs, IcaoAddress icaoAddress,
@@ -60,13 +62,13 @@ public record AirborneVelocityMessage (long timeStampNs, IcaoAddress icaoAddress
                 if (subtype == 2) vel *= 4;
                 return new AirborneVelocityMessage(timeStampNs,icaoAddress,vel,dir);
             }
-            case 3, 4 -> { //todo fix airspeed
+            case 3, 4 -> {
                 int headingAvailable = Bits.extractUInt(contentOfMessage, 21, 1);
                 //direction
                 double heading;
                 if (headingAvailable == 1) {
                     heading = (Bits.extractUInt(contentOfMessage, 11, 10) / Math.pow(2, 10));
-                    //heading = Units.convertTo(heading, DEGREE);
+                    heading = Units.convertFrom(heading, TURN);
                 }
                 else {return null;}
 

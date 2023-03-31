@@ -60,4 +60,14 @@ public class AirborneVelocityMessageTest {
         assertEquals(243.984375, Units.convertTo(message.trackOrHeading(),Units.Angle.DEGREE));
     }
 
+    @Test
+    void ofSubType2() {
+        AirborneVelocityMessage message = AirborneVelocityMessage.of(new RawMessage(0,
+                new ByteString(HexFormat.of().parseHex("8D4B1A00EA0DC89E8F7C0857D5F5"))));
+
+        assertEquals(1061.4503686262444, message.speed());
+        assertEquals(4.221861463749146, message.trackOrHeading());
+    }
+
+
 }
