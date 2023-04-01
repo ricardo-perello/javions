@@ -25,7 +25,7 @@ public class CprDecoder {
     public static GeoPos decodePosition(double x0, double y0, double x1, double y1, int mostRecent) {
 
         Preconditions.checkArgument(mostRecent == 0 || mostRecent == 1);
-
+        //TODO metotdo para zLatitude???????
         double zLatitude = Math.rint(y0 * NUMBER_ZONES_LATITUDE_1 - y1 * NUMBER_ZONES_LATITUDE_0);
         double zLatitude0 = zCoordinatesPositive(zLatitude, NUMBER_ZONES_LATITUDE_0);
         double zLatitude1 = zCoordinatesPositive(zLatitude, NUMBER_ZONES_LATITUDE_1);
@@ -41,46 +41,51 @@ public class CprDecoder {
             return null;
         }
 
-
-        latitudeTurn0 = turnConvert(latitudeTurn0);
-        latitudeTurn1 = turnConvert(latitudeTurn1);
-        int latitude0T32 = (int) Math.rint(convertToT32(latitudeTurn0));
-        int latitude1T32 = (int) Math.rint(convertToT32(latitudeTurn1));
-        if (!GeoPos.isValidLatitudeT32(latitude0T32)) {
-            return null;
-        }
-        if (!GeoPos.isValidLatitudeT32(latitude1T32)) {
-            return null;
-        }
-
-        if (Double.isNaN(A0)) {
-            return (mostRecent == 0) ?
-                    new GeoPos((int) convertToT32(x0), latitude0T32) :
-                    new GeoPos((int) convertToT32(x1), latitude1T32);
-        }
         double numberZonesLongitude1 = zA0 - 1;
+        //TODO ver si vale la pena usar la private method widthCalculator
         double widthZoneLongitude0 = 1 / zA0;
         double widthZoneLongitude1 = 1 / numberZonesLongitude1;
-
         double zLongitude = Math.rint(x0 * numberZonesLongitude1 - x1 * zA0);
-        if (mostRecent == 0) {
+
+
+        if(mostRecent == 0){
+            latitudeTurn0 = turnVerifier(latitudeTurn0);
+            int latitude0T32 = (int) Math.rint(convertToT32(latitudeTurn0));
+            if (!GeoPos.isValidLatitudeT32(latitude0T32)) {
+                return null;
+            }
+            if (Double.isNaN(A0)){
+                return new GeoPos((int) convertToT32(x0), latitude0T32);
+            }
+
             double zLongitude0 = zCoordinatesPositive(zLongitude, zA0);
             double longitudeTurn = coordinateTurnCalculator(widthZoneLongitude0, zLongitude0, x0);
-            longitudeTurn = turnConvert(longitudeTurn);
+            longitudeTurn = turnVerifier(longitudeTurn);
             int longitudeT32 = (int) Math.rint(convertToT32(longitudeTurn));
             return new GeoPos(longitudeT32, latitude0T32);
 
-        } else {
+        }
+        else{
+            latitudeTurn1 = turnVerifier(latitudeTurn1);
+            int latitude1T32 = (int) Math.rint(convertToT32(latitudeTurn1));
+
+            if (!GeoPos.isValidLatitudeT32(latitude1T32)) {
+                return null;
+            }
+            if (Double.isNaN(A0)){
+                return new GeoPos((int) convertToT32(x0), latitude1T32);
+            }
+
             double zLongitude1 = zCoordinatesPositive(zLongitude, numberZonesLongitude1);
             double longitudeTurn = coordinateTurnCalculator(widthZoneLongitude1, zLongitude1, x1);
-            longitudeTurn = turnConvert(longitudeTurn);
+            longitudeTurn = turnVerifier(longitudeTurn);
             int longitudeT32 = (int) Math.rint(convertToT32(longitudeTurn));
             return new GeoPos(longitudeT32, latitude1T32);
         }
     }
     //TODO comentarios
 
-    private static double turnConvert(double turn) {
+    private static double turnVerifier(double turn) {
         return turn >= 0.5 ? turn - 1 : turn;
     }
 
@@ -103,5 +108,9 @@ public class CprDecoder {
 
     private static double zCoordinatesPositive(double zCoodinates, double numberZonesCoordinates) {
         return (zCoodinates < 0) ? zCoodinates + numberZonesCoordinates : zCoodinates;
+    }
+
+    private static double widthCalculator(double numberOfZones){
+        return 1.0/numberOfZones;
     }
 }

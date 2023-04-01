@@ -45,6 +45,7 @@ public final class Crc24 {
                 crc = ((crc << 1) | extractUInt(b, i, 1)) ^ table[extractUInt(crc, 23, 1)];
             }
         }
+        //TODO pq no se usa un solo fori
         for (int i = 0; i < 3; i++) {
             for (int j = 7; j >= 0; j--) {
                 crc = ((crc << 1)) ^ table[extractUInt(crc, 23, 1)];
