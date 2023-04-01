@@ -27,18 +27,16 @@ public class CprDecoder {
         Preconditions.checkArgument(mostRecent == 0 || mostRecent == 1);
 
         double zLatitude = Math.rint(y0 * NUMBER_ZONES_LATITUDE_1 - y1 * NUMBER_ZONES_LATITUDE_0);
-        double zLatitude0 = (zLatitude < 0) ? zLatitude + NUMBER_ZONES_LATITUDE_0 : zLatitude;
-        double zLatitude1 = (zLatitude < 0) ? zLatitude + NUMBER_ZONES_LATITUDE_1 : zLatitude;
-        double latitudeTurn0 = (WIDTH_ZONES_LATITUDE_0 * (zLatitude0 + y0));
-        double latitudeTurn1 = (WIDTH_ZONES_LATITUDE_1 * (zLatitude1 + y1));
+        double zLatitude0 = zCoordinatesPositive(zLatitude, NUMBER_ZONES_LATITUDE_0);
+        double zLatitude1 = zCoordinatesPositive(zLatitude, NUMBER_ZONES_LATITUDE_1);
+        double latitudeTurn0 = coordinateTurnCalculator(WIDTH_ZONES_LATITUDE_0, zLatitude0, y0);
+        double latitudeTurn1 = coordinateTurnCalculator(WIDTH_ZONES_LATITUDE_1, zLatitude1, y1);
 
 
-        double A0 = Math.acos(1 - (1 - Math.cos(2 * Math.PI * WIDTH_ZONES_LATITUDE_0)) /
-                Math.pow(Math.cos(Units.convert(latitudeTurn0, Units.Angle.TURN, Units.Angle.RADIAN)), 2));
-        double A1 = Math.acos(1 - (1 - Math.cos(2 * Math.PI * WIDTH_ZONES_LATITUDE_0)) /
-                Math.pow(Math.cos(Units.convert(latitudeTurn1, Units.Angle.TURN, Units.Angle.RADIAN)), 2));
-        double zA0 = Math.floor((2 * Math.PI) / A0);
-        double zA1 = Math.floor((2 * Math.PI) / A1);
+        double A0 = ACalculator(latitudeTurn0);
+        double A1 = ACalculator(latitudeTurn1);
+        double zA0 = zACalculator(A0);
+        double zA1 = zACalculator(A1);
         if (zA1 != zA0 && !Double.isNaN(A0) && !Double.isNaN(A1)) {
             return null;
         }
@@ -55,9 +53,7 @@ public class CprDecoder {
             return null;
         }
 
-
         if (Double.isNaN(A0)) {
-            double numberZonesLongitude0 = 1;
             return (mostRecent == 0) ?
                     new GeoPos((int) convertToT32(x0), latitude0T32) :
                     new GeoPos((int) convertToT32(x1), latitude1T32);
@@ -68,20 +64,21 @@ public class CprDecoder {
 
         double zLongitude = Math.rint(x0 * numberZonesLongitude1 - x1 * zA0);
         if (mostRecent == 0) {
-            double zLongitude0 = (zLongitude < 0) ? zLongitude + zA0 : zLongitude;
-            double longitudeTurn = widthZoneLongitude0 * (zLongitude0 + x0);
+            double zLongitude0 = zCoordinatesPositive(zLongitude, zA0);
+            double longitudeTurn = coordinateTurnCalculator(widthZoneLongitude0, zLongitude0, x0);
             longitudeTurn = turnConvert(longitudeTurn);
             int longitudeT32 = (int) Math.rint(convertToT32(longitudeTurn));
             return new GeoPos(longitudeT32, latitude0T32);
 
         } else {
-            double zLongitude1 = (zLongitude < 0) ? zLongitude + numberZonesLongitude1 : zLongitude;
-            double longitudeTurn = widthZoneLongitude1 * (zLongitude1 + x1);
+            double zLongitude1 = zCoordinatesPositive(zLongitude, numberZonesLongitude1);
+            double longitudeTurn = coordinateTurnCalculator(widthZoneLongitude1, zLongitude1, x1);
             longitudeTurn = turnConvert(longitudeTurn);
             int longitudeT32 = (int) Math.rint(convertToT32(longitudeTurn));
             return new GeoPos(longitudeT32, latitude1T32);
         }
     }
+    //TODO comentarios
 
     private static double turnConvert(double turn) {
         return turn >= 0.5 ? turn - 1 : turn;
@@ -89,5 +86,22 @@ public class CprDecoder {
 
     private static double convertToT32(double turn) {
         return Units.convert(turn, Units.Angle.TURN, Units.Angle.T32);
+    }
+
+    private static double ACalculator(double latitudeTurn) {
+        return Math.acos(1 - (1 - Math.cos(2 * Math.PI * WIDTH_ZONES_LATITUDE_0)) /
+                Math.pow(Math.cos(Units.convert(latitudeTurn, Units.Angle.TURN, Units.Angle.RADIAN)), 2));
+    }
+
+    private static int zACalculator(double A) {
+        return (int) Math.floor((2 * Math.PI) / A);
+    }
+
+    private static double coordinateTurnCalculator(double widthZone, double numberZone, double initialCoordinate) {
+        return widthZone * (numberZone + initialCoordinate);
+    }
+
+    private static double zCoordinatesPositive(double zCoodinates, double numberZonesCoordinates) {
+        return (zCoodinates < 0) ? zCoodinates + numberZonesCoordinates : zCoodinates;
     }
 }

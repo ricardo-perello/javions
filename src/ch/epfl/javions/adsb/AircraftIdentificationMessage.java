@@ -46,7 +46,6 @@ public record AircraftIdentificationMessage(long timeStampNs, IcaoAddress icaoAd
         StringBuilder string = new StringBuilder();
         for (int i = 7; i >= 0; i--) {
             string.append(ALPHABET.charAt(extractUInt(payload, i * 6, 6)));
-
         }
         string = new StringBuilder(string.toString().stripTrailing());
         if (string.toString().contains("?")) {

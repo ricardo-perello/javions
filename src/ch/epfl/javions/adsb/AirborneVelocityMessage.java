@@ -89,6 +89,7 @@ public record AirborneVelocityMessage(long timeStampNs, IcaoAddress icaoAddress,
                 if (subtype == 2) vel *= 4;
                 return new AirborneVelocityMessage(timeStampNs, icaoAddress, vel, dir);
             }
+
             case 3, 4 -> {
                 int headingAvailable = Bits.extractUInt(contentOfMessage, HEADING_AVAILABLE_START, HEADING_AVAILABLE_LENGTH);
                 //direction

@@ -12,6 +12,22 @@ public record AirbornePositionMessage(long timeStampNs, IcaoAddress icaoAddress,
 
     private static final double NORMALIZER = Math.pow(2, -17);
     private static final int[] POSITIONS = {4, 2, 0, 10, 8, 6, 5, 3, 1, 11, 9, 7};
+    private static final int STARTPARITY = 34;
+    private static final int STARTLATITUDE = 17;
+    private static final int STARTLONGITUDE = 0;
+    private static final int SIZE_PARITY = 1;
+    private static final int SIZE_COORDINATES = 17;
+    private static final int START_ALTITUDE_IN_RAWMESSAGEME = 36;
+    private static final int SIZE_ALTITUDE_IN_RAWMESSAGEME = 12;
+    private static final int MULTIPLIER_ALTITUDE1 = 25;
+    private static final int SETBACK_ALTITUDE1 = 1000;
+
+    private static final int SMALL_MULTIPLIER_ALTITUDE0 = 100;
+    private static final int BIG_MULTIPLIER_ALTITUDE0 = 500;
+    private static final int SETBACK_ALTITUDE0 = 1300;
+
+
+
 
     /**
      * constructor for AirbornePositionMessage
@@ -40,15 +56,16 @@ public record AirbornePositionMessage(long timeStampNs, IcaoAddress icaoAddress,
      */
     public static AirbornePositionMessage of(RawMessage rawMessage) {
         long rawMessageME = rawMessage.payload();
-        double altitude = altitudeFinder(Bits.extractUInt(rawMessageME, 36, 12));
+        double altitude = altitudeFinder(Bits.extractUInt(rawMessageME, START_ALTITUDE_IN_RAWMESSAGEME, SIZE_ALTITUDE_IN_RAWMESSAGEME));
         if (Double.isNaN(altitude)) {
             return null;
         }
         long timeStampNs = rawMessage.timeStampNs();
         IcaoAddress icaoAddress = rawMessage.icaoAddress();
-        int parity = Bits.extractUInt(rawMessageME, 34, 1);
-        double latitude = Bits.extractUInt(rawMessageME, 17, 17) * NORMALIZER;
-        double longitude = Bits.extractUInt(rawMessageME, 0, 17) * NORMALIZER;
+
+        int parity = Bits.extractUInt(rawMessageME, STARTPARITY, SIZE_PARITY);
+        double latitude = Bits.extractUInt(rawMessageME, STARTLATITUDE, SIZE_COORDINATES) * NORMALIZER;
+        double longitude = Bits.extractUInt(rawMessageME, STARTLONGITUDE, SIZE_COORDINATES) * NORMALIZER;
         return new AirbornePositionMessage(timeStampNs, icaoAddress, altitude, parity, longitude, latitude);
     }
 
@@ -64,10 +81,11 @@ public record AirbornePositionMessage(long timeStampNs, IcaoAddress icaoAddress,
         if (qAltitude) {
             rawMessageAltitude = (long) Bits.extractUInt(rawMessageAltitude, 5, 7) << 4 |
                     Bits.extractUInt(rawMessageAltitude, 0, 4);
-            double altitudeFeet = 25 * rawMessageAltitude - 1000;
-            return Units.convert(altitudeFeet, Units.Length.FOOT, Units.Length.METER);
+            double altitudeFeet = MULTIPLIER_ALTITUDE1 * rawMessageAltitude - SETBACK_ALTITUDE1;
+            //return Units.convert(altitudeFeet, Units.Length.FOOT, Units.Length.METER);
+            return Units.convertFrom(altitudeFeet,Units.Length.FOOT);
         }
-        // if qAltitude == 0
+        //qAltitude == 0
         //we reorder rawMessageAltitude
         long sortedAltitude = sortRawMessageAltitude(rawMessageAltitude);
 
@@ -90,8 +108,10 @@ public record AirbornePositionMessage(long timeStampNs, IcaoAddress icaoAddress,
         if (decodedGrayBIGGEST % 2 == 1) {
             decodedGraySMALLEST = 6 - decodedGraySMALLEST;
         }
-        double altitudeFEET = decodedGraySMALLEST * 100 + decodedGrayBIGGEST * 500 - 1300;
-        return Units.convert(altitudeFEET, Units.Length.FOOT, Units.Length.METER);
+        double altitudeFEET = decodedGraySMALLEST * SMALL_MULTIPLIER_ALTITUDE0 +
+                decodedGrayBIGGEST * BIG_MULTIPLIER_ALTITUDE0 - SETBACK_ALTITUDE0;
+        //return Units.convert(altitudeFEET, Units.Length.FOOT, Units.Length.METER);
+        return Units.convertFrom(altitudeFEET,Units.Length.FOOT);
     }
 
     /**
@@ -116,5 +136,4 @@ public record AirbornePositionMessage(long timeStampNs, IcaoAddress icaoAddress,
         }
         return sortedAltitude;
     }
-
 }
