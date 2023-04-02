@@ -25,7 +25,7 @@ public class CprDecoder {
     public static GeoPos decodePosition(double x0, double y0, double x1, double y1, int mostRecent) {
 
         Preconditions.checkArgument(mostRecent == 0 || mostRecent == 1);
-        //TODO metotdo para zLatitude???????
+        // TODO metotdo para zLatitude???????
         double zLatitude = Math.rint(y0 * NUMBER_ZONES_LATITUDE_1 - y1 * NUMBER_ZONES_LATITUDE_0);
         double zLatitude0 = zCoordinatesPositive(zLatitude, NUMBER_ZONES_LATITUDE_0);
         double zLatitude1 = zCoordinatesPositive(zLatitude, NUMBER_ZONES_LATITUDE_1);
@@ -42,7 +42,7 @@ public class CprDecoder {
         }
 
         double numberZonesLongitude1 = zA0 - 1;
-        //TODO ver si vale la pena usar la private method widthCalculator
+        // TODO ver si vale la pena usar la private method widthCalculator
         double widthZoneLongitude0 = 1 / zA0;
         double widthZoneLongitude1 = 1 / numberZonesLongitude1;
         double zLongitude = Math.rint(x0 * numberZonesLongitude1 - x1 * zA0);
@@ -85,31 +85,65 @@ public class CprDecoder {
     }
     //TODO comentarios
 
+    /**
+     * private method that allows to verify that turn is not over 0.5 turn
+     * @param turn, double the angle in turn that we want to verify
+     * @return double, if turn >= 0.5, we return turn - 1, if not, we return turn
+     * this means that the value returned belongs to [-0.5 , 0.5[
+     */
     private static double turnVerifier(double turn) {
         return turn >= 0.5 ? turn - 1 : turn;
     }
 
+    /**
+     * private method that allows us to convert a Turn to a T32
+     * @param turn, double, angle we want to convert
+     * @return, double the angle but in T32
+     */
     private static double convertToT32(double turn) {
         return Units.convert(turn, Units.Angle.TURN, Units.Angle.T32);
     }
 
+    /**
+     * private method that allows us to calculate A
+     * @param latitudeTurn, double angle og the latitude of the plane, in turn, used in the formula
+     * @return double, we return A (formula below)
+     */
     private static double ACalculator(double latitudeTurn) {
         return Math.acos(1 - (1 - Math.cos(2 * Math.PI * WIDTH_ZONES_LATITUDE_0)) /
                 Math.pow(Math.cos(Units.convert(latitudeTurn, Units.Angle.TURN, Units.Angle.RADIAN)), 2));
     }
 
+    /**
+     * private method that allows to calculate zA (number of zone for the longitude)
+     * @param A, double, valued calculated in the previous method
+     * @return int, return the number of zone for the longitude
+     */
     private static int zACalculator(double A) {
         return (int) Math.floor((2 * Math.PI) / A);
     }
 
+    /**
+     * private method that allows us to calculate the angle of the plane in turns
+     * @param widthZone, double, width of the zone the plane is currently in
+     * @param numberZone, double, number of zones (differs depending on the MostRecent and longitude/latitude)
+     * @param initialCoordinate, double initial coordinates of the plane (differs depending on the MostRecent and longitude/latitude)
+     * @return the angle of the plane coordinate in turn
+     */
     private static double coordinateTurnCalculator(double widthZone, double numberZone, double initialCoordinate) {
         return widthZone * (numberZone + initialCoordinate);
     }
 
-    private static double zCoordinatesPositive(double zCoodinates, double numberZonesCoordinates) {
-        return (zCoodinates < 0) ? zCoodinates + numberZonesCoordinates : zCoodinates;
+    /**
+     * private method that allows to make sure that number of zones depending on the direction and most recent is positive
+     * @param zCoordinates double, the number of zones we want to make sure about
+     * @param numberZonesCoordinates double the number of zones general for the direction
+     * @return double, the definitive angle
+     */
+    private static double zCoordinatesPositive(double zCoordinates, double numberZonesCoordinates) {
+        return (zCoordinates < 0) ? zCoordinates + numberZonesCoordinates : zCoordinates;
     }
-
+    // TODO usar o no esa es la question ??????????
     private static double widthCalculator(double numberOfZones){
         return 1.0/numberOfZones;
     }

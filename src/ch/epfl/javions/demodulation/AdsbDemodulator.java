@@ -40,24 +40,10 @@ public final class AdsbDemodulator {
                 if (sumPics >= (2 * sumValleys)) {
                     byte[] bytes = new byte[LENGTH_RAWMESSAGE];
                     IDKWNTG(0,1,0,8,bytes);
-                    /*for (int i = 0; i < 8; ++i) {
-
-                        if ((powerWindow.get(80 + (10 * i))) >= powerWindow.get(85 + (10 * i))) {
-                            bytes[0] |= (byte) (1 << (7 - i));
-                        }
-                    }*/
 
                     if (RawMessage.size(bytes[0]) == LENGTH_RAWMESSAGE) {
                         IDKWNTG(1,LENGTH_RAWMESSAGE, 0,8,bytes);
-                        /*for (int i = 1; i < LENGTH_RAWMESSAGE; ++i) {
-                            for (int j = 0; j < 8; ++j) {
 
-                                if (powerWindow.get(80 + (80 * i) + (10 * j)) >=
-                                        powerWindow.get(85 + (80 * i) + (10 * j))) {
-                                    bytes[i] |= (byte) (1 << (7 - j));
-                                }
-                            }
-                        }*/
                         RawMessage result = RawMessage.of(powerWindow.position() * 100, bytes);
 
                         if (result != null) {
@@ -74,8 +60,9 @@ public final class AdsbDemodulator {
         }
         return null;
     }
-    //TODO mejorar nombre & comentarios
-    //I don't know what name to give
+    // TODO mejorar nombre & comentarios
+    //TODO I don't know what name to give
+
     private void IDKWNTG(int startFirstLoop, int endFirstLoop, int startSecondLoop, int endSecondLoop, byte[] bytes){
         for (int i = startFirstLoop; i < endFirstLoop; i++) {
             for (int j = startSecondLoop; j < endSecondLoop; j++) {

@@ -129,6 +129,11 @@ public record AirbornePositionMessage(long timeStampNs, IcaoAddress icaoAddress,
         return decodedGray;
     }
 
+    /**
+     * private method allowing to sort the message with the Altitude
+     * @param rawMessageAltitude long, only the part of the rawMessage that contains the information for the altitude
+     * @return long, the sorted version of the parameter
+     */
     private static long sortRawMessageAltitude(long rawMessageAltitude) {
         long sortedAltitude = 0;
         for (int i = 0; i < 12; i++) {
