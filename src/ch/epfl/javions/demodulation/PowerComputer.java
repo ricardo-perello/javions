@@ -4,11 +4,15 @@ import ch.epfl.javions.Preconditions;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 
 public final class PowerComputer {
     private final short[] samplesDecoded;
     private final SamplesDecoder samplesDecoder;
-    private final short[] values = new short[8];
+    private final ArrayList<Short> valuesA = new ArrayList<Short>(8);
+    private final short[]values = new short[8];
+
+
 
     /**
      * constructor of PowerComputer,
@@ -39,6 +43,26 @@ public final class PowerComputer {
     public int readBatch(int[] Batch) throws IOException {
         Preconditions.checkArgument(Batch.length == (samplesDecoded.length / 2));
         int batchSize = samplesDecoder.readBatch(samplesDecoded);
+        //TODO encontrar pq da error
+        /*valuesA.ensureCapacity(8);
+        for (int i = 0; i < 9; i++) {
+            valuesA.add((short) 0);
+        }
+        for (int i = 1; i < batchSize; i+=8) {
+            for (int j = 0; j < 8; j+=2) {
+                valuesA.remove(j);
+                valuesA.add(j, samplesDecoded[i+j]);
+                valuesA.remove(j+1);
+                valuesA.add(j+1, samplesDecoded[i+j+1]);
+                int evenNumbers = valuesA.get(2) - valuesA.get(4) + valuesA.get(6) - valuesA.get(0);
+                int oddNumbers = valuesA.get(3) - valuesA.get(5) + valuesA.get(7) - valuesA.get(1);
+                Batch[(i - 1) / 2] = evenNumbers * evenNumbers + oddNumbers * oddNumbers;
+            }
+        }*/
+
+
+
+
         for (int i = 1; i < batchSize; i += 2) {
             //For every i in the loop, we add two new values into the table values from the table decodedSampleTable found
             //using samplesDecoder.readBatch .
@@ -47,9 +71,6 @@ public final class PowerComputer {
             //His allows us to always have the eight values that interest us in the same table.
             //It does not matter if they are not in order since a sum commutative.
             //TODO quitar modulo mirar audio enviado a ricardo
-
-
-
 
             values[i % 8] = samplesDecoded[i];
             values[(i - 1) % 8] = samplesDecoded[i - 1];
@@ -62,6 +83,4 @@ public final class PowerComputer {
         }
         return batchSize / 2;
     }
-
-
 }
