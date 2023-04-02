@@ -50,10 +50,11 @@ public final class PowerComputer {
         }
         for (int i = 1; i < batchSize; i+=8) {
             for (int j = 0; j < 8; j+=2) {
-                valuesA.remove(j);
+                // TODO prefuntar pq no puedo usar ArrayList.removeRange(...)
+                //valuesA.remove(j);
                 valuesA.add(j, samplesDecoded[i+j]);
-                valuesA.remove(j+1);
-                valuesA.add(j+1, samplesDecoded[i+j+1]);
+                //valuesA.remove(j+1);
+                valuesA.add(j, samplesDecoded[i+j+1]);
                 int evenNumbers = valuesA.get(2) - valuesA.get(4) + valuesA.get(6) - valuesA.get(0);
                 int oddNumbers = valuesA.get(3) - valuesA.get(5) + valuesA.get(7) - valuesA.get(1);
                 Batch[(i - 1) / 2] = evenNumbers * evenNumbers + oddNumbers * oddNumbers;
