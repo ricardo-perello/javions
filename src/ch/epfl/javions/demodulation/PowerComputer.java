@@ -11,6 +11,8 @@ public final class PowerComputer {
     private final SamplesDecoder samplesDecoder;
     private final ArrayList<Short> valuesA = new ArrayList<Short>(8);
     private final short[]values = new short[8];
+    private final short[]values1=new short[8];
+    private short[] values2=new short[8];
 
 
 
@@ -44,7 +46,7 @@ public final class PowerComputer {
         Preconditions.checkArgument(Batch.length == (samplesDecoded.length / 2));
         int batchSize = samplesDecoder.readBatch(samplesDecoded);
         //TODO encontrar pq da error
-        for (int i = 0; i < 8; i++) {
+        /*for (int i = 0; i < 8; i++) {
             valuesA.add((short) 0);
         }
         for (int i = 0; i < batchSize; i+=2) {
@@ -67,13 +69,31 @@ public final class PowerComputer {
                 int evenNumbers = valuesA.get(2) - valuesA.get(4) + valuesA.get(6) - valuesA.get(0);
                 int oddNumbers = valuesA.get(3) - valuesA.get(5) + valuesA.get(7) - valuesA.get(1);
                 Batch[(i + j/2)] = evenNumbers * evenNumbers + oddNumbers * oddNumbers;
-            }*/
-        }
+            }
+        }*/
+
+        /*for (int i = 0; i < batchSize; i+=2) {
+            values1[0] = samplesDecoded[i];
+            values1[1]= samplesDecoded[i+1];
+            int evenNumbers = values1[2] - values1[4] + values1[6] - values1[0];
+            int oddNumbers = values1[3] - values1[5] + values1[7] - values1[1];
+            Batch[(i/2)] = evenNumbers * evenNumbers + oddNumbers * oddNumbers;
+            values2 = values1.clone();
+            for (int j = 0; j < 6; j++) {
+                values1[j+2] = values2[j];
+            }
+        }*/
+        /*for (int i = 0; i < batchSize; i+=2) {
+            valuesA.add(0,samplesDecoded[i]);
+            valuesA.add(1,samplesDecoded[i+1]);
+            values1= valuesA.toArray(new Short[8]);
+            int evenNumbers = valuesA.get(2) - values1[4] + values1[6] - values1[0];
+            int oddNumbers = values1[3] - values1[5] + values1[7] - values1[1];
+        }*/
 
 
 
-
-        /*for (int i = 1; i < batchSize; i += 2) {
+        for (int i = 1; i < batchSize; i += 2) {
             //For every i in the loop, we add two new values into the table values from the table decodedSampleTable found
             //using samplesDecoder.readBatch .
             //They are placed at their position using the modulo of 8, this allows us to take out the values of the
@@ -85,12 +105,10 @@ public final class PowerComputer {
             values[i % 8] = samplesDecoded[i];
             values[(i - 1) % 8] = samplesDecoded[i - 1];
             //We then select the values that interest us using the ints evenNumbers & oddNumbers
-            int evenNums = (values[(i + 2) % 8]) - (values[(i + 4) % 8]) + (values[(i + 6) % 8]) -
-                    (values[(i) % 8]);
-            int oddNums = (values[(i + 1) % 8]) - (values[(i + 3) % 8]) + (values[(i + 5) % 8]) -
-                    (values[(i + 7) % 8]);
+            int evenNums = values[2]- values[4] + values[6] - values[0];
+            int oddNums = values[1] - values[3] + values[5] - values[7];
             Batch[(i - 1) / 2] = evenNums * evenNums + oddNums * oddNums;
-        }*/
+        }
         return batchSize / 2;
     }
 }

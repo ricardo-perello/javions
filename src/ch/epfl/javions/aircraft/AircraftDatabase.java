@@ -42,6 +42,7 @@ public final class AircraftDatabase {
                     wakeTurbulenceCategory = WakeTurbulenceCategory.of(data[5]);
                     return new AircraftData(registration, typeDesignator, model, description, wakeTurbulenceCategory);
                 }
+                // todo quitar el break TOTA
                 if ((line.compareTo(address.string()) > 0)) {
                     break;
                 }
