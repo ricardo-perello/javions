@@ -78,48 +78,48 @@ public class AircraftStateAccumulator<T extends AircraftStateSetter> {
             case 0 -> {
                 xEven = aim.x();
                 yEven = aim.y();
-                calculateGeopos(aim,parity,lastMessageTimeStampNsEven);
+                // keep the timeStampNs, used next time we have an Odd message
+                lastMessageTimeStampNsEven = aim.timeStampNs();
+                //calculateGeopos(aim,parity,lastMessageTimeStampNsEven);
                 //TODO ver que preferimos
                 // verify that the coordinates are not NaN (aka we cannot calculate for the first position message)
-                /*if (!Double.isNaN(xEven) && !Double.isNaN(yEven)) {
+                if (!Double.isNaN(xOdd) && !Double.isNaN(yOdd)) {
                     // verify that the difference since last opposite parity message is not over the maximum
                     if (aim.timeStampNs() - lastMessageTimeStampNsOdd <= MAXIMUM_DISTANCE_BETWEEN_MESSAGES) {
                         GeoPos geoPos = CprDecoder.decodePosition(xEven, yEven, xOdd, yOdd, parity);
                         //verify that the decodePosition is not null (aka that the plane is in a different latitude band)
                         if (geoPos != null) {
                             state.setPosition(geoPos);
-                            // keep the timeStampNs, used next time we have an Odd message
-                            lastMessageTimeStampNsEven = aim.timeStampNs();
                         }
                     }
-                }*/
+                }
             }
             //case where the parity is 1
             case 1 -> {
                 xOdd = aim.x();
                 yOdd = aim.y();
-                calculateGeopos(aim,parity,lastMessageTimeStampNsOdd);
+                // keep the timeStampNs, used next time we have an Even message
+                lastMessageTimeStampNsOdd = aim.timeStampNs();
+                //calculateGeopos(aim,parity,lastMessageTimeStampNsOdd);
                 // verify that the coordinates are not NaN (aka we cannot calculate for the first position message)
-                /*if (!Double.isNaN(xEven) && !Double.isNaN(yEven)) {
+                if (!Double.isNaN(xEven) && !Double.isNaN(yEven)) {
                     // verify that the difference since last oppposite parity message is not over the maximum
                     if (aim.timeStampNs() - lastMessageTimeStampNsEven <= MAXIMUM_DISTANCE_BETWEEN_MESSAGES) {
                         GeoPos geoPos = CprDecoder.decodePosition(xEven, yEven, xOdd, yOdd, parity);
                         //verify that the decodePosition is not null (aka that the plane is in a different latitude band)
                         if (geoPos != null) {
                             state.setPosition(geoPos);
-                            // keep the timeStampNs, used next time we have an Even message
-                            lastMessageTimeStampNsOdd = aim.timeStampNs();
                         }
                     }
-                }*/
+                }
             }
         }
     }
     //TODO comentarios
-    private void calculateGeopos(AirbornePositionMessage aim, int parity, long lastMessageTimeStampsNsParity){
+    /*private void calculateGeopos(AirbornePositionMessage aim, int parity, long lastMessageTimeStampsNsParity){
         if (!Double.isNaN(xEven) && !Double.isNaN(yEven)) {
             // verify that the difference since last opposite parity message is not over the maximum
-            if (aim.timeStampNs() - lastMessageTimeStampNsOdd <= MAXIMUM_DISTANCE_BETWEEN_MESSAGES) {
+            if (aim.timeStampNs() - last <= MAXIMUM_DISTANCE_BETWEEN_MESSAGES) {
                 GeoPos geoPos = CprDecoder.decodePosition(xEven, yEven, xOdd, yOdd, parity);                        //verify that the decodePosition is not null (aka that the plane is in a different latitude band)
                 if (geoPos != null) {
                     state.setPosition(geoPos);
@@ -128,5 +128,5 @@ public class AircraftStateAccumulator<T extends AircraftStateSetter> {
                 }
             }
         }
-    }
+    }*/
 }
