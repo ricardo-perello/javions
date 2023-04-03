@@ -46,7 +46,7 @@ public class AirbornePositionMessageTestPERSONAL {
         assertDoesNotThrow(()-> new AirbornePositionMessage(0,
                 new IcaoAddress("000000"), 788, 1, 0.0, 0.0));
     }
-
+    //TODO hacer el test
     @Test
     void TestRawMessage() throws IOException {
         String f = "resources/samples_20230304_1442.bin";

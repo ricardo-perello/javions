@@ -8,8 +8,8 @@ public class CprDecoder {
 
     private static final double NUMBER_ZONES_LATITUDE_0 = 60.0;
     private static final double NUMBER_ZONES_LATITUDE_1 = 59.0;
-    private static final double WIDTH_ZONES_LATITUDE_0 = 1.0 / NUMBER_ZONES_LATITUDE_0;
-    private static final double WIDTH_ZONES_LATITUDE_1 = 1.0 / NUMBER_ZONES_LATITUDE_1;
+    private static final double WIDTH_ZONES_LATITUDE_0 = widthCalculator(NUMBER_ZONES_LATITUDE_0);
+    private static final double WIDTH_ZONES_LATITUDE_1 = widthCalculator(NUMBER_ZONES_LATITUDE_1);
 
 
     /**
@@ -25,7 +25,7 @@ public class CprDecoder {
     public static GeoPos decodePosition(double x0, double y0, double x1, double y1, int mostRecent) {
 
         Preconditions.checkArgument(mostRecent == 0 || mostRecent == 1);
-        // TODO metotdo para zLatitude???????
+        // TODO metodo para zLatitude???????
         double zLatitude = Math.rint(y0 * NUMBER_ZONES_LATITUDE_1 - y1 * NUMBER_ZONES_LATITUDE_0);
         double zLatitude0 = zCoordinatesPositive(zLatitude, NUMBER_ZONES_LATITUDE_0);
         double zLatitude1 = zCoordinatesPositive(zLatitude, NUMBER_ZONES_LATITUDE_1);
@@ -43,8 +43,8 @@ public class CprDecoder {
 
         double numberZonesLongitude1 = zA0 - 1;
         // TODO ver si vale la pena usar la private method widthCalculator
-        double widthZoneLongitude0 = 1 / zA0;
-        double widthZoneLongitude1 = 1 / numberZonesLongitude1;
+        double widthZoneLongitude0 = widthCalculator(zA0);
+        double widthZoneLongitude1 = widthCalculator(numberZonesLongitude1);
         double zLongitude = Math.rint(x0 * numberZonesLongitude1 - x1 * zA0);
 
 
