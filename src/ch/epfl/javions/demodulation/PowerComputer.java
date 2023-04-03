@@ -9,10 +9,10 @@ import java.util.ArrayList;
 public final class PowerComputer {
     private final short[] samplesDecoded;
     private final SamplesDecoder samplesDecoder;
-    private final ArrayList<Short> valuesA = new ArrayList<Short>(8);
+    //private final ArrayList<Short> valuesA = new ArrayList<Short>(8);
     private final short[]values = new short[8];
-    private final short[]values1=new short[8];
-    private short[] values2=new short[8];
+    //private final short[]values1=new short[8];
+    //private short[] values2=new short[8];
 
 
 
@@ -93,21 +93,28 @@ public final class PowerComputer {
 
 
 
-        for (int i = 1; i < batchSize; i += 2) {
+        for (int i = 0; i < batchSize; i += 8) {
+            for (int j = 0; j < 8; j+=2) {
+                values[j] = samplesDecoded[i+j];
+                values[j+1] = samplesDecoded[i+j+1];
+                int evenNums = values[2]- values[4] + values[6] - values[0];
+                int oddNums = values[1] - values[3] + values[5] - values[7];
+                Batch[(i +j)/ 2] = evenNums * evenNums + oddNums * oddNums;
+            }
             //For every i in the loop, we add two new values into the table values from the table decodedSampleTable found
             //using samplesDecoder.readBatch .
             //They are placed at their position using the modulo of 8, this allows us to take out the values of the
             //previous batch at the same position.
             //His allows us to always have the eight values that interest us in the same table.
             //It does not matter if they are not in order since a sum commutative.
-            //TODO quitar modulo mirar audio enviado a ricardo
+            //TODO quitar modulo mirar audio enviado a ricardo*/
 
-            values[i % 8] = samplesDecoded[i];
+            /*values[i % 8] = samplesDecoded[i];
             values[(i - 1) % 8] = samplesDecoded[i - 1];
             //We then select the values that interest us using the ints evenNumbers & oddNumbers
             int evenNums = values[2]- values[4] + values[6] - values[0];
             int oddNums = values[1] - values[3] + values[5] - values[7];
-            Batch[(i - 1) / 2] = evenNums * evenNums + oddNums * oddNums;
+            Batch[(i - 1) / 2] = evenNums * evenNums + oddNums * oddNums;*/
         }
         return batchSize / 2;
     }
