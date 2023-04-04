@@ -21,7 +21,7 @@ public final class PowerWindow {
      *
      * @param stream     the InputStream from where we are going to get the values
      * @param windowSize the size of the window we are going to study
-     * @throws IOException exception thrown if error in intput/output
+     * @throws IOException exception thrown if error in input/output
      */
     public PowerWindow(InputStream stream, int windowSize) throws IOException {
         Preconditions.checkArgument((windowSize > 0) && (windowSize <= BATCH_SIZE));

@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.util.Objects;
 
 public final class SamplesDecoder {
+    private static final int MASK = 0xFF;
     private final InputStream stream;
     private final int batchSize;
     private final byte[] littleEndian;
@@ -41,8 +42,8 @@ public final class SamplesDecoder {
             //todo se podria escribir por separado ?????
             //int firstByte = buffer[byteIndex] & 0xFF;
             //int secondByte = buffer[byteIndex + 1] & 0xFF;
-            Batch[i] = (short) ((((littleEndian[i * 2 + 1] & 0xFF) << 8) |
-                    (littleEndian[i * 2] & 0xFF)) - RECENTER);
+            Batch[i] = (short) ((((littleEndian[i * 2 + 1] & MASK) << 8) |
+                    (littleEndian[i * 2] & MASK)) - RECENTER);
         }
         return nBytesRead;
     }

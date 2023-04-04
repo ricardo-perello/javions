@@ -16,6 +16,7 @@ public record AirbornePositionMessage(long timeStampNs, IcaoAddress icaoAddress,
     private static final int STARTLATITUDE = 17;
     private static final int STARTLONGITUDE = 0;
     private static final int SIZE_PARITY = 1;
+
     private static final int SIZE_COORDINATES = 17;
     private static final int START_ALTITUDE_IN_RAWMESSAGEME = 36;
     private static final int SIZE_ALTITUDE_IN_RAWMESSAGEME = 12;

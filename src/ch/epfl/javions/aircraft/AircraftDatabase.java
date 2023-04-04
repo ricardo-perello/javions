@@ -20,7 +20,7 @@ public final class AircraftDatabase {
      * @return AircraftDatabase with the information about the plane with the input ICAO address.
      * @throws IOException when there is an error while reading
      */
-    //TODO mirar si simplificable
+    // TODO mirar si simplificable
     public AircraftData get(IcaoAddress address) throws IOException {
         AircraftRegistration registration;
         AircraftTypeDesignator typeDesignator;
