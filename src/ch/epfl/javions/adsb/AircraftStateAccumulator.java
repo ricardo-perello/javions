@@ -83,16 +83,6 @@ public class AircraftStateAccumulator<T extends AircraftStateSetter> {
                 //TODO ver que preferimos
                 // verify that the coordinates are not NaN (aka we cannot calculate for the first position message)
                 calculateGeopos(aim, parity,lastMessageTimeStampNsEven,lastMessageTimeStampNsOdd);
-                /*if (!Double.isNaN(xOdd) && !Double.isNaN(yOdd)) {
-                    // verify that the difference since last opposite parity message is not over the maximum
-                    if (aim.timeStampNs() - lastMessageTimeStampNsOdd <= MAXIMUM_DISTANCE_BETWEEN_MESSAGES) {
-                        GeoPos geoPos = CprDecoder.decodePosition(xEven, yEven, xOdd, yOdd, parity);
-                        //verify that the decodePosition is not null (aka that the plane is in a different latitude band)
-                        if (geoPos != null) {
-                            state.setPosition(geoPos);
-                        }
-                    }
-                }*/
             }
             //case where the parity is 1
             case 1 -> {
@@ -100,19 +90,7 @@ public class AircraftStateAccumulator<T extends AircraftStateSetter> {
                 yOdd = aim.y();
                 // keep the timeStampNs, used next time we have an Even message
                 lastMessageTimeStampNsOdd = aim.timeStampNs();
-                //calculateGeopos(aim,parity,lastMessageTimeStampNsOdd);
-                // verify that the coordinates are not NaN (aka we cannot calculate for the first position message)
                 calculateGeopos(aim, parity,lastMessageTimeStampNsOdd,lastMessageTimeStampNsEven);
-                /*if (!Double.isNaN(xEven) && !Double.isNaN(yEven)) {
-                    // verify that the difference since last oppposite parity message is not over the maximum
-                    if (aim.timeStampNs() - lastMessageTimeStampNsEven <= MAXIMUM_DISTANCE_BETWEEN_MESSAGES) {
-                        GeoPos geoPos = CprDecoder.decodePosition(xEven, yEven, xOdd, yOdd, parity);
-                        //verify that the decodePosition is not null (aka that the plane is in a different latitude band)
-                        if (geoPos != null) {
-                            state.setPosition(geoPos);
-                        }
-                    }
-                }*/
             }
         }
     }

@@ -83,7 +83,7 @@ public class Units {
      */
     //TODO mirar si queda mejor si utilizamos convert?????????????
     public static double convertFrom(double value, double fromUnit) {
-        return value * fromUnit;
+        return convert(value, fromUnit, 1);
     }
 
     /**
@@ -94,6 +94,6 @@ public class Units {
      * @return a double which is the new value
      */
     public static double convertTo(double value, double toUnit) {
-        return value * (1 / toUnit);
+        return convert(value, 1, toUnit);
     }
 }

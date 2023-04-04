@@ -19,7 +19,7 @@ public final class AdsbDemodulator {
     public AdsbDemodulator(InputStream samplesStream) throws IOException {
         powerWindow = new PowerWindow(samplesStream, 1200);
     }
-
+    //todo mirar si simplificable
     /**
      * method that demodulates the stream
      *
