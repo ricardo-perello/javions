@@ -50,33 +50,48 @@ public final class PowerComputer {
 
 
         for (int i = 0; i < batchSize; i += 8) {
-            summation(0,i);
+            //todo decidir que hacer aca
+            evenNumbers += newNumbers(0,i);
+            oddNumbers += newNumbers(1,i);
+            //summation(0,i);
             Batch[(i / 2)] = evenNumbers * evenNumbers + oddNumbers * oddNumbers;
 
-            substraction(2,i);
+            evenNumbers -= newNumbers(2,i);
+            oddNumbers -= newNumbers(3,i);
+            //substraction(2,i);
             Batch[(i / 2) +1] = evenNumbers * evenNumbers + oddNumbers * oddNumbers;
 
-            summation(4,i);
+            evenNumbers += newNumbers(4,i);
+            oddNumbers += newNumbers(5,i);
+            //summation(4,i);
             Batch[(i / 2)+2] = evenNumbers * evenNumbers + oddNumbers * oddNumbers;
 
-            substraction(6,i);
+            evenNumbers -= newNumbers(6,i);
+            oddNumbers -= newNumbers(7,i);
+            //substraction(6,i);
             Batch[(i / 2) + 3] = evenNumbers * evenNumbers + oddNumbers * oddNumbers;
         }
 
         return batchSize / 2;
     }
 
-    private void summation(int positionEven, int positionInLoop){
-        evenNumbers += values[positionEven] - samplesDecoded[positionInLoop + positionEven];
+    private int newNumbers(int positionEven, int positionInLoop){
+        int nb = values[positionEven] - samplesDecoded[positionInLoop + positionEven];
         values[positionEven] = samplesDecoded[positionInLoop + positionEven];
-        oddNumbers += values[positionEven +1] - samplesDecoded[positionInLoop+ positionEven + 1] ;
+        return nb;
+    }
+
+    private void summation(int positionEven, int positionInLoop){
+        evenNumbers +=  values[positionEven] - samplesDecoded[positionInLoop + positionEven];
+        values[positionEven] = samplesDecoded[positionInLoop + positionEven];
+        oddNumbers += values[positionEven +1] - samplesDecoded[positionInLoop+ positionEven + 1];
         values[positionEven +1] = samplesDecoded[positionInLoop + positionEven+ 1];
     }
 
     private void substraction(int positionEven, int positionInLoop){
         evenNumbers -= values[positionEven] - samplesDecoded[positionInLoop+positionEven];
         values[positionEven] = samplesDecoded[positionInLoop+positionEven];
-        oddNumbers -= values[positionEven +1] - samplesDecoded[positionInLoop+positionEven +1];
+        oddNumbers -= values[positionEven + 1] - samplesDecoded[positionInLoop+positionEven +1];
         values[positionEven +1] = samplesDecoded[positionInLoop + positionEven +1];
 
     }
