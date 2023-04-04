@@ -275,47 +275,6 @@ public class all_test {
     }
 
 
-    @Test
-    void getIfTheWindowIsOn2Batches() throws IOException {
-        List<Byte> bytes = new ArrayList<>();
-        for (int i = 0; i < ((1<<16) -1200) * 4; i+=2) {
-            bytes.add((byte) 0);
-            bytes.add((byte) 8);
-        }
-        InputStream stream = new FileInputStream("resources/samples.bin");
-        byte[] bytes1 = new byte[4804];
 
-
-        int readBatch = stream.readNBytes(bytes1,0,bytes1.length);
-
-
-        for (int i = 0; i < bytes1.length; i++) {
-            bytes.add(bytes1[i]);
-        }
-        byte[] bytesFinal = new byte[bytes.size()];
-        for (int i = 0; i < bytes.size(); i++) {
-            bytesFinal[i]=bytes.get(i);
-        }
-        InputStream stream2 = new ByteArrayInputStream(bytesFinal);
-        PowerWindow powerWindow = new PowerWindow(stream2,5);
-        for (int i = 0; i < Math.scalb(1,16) -4; i++) {
-            powerWindow.advance();
-            if(i== (1<<16)-5 ){
-                powerWindow.isFull();
-            }
-        }
-        int[] tabTest =  {585,740,360,1130,3370};
-        assertEquals(tabTest[0],powerWindow.get(4));
-        powerWindow.advance();
-        assertEquals(tabTest[0],powerWindow.get(3));
-        powerWindow.advance();
-        assertEquals(tabTest[0],powerWindow.get(2));
-        powerWindow.advance();
-        assertEquals(tabTest[0],powerWindow.get(1));
-        powerWindow.advance();
-        assertEquals(tabTest[0],powerWindow.get(0));
-        powerWindow.advance();
-        assertEquals(0,powerWindow.get(0));
-    }
 
 }

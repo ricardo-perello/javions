@@ -2,6 +2,7 @@ package ch.epfl.javions.demodulation;
 
 import ch.epfl.javions.Preconditions;
 
+import javax.swing.plaf.basic.BasicTableHeaderUI;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -9,9 +10,11 @@ public final class PowerComputer {
     private final short[] samplesDecoded;
     private final SamplesDecoder samplesDecoder;
     //private final ArrayList<Short> valuesA = new ArrayList<Short>(8);
-    private final short[] values = new short[8];
-    //private final short[]values1=new short[8];
+
+    private final short[]values=new short[8];
     //private short[] values2=new short[8];
+    private int evenNumbers = 0;
+    private int oddNumbers = 0;
 
 
     /**
@@ -31,6 +34,7 @@ public final class PowerComputer {
         Preconditions.checkArgument((batchSize % 8) == 0);
         samplesDecoded = new short[batchSize * 2];
         samplesDecoder = new SamplesDecoder(stream, 2 * batchSize);
+
     }
 
     /**
@@ -43,77 +47,38 @@ public final class PowerComputer {
     public int readBatch(int[] Batch) throws IOException {
         Preconditions.checkArgument(Batch.length == (samplesDecoded.length / 2));
         int batchSize = samplesDecoder.readBatch(samplesDecoded);
-        //TODO encontrar pq da error
-        /*for (int i = 0; i < 8; i++) {
-            valuesA.add((short) 0);
+
+
+        for (int i = 0; i < batchSize; i += 8) {
+            summation(0,i);
+            Batch[(i / 2)] = evenNumbers * evenNumbers + oddNumbers * oddNumbers;
+
+            substraction(2,i);
+            Batch[(i / 2) +1] = evenNumbers * evenNumbers + oddNumbers * oddNumbers;
+
+            summation(4,i);
+            Batch[(i / 2)+2] = evenNumbers * evenNumbers + oddNumbers * oddNumbers;
+
+            substraction(6,i);
+            Batch[(i / 2) + 3] = evenNumbers * evenNumbers + oddNumbers * oddNumbers;
         }
-        for (int i = 0; i < batchSize; i+=2) {
-            valuesA.add(0, samplesDecoded[i]);
-            valuesA.add(1,samplesDecoded[i+1]);
-            valuesA.remove(9);
-            valuesA.remove(8);
-            int evenNumbers = valuesA.get(2) - valuesA.get(4) + valuesA.get(6) - valuesA.get(0);
-            int oddNumbers = valuesA.get(3) - valuesA.get(5) + valuesA.get(7) - valuesA.get(1);
-            Batch[(i/2)] = evenNumbers * evenNumbers + oddNumbers * oddNumbers;
 
-            /*for (int j = 0; j < 7; j+=2) {
-                // TODO prefuntar pq no puedo usar ArrayList.removeRange(...)
-                //valuesA.remove(j);
-                valuesA.add(0, samplesDecoded[i+j]);
-                //valuesA.remove(j+1);
-                valuesA.add(1, samplesDecoded[i+j+1]);
-                valuesA.remove(9);
-                valuesA.remove(8);
-                int evenNumbers = valuesA.get(2) - valuesA.get(4) + valuesA.get(6) - valuesA.get(0);
-                int oddNumbers = valuesA.get(3) - valuesA.get(5) + valuesA.get(7) - valuesA.get(1);
-                Batch[(i + j/2)] = evenNumbers * evenNumbers + oddNumbers * oddNumbers;
-            }
-        }*/
-
-        /*for (int i = 0; i < batchSize; i+=2) {
-            values1[0] = samplesDecoded[i];
-            values1[1]= samplesDecoded[i+1];
-            int evenNumbers = values1[2] - values1[4] + values1[6] - values1[0];
-            int oddNumbers = values1[3] - values1[5] + values1[7] - values1[1];
-            Batch[(i/2)] = evenNumbers * evenNumbers + oddNumbers * oddNumbers;
-            values2 = values1.clone();
-            for (int j = 0; j < 6; j++) {
-                values1[j+2] = values2[j];
-            }
-        }*/
-        /*for (int i = 0; i < batchSize; i+=2) {
-            valuesA.add(0,samplesDecoded[i]);
-            valuesA.add(1,samplesDecoded[i+1]);
-            values1= valuesA.toArray(new Short[8]);
-            int evenNumbers = valuesA.get(2) - values1[4] + values1[6] - values1[0];
-            int oddNumbers = values1[3] - values1[5] + values1[7] - values1[1];
-        }*/
-
-
-        for (int i = 1; i < batchSize; i += 2) {
-            /*for (int j = 0; j < 8; j += 2) {
-                values[j] = samplesDecoded[i + j];
-                values[j + 1] = samplesDecoded[i + j + 1];
-                int evenNums = values[2] - values[4] + values[6] - values[0];
-                int oddNums = values[1] - values[3] + values[5] - values[7];
-                Batch[(i + j) / 2] = evenNums * evenNums + oddNums * oddNums;
-            }*/
-            //For every i in the loop, we add two new values into the table values from the table decodedSampleTable found
-            //using samplesDecoder.readBatch .
-            //They are placed at their position using the modulo of 8, this allows us to take out the values of the
-            //previous batch at the same position.
-            //His allows us to always have the eight values that interest us in the same table.
-            //It does not matter if they are not in order since a sum commutative.
-            //TODO quitar modulo mirar audio enviado a ricardo*/
-            //TODO leer la mierda y hacerlo desde 0
-
-            values[i % 8] = samplesDecoded[i];
-            values[(i - 1) % 8] = samplesDecoded[i - 1];
-            //We then select the values that interest us using the ints evenNumbers & oddNumbers
-            int evenNums = values[2]- values[4] + values[6] - values[0];
-            int oddNums = values[1] - values[3] + values[5] - values[7];
-            Batch[(i - 1) / 2] = evenNums * evenNums + oddNums * oddNums;
-        }
         return batchSize / 2;
     }
+
+    private void summation(int positionEven, int positionInLoop){
+        evenNumbers += values[positionEven] - samplesDecoded[positionInLoop + positionEven];
+        values[positionEven] = samplesDecoded[positionInLoop + positionEven];
+        oddNumbers += values[positionEven +1] - samplesDecoded[positionInLoop+ positionEven + 1] ;
+        values[positionEven +1] = samplesDecoded[positionInLoop + positionEven+ 1];
+    }
+
+    private void substraction(int positionEven, int positionInLoop){
+        evenNumbers -= values[positionEven] - samplesDecoded[positionInLoop+positionEven];
+        values[positionEven] = samplesDecoded[positionInLoop+positionEven];
+        oddNumbers -= values[positionEven +1] - samplesDecoded[positionInLoop+positionEven +1];
+        values[positionEven +1] = samplesDecoded[positionInLoop + positionEven +1];
+
+    }
+
 }
