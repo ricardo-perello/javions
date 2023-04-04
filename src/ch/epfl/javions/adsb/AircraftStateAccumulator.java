@@ -80,10 +80,10 @@ public class AircraftStateAccumulator<T extends AircraftStateSetter> {
                 yEven = aim.y();
                 // keep the timeStampNs, used next time we have an Odd message
                 lastMessageTimeStampNsEven = aim.timeStampNs();
-                //calculateGeopos(aim,parity,lastMessageTimeStampNsEven);
                 //TODO ver que preferimos
                 // verify that the coordinates are not NaN (aka we cannot calculate for the first position message)
-                if (!Double.isNaN(xOdd) && !Double.isNaN(yOdd)) {
+                calculateGeopos(aim, parity,lastMessageTimeStampNsEven,lastMessageTimeStampNsOdd);
+                /*if (!Double.isNaN(xOdd) && !Double.isNaN(yOdd)) {
                     // verify that the difference since last opposite parity message is not over the maximum
                     if (aim.timeStampNs() - lastMessageTimeStampNsOdd <= MAXIMUM_DISTANCE_BETWEEN_MESSAGES) {
                         GeoPos geoPos = CprDecoder.decodePosition(xEven, yEven, xOdd, yOdd, parity);
@@ -92,7 +92,7 @@ public class AircraftStateAccumulator<T extends AircraftStateSetter> {
                             state.setPosition(geoPos);
                         }
                     }
-                }
+                }*/
             }
             //case where the parity is 1
             case 1 -> {
@@ -102,7 +102,8 @@ public class AircraftStateAccumulator<T extends AircraftStateSetter> {
                 lastMessageTimeStampNsOdd = aim.timeStampNs();
                 //calculateGeopos(aim,parity,lastMessageTimeStampNsOdd);
                 // verify that the coordinates are not NaN (aka we cannot calculate for the first position message)
-                if (!Double.isNaN(xEven) && !Double.isNaN(yEven)) {
+                calculateGeopos(aim, parity,lastMessageTimeStampNsOdd,lastMessageTimeStampNsEven);
+                /*if (!Double.isNaN(xEven) && !Double.isNaN(yEven)) {
                     // verify that the difference since last oppposite parity message is not over the maximum
                     if (aim.timeStampNs() - lastMessageTimeStampNsEven <= MAXIMUM_DISTANCE_BETWEEN_MESSAGES) {
                         GeoPos geoPos = CprDecoder.decodePosition(xEven, yEven, xOdd, yOdd, parity);
@@ -111,22 +112,24 @@ public class AircraftStateAccumulator<T extends AircraftStateSetter> {
                             state.setPosition(geoPos);
                         }
                     }
-                }
+                }*/
             }
         }
     }
     //TODO comentarios
-    /*private void calculateGeopos(AirbornePositionMessage aim, int parity, long lastMessageTimeStampsNsParity){
-        if (!Double.isNaN(xEven) && !Double.isNaN(yEven)) {
+    private void calculateGeopos(AirbornePositionMessage aim, int parity, long lastMessageTimeStampsNsCurrentParity,
+                                 long lastMessageTimeStampsNsOpositeParity){
+        if ((!Double.isNaN(xEven) && !Double.isNaN(yEven) && (parity==1)) ||
+        (!Double.isNaN(xOdd) && !Double.isNaN(yOdd) && (parity == 0)) ) {
             // verify that the difference since last opposite parity message is not over the maximum
-            if (aim.timeStampNs() - last <= MAXIMUM_DISTANCE_BETWEEN_MESSAGES) {
+            if (aim.timeStampNs() - lastMessageTimeStampsNsOpositeParity <= MAXIMUM_DISTANCE_BETWEEN_MESSAGES) {
                 GeoPos geoPos = CprDecoder.decodePosition(xEven, yEven, xOdd, yOdd, parity);                        //verify that the decodePosition is not null (aka that the plane is in a different latitude band)
                 if (geoPos != null) {
                     state.setPosition(geoPos);
                     // keep the timeStampNs, used next time we have an Odd message
-                    lastMessageTimeStampsNsParity = aim.timeStampNs();
+                    lastMessageTimeStampsNsCurrentParity = aim.timeStampNs();
                 }
             }
         }
-    }*/
+    }
 }
