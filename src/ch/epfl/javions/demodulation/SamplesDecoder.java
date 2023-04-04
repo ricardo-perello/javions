@@ -37,8 +37,10 @@ public final class SamplesDecoder {
     public int readBatch(short[] Batch) throws IOException {
         Preconditions.checkArgument(Batch.length == batchSize);
         int nBytesRead = stream.readNBytes(littleEndian, 0, 2 * batchSize) / 2;
-        //TODO mirar si se puede usar un foreach
         for (int i = 0; i < nBytesRead; i++) {
+            //todo se podria escribir por separado ?????
+            //int firstByte = buffer[byteIndex] & 0xFF;
+            //int secondByte = buffer[byteIndex + 1] & 0xFF;
             Batch[i] = (short) ((((littleEndian[i * 2 + 1] & 0xFF) << 8) |
                     (littleEndian[i * 2] & 0xFF)) - RECENTER);
         }

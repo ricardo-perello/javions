@@ -39,10 +39,10 @@ public final class AdsbDemodulator {
 
                 if (sumPics >= (2 * sumValleys)) {
                     byte[] bytes = new byte[LENGTH_RAWMESSAGE];
-                    IDKWNTG(0,1,0,8,bytes);
+                    bitsComputer(0,1,0,8,bytes);
 
                     if (RawMessage.size(bytes[0]) == LENGTH_RAWMESSAGE) {
-                        IDKWNTG(1,LENGTH_RAWMESSAGE, 0,8,bytes);
+                        bitsComputer(1,LENGTH_RAWMESSAGE, 0,8,bytes);
 
                         RawMessage result = RawMessage.of(powerWindow.position() * 100, bytes);
 
@@ -60,10 +60,16 @@ public final class AdsbDemodulator {
         }
         return null;
     }
-    // TODO mejorar nombre & comentarios
-    //TODO I don't know what name to give
 
-    private void IDKWNTG(int startFirstLoop, int endFirstLoop, int startSecondLoop, int endSecondLoop, byte[] bytes){
+    /**
+     * this privat method allows to based on the power Window determine if the bit is a 0 or a 1
+     * @param startFirstLoop, int, beginning of the first fori loop
+     * @param endFirstLoop, int, end of the first fori loop
+     * @param startSecondLoop, int, beginning of the second fori loop
+     * @param endSecondLoop, int, end of the second fori loop
+     * @param bytes, byte[], table where we place the value of the the signal
+     */
+    private void bitsComputer(int startFirstLoop, int endFirstLoop, int startSecondLoop, int endSecondLoop, byte[] bytes){
         for (int i = startFirstLoop; i < endFirstLoop; i++) {
             for (int j = startSecondLoop; j < endSecondLoop; j++) {
                 if (powerWindow.get(80 + (80 * i) + (10 * j)) >=

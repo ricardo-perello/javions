@@ -125,10 +125,28 @@ public class CprDecoder {
     }
 
     // TODO usar o no esa es la question ??????????
+
+    /**
+     * method that allows us to determine the width of the zone thanks to the number of zones
+     * @param numberOfZones, double, number of zones in a given direction(longitude or latitude)
+     * @return double the width
+     */
     private static double widthCalculator(double numberOfZones) {
         return 1.0 / numberOfZones;
     }
     //todo comentarios
+
+    /**
+     * private method that allows to calculate the final geoPos of tle plane
+     * @param latitudeTurn, double, the latitude in its turn form
+     * @param A, double, the value of A calculate with the method ACalculator
+     * @param zLongitude, double the general
+     * @param numberZonesLongitude, double, the number of zones for the longitude depending on the mostRecent
+     * @param widthZoneLongitude, double, the width of zones for the longitude depending on the mostRecent
+     * @param x, double, the coordinates for x depending on the mostRcent
+     * @return null if the Latitude is not valid
+     *          new GeoPos of the plane (formula changes depending on the conditions)
+     */
     private static GeoPos geoPosComputer(double latitudeTurn, double A, double zLongitude,
                                             double numberZonesLongitude, double widthZoneLongitude,
                                             double x) {

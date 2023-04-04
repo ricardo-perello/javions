@@ -4,7 +4,7 @@ import static ch.epfl.javions.Bits.extractUInt;
 
 public final class Crc24 {
     public static int GENERATOR = 0xFFF409;
-    private static final int mask = 16777215;
+    private static final int mask = 0xFFFFFF;
     private final int[] table;
 
 

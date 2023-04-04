@@ -81,7 +81,6 @@ public class Units {
      * @param fromUnit double, initial unit
      * @return a double which is the new value
      */
-    //TODO mirar si queda mejor si utilizamos convert?????????????
     public static double convertFrom(double value, double fromUnit) {
         return convert(value, fromUnit, 1);
     }
