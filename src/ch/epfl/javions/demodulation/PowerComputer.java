@@ -4,7 +4,6 @@ import ch.epfl.javions.Preconditions;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 
 public final class PowerComputer {
     private final short[] samplesDecoded;
