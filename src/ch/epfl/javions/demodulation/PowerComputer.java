@@ -8,13 +8,12 @@ import java.io.InputStream;
 public final class PowerComputer {
     private final short[] samplesDecoded;
     private final SamplesDecoder samplesDecoder;
-    //private final ArrayList<Short> valuesA = new ArrayList<Short>(8);
 
     private final short[]values=new short[8];
-    //private short[] values2=new short[8];
     private int evenNumbers = 0;
     private int oddNumbers = 0;
 
+    private final int LENGTH_BYTE = 8;
 
     /**
      * constructor of PowerComputer,
@@ -30,7 +29,7 @@ public final class PowerComputer {
 
     public PowerComputer(InputStream stream, int batchSize) {
         Preconditions.checkArgument(batchSize > 0);
-        Preconditions.checkArgument((batchSize % 8) == 0);
+        Preconditions.checkArgument((batchSize % LENGTH_BYTE) == 0);
         samplesDecoded = new short[batchSize * 2];
         samplesDecoder = new SamplesDecoder(stream, 2 * batchSize);
 
@@ -48,8 +47,8 @@ public final class PowerComputer {
         int batchSize = samplesDecoder.readBatch(samplesDecoded);
 
 
-        for (int i = 0; i < batchSize; i += 8) {
-            //todo decidir que hacer aca
+        for (int i = 0; i < batchSize; i += LENGTH_BYTE) {
+            //todo decidir que hacer aca Y COMENTARIOS
             evenNumbers += newNumbers(0,i);
             oddNumbers += newNumbers(1,i);
             //summation(0,i);

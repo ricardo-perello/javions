@@ -9,8 +9,15 @@ import ch.epfl.javions.aircraft.IcaoAddress;
 import java.util.HexFormat;
 
 public record RawMessage(long timeStampNs, ByteString bytes) {
-    public static final int LENGTH = 14;
+    private static final int LENGTH = 14;
+    private static final int END_PAYLOAD = 11;
     private static final Crc24 crc24 = new Crc24(Crc24.GENERATOR);
+    private static final int VALUE_DF = 17;
+    private static final int START_TYPECODE = 51;
+    private static final int LENGTH_TYPECODE = 5;
+
+    private static final int START_PAYLOAD = 4;
+
 
     /**
      * constructor of RawMessage
@@ -42,7 +49,7 @@ public record RawMessage(long timeStampNs, ByteString bytes) {
      * @return int, if DL equals 17, then LENGTH <=> 14, if not, 0
      */
     public static int size(byte byte0) {
-        return Byte.toUnsignedInt(byte0) >> 3 == 17 ? LENGTH : 0;
+        return Byte.toUnsignedInt(byte0) >> 3 == VALUE_DF ? LENGTH : 0;
     }
 
     /**
@@ -52,7 +59,7 @@ public record RawMessage(long timeStampNs, ByteString bytes) {
      * @return int, the first 5 bits of the ME
      */
     public static int typeCode(long payload) {
-        return Bits.extractUInt(payload, 51, 5);
+        return Bits.extractUInt(payload, START_TYPECODE, LENGTH_TYPECODE);
     }
 
     /**
@@ -79,14 +86,9 @@ public record RawMessage(long timeStampNs, ByteString bytes) {
      * @return long, the ME found from the 4rth to thr 11th(excluded) bytes of the message
      */
     public long payload() {
-        return bytes.bytesInRange(4, 11);
+        return bytes.bytesInRange(START_PAYLOAD, END_PAYLOAD);
     }
 
-    /**
-     * method that allows to find the code type of the message
-     *
-     * @return int, the first 5 bits of the ME
-     */
     public int typeCode() {
         return typeCode(payload());
     }
