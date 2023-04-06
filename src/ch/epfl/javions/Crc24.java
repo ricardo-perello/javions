@@ -7,7 +7,7 @@ public final class Crc24 {
     private static final int mask = 0xFFFFFF;
     private static final int SIZE_TABLE = 256;
     private final int[] table;
-    public final static int CRC_EXTRACT_START = 23;
+    private final static int CRC_EXTRACT_START = 23;
 
 
     public Crc24(int generator) {
