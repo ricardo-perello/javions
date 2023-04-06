@@ -4,6 +4,7 @@ import java.util.regex.Pattern;
 
 import static ch.epfl.javions.Preconditions.checkArgument;
 
+// TODO: 6/4/23 comments 
 public record AircraftTypeDesignator(String string) {
     final static Pattern check = Pattern.compile("[A-Z0-9]{2,4}");
 

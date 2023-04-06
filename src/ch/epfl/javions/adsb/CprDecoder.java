@@ -74,7 +74,7 @@ public class CprDecoder {
      * private method that allows us to convert a Turn to a T32
      *
      * @param turn, double, angle we want to convert
-     * @return, double the angle but in T32
+     * @return double the angle but in T32
      */
     private static double convertToT32(double turn) {
         return Units.convert(turn, Units.Angle.TURN, Units.Angle.T32);
@@ -143,7 +143,7 @@ public class CprDecoder {
      * @param zLongitude, double the general
      * @param numberZonesLongitude, double, the number of zones for the longitude depending on the mostRecent
      * @param widthZoneLongitude, double, the width of zones for the longitude depending on the mostRecent
-     * @param x, double, the coordinates for x depending on the mostRcent
+     * @param x, double, the coordinates for x depending on the mostRecent
      * @return null if the Latitude is not valid
      *          new GeoPos of the plane (formula changes depending on the conditions)
      */
