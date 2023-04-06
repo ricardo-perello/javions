@@ -1,6 +1,6 @@
 package ch.epfl.javions.adsb;
 
-@SuppressWarnings("GrazieInspection")
+@SuppressWarnings({"GrazieInspection", "MagicNumber"})
 public class MessageParser {
     /**
      * method allowing to determine what type of message the parameter is

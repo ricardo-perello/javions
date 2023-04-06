@@ -133,7 +133,7 @@ public record AirborneVelocityMessage(long timeStampNs, IcaoAddress icaoAddress,
             heading = Units.convertFrom(heading, TURN);
             double airspeed = Bits.extractUInt(contentOfMessage, AIRSPEED_START, AIRSPEED_LENGTH) - VELOCITY_OFFSET;
             //speed
-            if (airspeed == -1) {
+            if (!(airspeed == -1)) {
                 airspeed *= vel_multiplier;
                 airspeed = Units.convertFrom(airspeed, KNOT);
 

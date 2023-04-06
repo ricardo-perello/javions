@@ -5,6 +5,7 @@ import static ch.epfl.javions.Units.Angle.RADIAN;
 import static ch.epfl.javions.Units.Angle.TURN;
 import static ch.epfl.javions.Units.convert;
 
+@SuppressWarnings("MagicNumber")
 public class WebMercator {
     private WebMercator() {
     }

@@ -13,6 +13,8 @@ public record AircraftIdentificationMessage(long timeStampNs, IcaoAddress icaoAd
     @SuppressWarnings("SpellCheckingInspection")
     private final static String ALPHABET = "?ABCDEFGHIJKLMNOPQRSTUVWXYZ????? ???????????????0123456789??????";
     private static final int CAT_START = 48;
+    private static final int TYPECODE_OFFSET = 14;
+
     /**
      * Register that takes in a RawMessage and returns timeStamp, icao address, category and call-sign.
      * Compact constructor checks if the timestamp is bigger than 0. Also checks that ICAO address and
@@ -41,7 +43,7 @@ public record AircraftIdentificationMessage(long timeStampNs, IcaoAddress icaoAd
         if ((typeCode < 0) || (typeCode > 4)) {
             return null;
         }
-        int cat = (((14 - typeCode) << 4) | (extractUInt(payload, CAT_START, 3)));
+        int cat = (((TYPECODE_OFFSET - typeCode) << 4) | (extractUInt(payload, CAT_START, 3)));
         StringBuilder string = new StringBuilder();
         for (int i = 7; i >= 0; i--) {
             string.append(ALPHABET.charAt(extractUInt(payload, i * 6, 6)));
