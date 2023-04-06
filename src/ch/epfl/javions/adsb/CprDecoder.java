@@ -74,7 +74,7 @@ public class CprDecoder {
      * private method that allows us to convert a Turn to a T32
      *
      * @param turn, double, angle we want to convert
-     * @return, double the angle but in T32
+     * @return double the angle but in T32
      */
     private static double convertToT32(double turn) {
         return Units.convert(turn, Units.Angle.TURN, Units.Angle.T32);

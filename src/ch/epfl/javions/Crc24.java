@@ -6,6 +6,7 @@ public final class Crc24 {
     public final static int GENERATOR = 0xFFF409;
     private static final int mask = 0xFFFFFF;
     private final int[] table;
+    public final static int CRC_EXTRACT_START = 23;
 
 
     public Crc24(int generator) {
@@ -42,12 +43,13 @@ public final class Crc24 {
         int crc = 0;
         for (byte b : bytes) {
             for (int i = 7; i >= 0; i--) {
-                crc = ((crc << 1) | extractUInt(b, i, 1)) ^ table[extractUInt(crc, 23, 1)];
+                crc = ((crc << 1) | extractUInt(b, i, 1)) ^
+                        table[extractUInt(crc, CRC_EXTRACT_START, 1)];
             }
         }
         for (int i = 0; i < 3; i++) {
             for (int j = 7; j >= 0; j--) {
-                crc = ((crc << 1)) ^ table[extractUInt(crc, 23, 1)];
+                crc = ((crc << 1)) ^ table[extractUInt(crc, CRC_EXTRACT_START, 1)];
             }
         }
         return crc & mask;

@@ -8,7 +8,7 @@ public class MessageParser {
      * @return AircraftIdentificationMessage.of, if the parameter's type code is between 1 and 4 included,
      * AirbornePositionMessage.of, if the parameter's type code is between 9 and 18 or 20 and 22,
      * AirborneVelocityMessage.of, if equal to 19,
-     * if the parameter's type code does not corresponds to one of these conditions, we return null
+     * if the parameter's type code does not correspond to one of these conditions, we return null
      */
     public static Message parse(RawMessage rawMessage) {
         int typeOfMessage = rawMessage.typeCode();

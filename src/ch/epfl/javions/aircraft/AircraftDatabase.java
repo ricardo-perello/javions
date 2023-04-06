@@ -7,7 +7,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Objects.requireNonNull;
 
 public final class AircraftDatabase {
-    String fileName;
+    final String fileName;
 
     public AircraftDatabase(String fileName) {
         requireNonNull(fileName);
