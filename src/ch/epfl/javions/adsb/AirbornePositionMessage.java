@@ -12,9 +12,9 @@ public record AirbornePositionMessage(long timeStampNs, IcaoAddress icaoAddress,
 
     private static final double NORMALIZER = Math.pow(2, -17);
     private static final int[] POSITIONS = {4, 2, 0, 10, 8, 6, 5, 3, 1, 11, 9, 7};
-    private static final int STARTPARITY = 34;
-    private static final int STARTLATITUDE = 17;
-    private static final int STARTLONGITUDE = 0;
+    private static final int START_PARITY = 34;
+    private static final int START_LATITUDE = 17;
+    private static final int START_LONGITUDE = 0;
     private static final int SIZE_PARITY = 1;
 
     private static final int SIZE_COORDINATES = 17;
@@ -64,9 +64,9 @@ public record AirbornePositionMessage(long timeStampNs, IcaoAddress icaoAddress,
         long timeStampNs = rawMessage.timeStampNs();
         IcaoAddress icaoAddress = rawMessage.icaoAddress();
 
-        int parity = Bits.extractUInt(rawMessageME, STARTPARITY, SIZE_PARITY);
-        double latitude = Bits.extractUInt(rawMessageME, STARTLATITUDE, SIZE_COORDINATES) * NORMALIZER;
-        double longitude = Bits.extractUInt(rawMessageME, STARTLONGITUDE, SIZE_COORDINATES) * NORMALIZER;
+        int parity = Bits.extractUInt(rawMessageME, START_PARITY, SIZE_PARITY);
+        double latitude = Bits.extractUInt(rawMessageME, START_LATITUDE, SIZE_COORDINATES) * NORMALIZER;
+        double longitude = Bits.extractUInt(rawMessageME, START_LONGITUDE, SIZE_COORDINATES) * NORMALIZER;
         return new AirbornePositionMessage(timeStampNs, icaoAddress, altitude, parity, longitude, latitude);
     }
 
@@ -95,7 +95,7 @@ public record AirbornePositionMessage(long timeStampNs, IcaoAddress icaoAddress,
         //we take the last 3
         long sortedAltitudeSMALLEST = Bits.extractUInt(sortedAltitude,0,3);
 
-        //tranform gray code
+        //transform gray code
         int decodedGrayBIGGEST = decodeGray(sortedAltitudeBIGGEST, 9);
         int decodedGraySMALLEST = decodeGray(sortedAltitudeSMALLEST, 3);
 

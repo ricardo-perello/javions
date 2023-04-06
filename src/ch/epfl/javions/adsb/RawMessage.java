@@ -9,7 +9,7 @@ import ch.epfl.javions.aircraft.IcaoAddress;
 import java.util.HexFormat;
 
 public record RawMessage(long timeStampNs, ByteString bytes) {
-    private static final int LENGTH = 14;
+    public static final int LENGTH = 14;
     private static final int END_PAYLOAD = 11;
     private static final Crc24 crc24 = new Crc24(Crc24.GENERATOR);
     private static final int VALUE_DF = 17;

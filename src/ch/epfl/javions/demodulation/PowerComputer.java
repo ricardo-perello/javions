@@ -56,7 +56,7 @@ public final class PowerComputer {
 
             evenNumbers -= newNumbers(2,i);
             oddNumbers -= newNumbers(3,i);
-            //substraction(2,i);
+            //subtraction(2,i);
             Batch[(i / 2) +1] = evenNumbers * evenNumbers + oddNumbers * oddNumbers;
 
             evenNumbers += newNumbers(4,i);
@@ -66,7 +66,7 @@ public final class PowerComputer {
 
             evenNumbers -= newNumbers(6,i);
             oddNumbers -= newNumbers(7,i);
-            //substraction(6,i);
+            //subtraction(6,i);
             Batch[(i / 2) + 3] = evenNumbers * evenNumbers + oddNumbers * oddNumbers;
         }
 
@@ -86,7 +86,7 @@ public final class PowerComputer {
         values[positionEven +1] = samplesDecoded[positionInLoop + positionEven+ 1];
     }
 
-    private void substraction(int positionEven, int positionInLoop){
+    private void subtraction(int positionEven, int positionInLoop){
         evenNumbers -= values[positionEven] - samplesDecoded[positionInLoop+positionEven];
         values[positionEven] = samplesDecoded[positionInLoop+positionEven];
         oddNumbers -= values[positionEven + 1] - samplesDecoded[positionInLoop+positionEven +1];
