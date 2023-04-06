@@ -5,6 +5,7 @@ import static ch.epfl.javions.Bits.extractUInt;
 public final class Crc24 {
     public final static int GENERATOR = 0xFFF409;
     private static final int mask = 0xFFFFFF;
+    private static final int SIZE_TABLE = 256;
     private final int[] table;
     public final static int CRC_EXTRACT_START = 23;
 
@@ -73,8 +74,8 @@ public final class Crc24 {
      * @return int table with all the values of the generator
      */
     private static int[] buildTable(int generator) {
-        int[] table = new int[256];
-        for (int i = 0; i < 256; i++) {
+        int[] table = new int[SIZE_TABLE];
+        for (int i = 0; i < SIZE_TABLE; i++) {
             table[i] = crc_bitwise(generator, new byte[]{(byte) i});
         }
         return table;
