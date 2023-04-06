@@ -79,14 +79,14 @@ public class AircraftStateAccumulator<T extends AircraftStateSetter> {
                 xEven = aim.x();
                 yEven = aim.y();
                 lastMessageTimeStampNsEven = aim.timeStampNs();
-                calculateGeoPos(aim, parity,lastMessageTimeStampNsEven,lastMessageTimeStampNsOdd);
+                calculateGeoPos(aim, parity,lastMessageTimeStampNsOdd);
             }
             //case where the parity is 1
             case 1 -> {
                 xOdd = aim.x();
                 yOdd = aim.y();
                 lastMessageTimeStampNsOdd = aim.timeStampNs();
-                calculateGeoPos(aim, parity,lastMessageTimeStampNsOdd,lastMessageTimeStampNsEven);
+                calculateGeoPos(aim, parity,lastMessageTimeStampNsEven);
             }
         }
     }
@@ -95,19 +95,21 @@ public class AircraftStateAccumulator<T extends AircraftStateSetter> {
      * private method that allows us to determine the geoPos of the plane
      * @param aim AirbornePositionMessage, message sent by the plane
      * @param parity, int, equivalent to the mostRecent in CprDecoder
-     * @param lastMessageTimeStampsNsCurrentParity, long, this will allow us to save the timeStamps of the parity given
-     *                                             so that it can be used next time the opposite parity message is received
      * @param lastMessageTimeStampsNsOppositeParity, long, the time stamps of the message of opposite parity
      */
-    private void calculateGeoPos(AirbornePositionMessage aim, int parity, long lastMessageTimeStampsNsCurrentParity,
-                                 long lastMessageTimeStampsNsOppositeParity){
+    private void calculateGeoPos(AirbornePositionMessage aim, int parity, long lastMessageTimeStampsNsOppositeParity){
         if ((!Double.isNaN(xEven) && !Double.isNaN(yEven) && (parity==1)) ||
         (!Double.isNaN(xOdd) && !Double.isNaN(yOdd) && (parity == 0)) ) {
             if (aim.timeStampNs() - lastMessageTimeStampsNsOppositeParity <= MAXIMUM_DISTANCE_BETWEEN_MESSAGES) {
                 GeoPos geoPos = CprDecoder.decodePosition(xEven, yEven, xOdd, yOdd, parity);
                 if (geoPos != null) {
                     state.setPosition(geoPos);
-                    lastMessageTimeStampsNsCurrentParity = aim.timeStampNs();
+                    if(parity == 0){
+                        lastMessageTimeStampNsEven = aim.timeStampNs();
+                    }
+                    else{
+                        lastMessageTimeStampNsOdd = aim.timeStampNs();
+                    }
                 }
             }
         }

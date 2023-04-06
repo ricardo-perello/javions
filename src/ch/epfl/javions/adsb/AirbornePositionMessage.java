@@ -16,13 +16,11 @@ public record AirbornePositionMessage(long timeStampNs, IcaoAddress icaoAddress,
     private static final int START_LATITUDE = 17;
     private static final int START_LONGITUDE = 0;
     private static final int SIZE_PARITY = 1;
-
     private static final int SIZE_COORDINATES = 17;
     private static final int START_ALTITUDE_IN_RAWMESSAGEME = 36;
     private static final int SIZE_ALTITUDE_IN_RAWMESSAGEME = 12;
     private static final int MULTIPLIER_ALTITUDE1 = 25;
     private static final int SETBACK_ALTITUDE1 = 1000;
-
     private static final int SMALL_MULTIPLIER_ALTITUDE0 = 100;
     private static final int BIG_MULTIPLIER_ALTITUDE0 = 500;
     private static final int SETBACK_ALTITUDE0 = 1300;
@@ -42,10 +40,10 @@ public record AirbornePositionMessage(long timeStampNs, IcaoAddress icaoAddress,
      */
     public AirbornePositionMessage {
         requireNonNull(icaoAddress);
-        Preconditions.checkArgument(timeStampNs >= 0);
-        Preconditions.checkArgument((parity == 0) || (parity == 1));
-        Preconditions.checkArgument(x >= 0 && x < 1);
-        Preconditions.checkArgument(y >= 0 && y < 1);
+        Preconditions.checkArgument(timeStampNs >= 0
+        && (parity == 0) || (parity == 1)
+        && x >= 0 && x < 1
+        && y >= 0 && y < 1);
     }
 
     /**
@@ -57,7 +55,8 @@ public record AirbornePositionMessage(long timeStampNs, IcaoAddress icaoAddress,
      */
     public static AirbornePositionMessage of(RawMessage rawMessage) {
         long rawMessageME = rawMessage.payload();
-        double altitude = altitudeFinder(Bits.extractUInt(rawMessageME, START_ALTITUDE_IN_RAWMESSAGEME, SIZE_ALTITUDE_IN_RAWMESSAGEME));
+        double altitude = altitudeFinder(Bits.extractUInt(rawMessageME, START_ALTITUDE_IN_RAWMESSAGEME,
+                                                            SIZE_ALTITUDE_IN_RAWMESSAGEME));
         if (Double.isNaN(altitude)) {
             return null;
         }
@@ -133,6 +132,7 @@ public record AirbornePositionMessage(long timeStampNs, IcaoAddress icaoAddress,
      * @param rawMessageAltitude long, only the part of the rawMessage that contains the information for the altitude
      * @return long, the sorted version of the parameter
      */
+    // todo name number
     private static long sortRawMessageAltitude(long rawMessageAltitude) {
         long sortedAltitude = 0;
         for (int i = 0; i < 12; i++) {

@@ -21,7 +21,6 @@ public final class AircraftDatabase {
      * @return AircraftDatabase with the information about the plane with the input ICAO address.
      * @throws IOException when there is an error while reading
      */
-    // TODO mirar si simplificable
     public AircraftData get(IcaoAddress address) throws IOException {
         AircraftRegistration registration;
         AircraftTypeDesignator typeDesignator;
@@ -41,18 +40,15 @@ public final class AircraftDatabase {
                     model = data[3];
                     description = new AircraftDescription(data[4]);
                     wakeTurbulenceCategory = WakeTurbulenceCategory.of(data[5]);
-                    return new AircraftData(registration, typeDesignator, model, description, wakeTurbulenceCategory);
+                    return new AircraftData(registration, typeDesignator,
+                            model, description, wakeTurbulenceCategory);
                 }
-                // todo quitar el break TOTA
                 if ((line.compareTo(address.string()) > 0)) {
                     break;
                 }
             }
             return null;
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         }
-
     }
 }
 

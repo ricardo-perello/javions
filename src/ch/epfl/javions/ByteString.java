@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.HexFormat;
 
 public final class ByteString {
-    byte[] octetTable;
+    private final byte[] octetTable;
 
     /**
      * Creates an array of bytes that is final and unsigned
@@ -53,7 +53,7 @@ public final class ByteString {
         if ((toIndex > size()) || (fromIndex < 0)) throw new IndexOutOfBoundsException();
         long output = 0;
         for (int i = fromIndex; i < toIndex; i++) {
-            output = ((output << 8) | byteAt(i));
+            output = ((output << Byte.SIZE) | byteAt(i));
         }
         return output;
     }

@@ -39,11 +39,9 @@ public final class SamplesDecoder {
         Preconditions.checkArgument(Batch.length == batchSize);
         int nBytesRead = stream.readNBytes(littleEndian, 0, 2 * batchSize) / 2;
         for (int i = 0; i < nBytesRead; i++) {
-            //todo se podria escribir por separado ?????
-            //int firstByte = buffer[byteIndex] & 0xFF;
-            //int secondByte = buffer[byteIndex + 1] & 0xFF;
-            Batch[i] = (short) ((((littleEndian[i * 2 + 1] & MASK) << 8) |
-                    (littleEndian[i * 2] & MASK)) - RECENTER);
+            int msb = littleEndian[i] & MASK;
+            int lsb = littleEndian[i + 1] & MASK;
+            Batch[i] = (short) (((msb << 8) | lsb) - RECENTER);
         }
         return nBytesRead;
     }

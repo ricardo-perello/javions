@@ -18,7 +18,6 @@ public record AircraftData(AircraftRegistration registration,
      * @param wakeTurbulenceCategory, WakeTurbulenceCategory, wake turbulence category of the plane
      */
     public AircraftData {
-
         requireNonNull(registration);
         requireNonNull(typeDesignator);
         requireNonNull(model);

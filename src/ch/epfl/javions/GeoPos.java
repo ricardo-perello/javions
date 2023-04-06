@@ -4,7 +4,8 @@ import static ch.epfl.javions.Units.Angle.*;
 import static ch.epfl.javions.Units.convert;
 
 public record GeoPos(int longitudeT32, int latitudeT32) {
-    private static final int MAXIMUM = (int) Math.pow(2,30);
+    private static final int MAXIMUM = (int) Math.scalb(1,30);
+    private static final int MINIMUM = -MAXIMUM;
 
     public GeoPos {
         Preconditions.checkArgument(isValidLatitudeT32(latitudeT32));
@@ -18,7 +19,7 @@ public record GeoPos(int longitudeT32, int latitudeT32) {
      */
 
     public static boolean isValidLatitudeT32(int latitudeT32) {
-        return ((-MAXIMUM <= latitudeT32) &&
+        return ((MINIMUM <= latitudeT32) &&
                 MAXIMUM >= latitudeT32);
     }
 

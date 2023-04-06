@@ -1,6 +1,9 @@
 package ch.epfl.javions;
 
 public class Bits {
+    private final static long FULLLONG = -1;
+    private static final int SIZE_LONG = 64;
+
     private Bits() {
     }
 
@@ -16,9 +19,8 @@ public class Bits {
         Preconditions.checkArgument(((size > 0) && (size < Integer.SIZE)));
         if (((start + size) < 0) || (start + size) > Long.SIZE) throw new IndexOutOfBoundsException();
         if (start < 0) throw new IndexOutOfBoundsException();
-        long fullLong = -1;
         int newValue = (int) (value >>> start);
-        long mask = fullLong >>> (64 - size);
+        long mask = FULLLONG >>> (SIZE_LONG - size);
         return (int) ((mask) & (newValue));
     }
 
@@ -31,7 +33,7 @@ public class Bits {
      * @throws IndexOutOfBoundsException if index not between 0-64
      */
     public static boolean testBit(long value, int index) {
-        if ((index < 0) || (index > 64)) {
+        if ((index < 0) || (index > SIZE_LONG)) {
             throw new IndexOutOfBoundsException();
         }
         return (extractUInt(value, index, 1) == 1);

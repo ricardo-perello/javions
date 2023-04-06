@@ -134,7 +134,6 @@ class AircraftStateAccumulatorTestCours {
         var m1 = new AirbornePositionMessage(timeStampNs, icao, altitude, 0, cpr(12), cpr(13));
         accumulator.update(m1);
         assertNull(stateSetter.position);
-        //TODO preguntar al profe pq no hay x1 e y1;
         timeStampNs += moreThan10s;
         var m2 = new AirbornePositionMessage(timeStampNs, icao, altitude, 0, x0, y0);
         accumulator.update(m2);
