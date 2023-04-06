@@ -33,7 +33,8 @@ public record AirborneVelocityMessage(long timeStampNs, IcaoAddress icaoAddress,
     private final static double HEADING_MULTIPLIER = Math.pow(2, 10);
     private final static int AIRSPEED_START = 0;
     private final static int AIRSPEED_LENGTH = 10;
-    private final static int SUBTYPE_4_MULTIPLIER = 4;
+    private final static int SUPERSONIC_MULTIPLIER = 4;
+    private final static int SUBSONIC_MULTIPLIER = 1;
 
 
     /**
@@ -59,8 +60,6 @@ public record AirborneVelocityMessage(long timeStampNs, IcaoAddress icaoAddress,
      */
     public static AirborneVelocityMessage of(RawMessage rawMessage) {
         long payload = rawMessage.payload();
-        long timeStampNs = rawMessage.timeStampNs();
-        IcaoAddress icaoAddress = rawMessage.icaoAddress();
         int subtype = Bits.extractUInt(payload, SUBTYPE_START, SUBTYPE_LENGTH);
         long contentOfMessage = Bits.extractUInt(payload, CONTENT_START, CONTENT_LENGTH);
 
@@ -68,50 +67,81 @@ public record AirborneVelocityMessage(long timeStampNs, IcaoAddress icaoAddress,
         //different cases of subtype
 
         switch (subtype) {
-            case 1, 2 -> {
-                //direction
-                int Dew = Bits.extractUInt(contentOfMessage, DEW_START, DEW_LENGTH);
-                int Dns = Bits.extractUInt(contentOfMessage, DNS_START, DNS_LENGTH);
-                //velocity
-                int Vew = Bits.extractUInt(contentOfMessage, VEW_START, VEW_LENGTH) - VELOCITY_OFFSET;
-                int Vns = Bits.extractUInt(contentOfMessage, VNS_START, VNS_LENGTH) - VELOCITY_OFFSET;
-                if (Vew == -1 || Vns == -1) return null;
-                //speed
-                double vel = Math.hypot(Vew, Vns);
-                vel = Units.convertFrom(vel, KNOT);
-                //angle
-                int x = (Dew == 0) ? Vew : -Vew;
-                int y = (Dns == 0) ? Vns : -Vns;
-                double dir = Math.atan2(x, y);
-                dir = (dir < 0) ? (2 * Math.PI) + dir : dir;
-                //adjusting for case
-                if (subtype == 2) vel *= 4;
-                return new AirborneVelocityMessage(timeStampNs, icaoAddress, vel, dir);
+            case 1 -> {
+                return groundSpeed(rawMessage, contentOfMessage, SUBSONIC_MULTIPLIER);
             }
-
-            case 3, 4 -> {
-                int headingAvailable = Bits.extractUInt(contentOfMessage, HEADING_AVAILABLE_START, HEADING_AVAILABLE_LENGTH);
-                //direction
-                double heading;
-                if (headingAvailable == 1) {
-                    heading = (Bits.extractUInt(contentOfMessage, HEADING_START, HEADING_LENGTH) / HEADING_MULTIPLIER);
-                    heading = Units.convertFrom(heading, TURN);
-                } else {
-                    return null;
-                }
-
-                //speed
-                double airspeed = Bits.extractUInt(contentOfMessage, AIRSPEED_START, AIRSPEED_LENGTH) - VELOCITY_OFFSET;
-                if (airspeed == -1) return null;
-                //adjusting for case
-                airspeed = (subtype == 3) ? airspeed : airspeed * SUBTYPE_4_MULTIPLIER;
-                airspeed = Units.convertFrom(airspeed, KNOT);
-                return new AirborneVelocityMessage(timeStampNs, icaoAddress, airspeed, heading);
+            case 2 -> {
+                return groundSpeed(rawMessage, contentOfMessage, SUPERSONIC_MULTIPLIER);
+            }
+            case 3 -> {
+                return airSpeed(rawMessage, contentOfMessage, SUBSONIC_MULTIPLIER);
+            }
+            case 4 -> {
+                return airSpeed(rawMessage, contentOfMessage, SUPERSONIC_MULTIPLIER);
             }
             default -> {
                 return null;
             }
         }
+
+    }
+
+    /**
+     * Ground speed method that is used for subtypes 1 and 2.
+     *
+     * @param rawMessage       rawMessage
+     * @param contentOfMessage useful part of the payload
+     * @param vel_multiplier   subsonic or supersonic aircraft
+     * @return AirborneVelocityMessage of subtype 1 or 2
+     */
+    private static AirborneVelocityMessage groundSpeed(RawMessage rawMessage, long contentOfMessage, int vel_multiplier) {
+        //direction
+        int Dew = Bits.extractUInt(contentOfMessage, DEW_START, DEW_LENGTH);
+        int Dns = Bits.extractUInt(contentOfMessage, DNS_START, DNS_LENGTH);
+        //velocity
+        int Vew = Bits.extractUInt(contentOfMessage, VEW_START, VEW_LENGTH) - VELOCITY_OFFSET;
+        int Vns = Bits.extractUInt(contentOfMessage, VNS_START, VNS_LENGTH) - VELOCITY_OFFSET;
+        if (Vew == -1 || Vns == -1) return null;
+        //speed
+        double vel = Math.hypot(Vew, Vns);
+        vel = Units.convertFrom(vel, KNOT);
+        //angle
+        int x = (Dew == 0) ? Vew : -Vew;
+        int y = (Dns == 0) ? Vns : -Vns;
+        double dir = Math.atan2(x, y);
+        dir = (dir < 0) ? (2 * Math.PI) + dir : dir;
+        //adjusting for case
+        vel *= vel_multiplier;
+
+        return new AirborneVelocityMessage(rawMessage.timeStampNs(), rawMessage.icaoAddress(), vel, dir);
+    }
+
+    /**
+     * Air speed method that is used for subtypes 1 and 2.
+     *
+     * @param rawMessage       rawMessage
+     * @param contentOfMessage useful part of the payload
+     * @param vel_multiplier   subsonic or supersonic aircraft
+     * @return AirborneVelocityMessage of subtype 3 or 4
+     */
+    private static AirborneVelocityMessage airSpeed(RawMessage rawMessage, long contentOfMessage, int vel_multiplier) {
+        int headingAvailable = Bits.extractUInt(contentOfMessage, HEADING_AVAILABLE_START, HEADING_AVAILABLE_LENGTH);
+        //direction
+        double heading;
+        if (headingAvailable == 1) {
+            heading = (Bits.extractUInt(contentOfMessage, HEADING_START, HEADING_LENGTH) / HEADING_MULTIPLIER);
+            heading = Units.convertFrom(heading, TURN);
+            double airspeed = Bits.extractUInt(contentOfMessage, AIRSPEED_START, AIRSPEED_LENGTH) - VELOCITY_OFFSET;
+            //speed
+            if (airspeed == -1) {
+                airspeed *= vel_multiplier;
+                airspeed = Units.convertFrom(airspeed, KNOT);
+
+                return new AirborneVelocityMessage(rawMessage.timeStampNs(), rawMessage.icaoAddress(), airspeed, heading);
+            }
+        }
+        return null;
+
 
     }
 }
