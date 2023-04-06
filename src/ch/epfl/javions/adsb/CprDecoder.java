@@ -10,6 +10,7 @@ public class CprDecoder {
     private static final double NUMBER_ZONES_LATITUDE_1 = 59.0;
     private static final double WIDTH_ZONES_LATITUDE_0 = widthCalculator(NUMBER_ZONES_LATITUDE_0);
     private static final double WIDTH_ZONES_LATITUDE_1 = widthCalculator(NUMBER_ZONES_LATITUDE_1);
+    private static final double HALF_TURN = 0.5;
 
 
     /**
@@ -25,7 +26,7 @@ public class CprDecoder {
     public static GeoPos decodePosition(double x0, double y0, double x1, double y1, int mostRecent) {
 
         Preconditions.checkArgument(mostRecent == 0 || mostRecent == 1);
-        // TODO metodo para zLatitude???????
+        // TODO metodo para zLatitude
         double zLatitude = Math.rint(y0 * NUMBER_ZONES_LATITUDE_1 - y1 * NUMBER_ZONES_LATITUDE_0);
         double zLatitude0 = zCoordinatesPositive(zLatitude, NUMBER_ZONES_LATITUDE_0);
         double zLatitude1 = zCoordinatesPositive(zLatitude, NUMBER_ZONES_LATITUDE_1);
@@ -67,7 +68,7 @@ public class CprDecoder {
      * this means that the value returned belongs to [-0.5 , 0.5[
      */
     private static double turnVerifier(double turn) {
-        return turn >= 0.5 ? turn - 1 : turn;
+        return turn >= HALF_TURN ? turn - 1 : turn;
     }
 
     /**

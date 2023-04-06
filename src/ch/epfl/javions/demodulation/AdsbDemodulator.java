@@ -63,11 +63,11 @@ public final class AdsbDemodulator {
                     byte[] bytes = new byte[LENGTH_RAWMESSAGE];
 
                     //this allows us to only calculate the length of the rawMessage
-                    byteDemodulator(0, 1, 0, LENGTH_BYTE, bytes);
+                    byteDemodulator(0, 1,  bytes);
 
                     if (RawMessage.size(bytes[0]) == LENGTH_RAWMESSAGE) {
                         //we put startFirstLoop at 1 because, we know already for 0 by the previous one
-                        byteDemodulator(1, LENGTH_RAWMESSAGE, 0, LENGTH_BYTE, bytes);
+                        byteDemodulator(1, LENGTH_RAWMESSAGE, bytes);
 
                         RawMessage result = RawMessage.of(powerWindow.position() * MULTIPLIER_FROM_MICRO_TO_NANO, bytes);
 
@@ -90,13 +90,11 @@ public final class AdsbDemodulator {
      *
      * @param startFirstLoop,  int, beginning of the first fori loop
      * @param endFirstLoop,    int, end of the first fori loop
-     * @param startSecondLoop, int, beginning of the second fori loop
-     * @param endSecondLoop,   int, end of the second fori loop
      * @param bytes,           byte[], table where we place the value of the signal
      */
-    private void byteDemodulator(int startFirstLoop, int endFirstLoop, int startSecondLoop, int endSecondLoop, byte[] bytes) {
+    private void byteDemodulator(int startFirstLoop, int endFirstLoop, byte[] bytes) {
         for (int i = startFirstLoop; i < endFirstLoop; i++) {
-            for (int j = startSecondLoop; j < endSecondLoop; j++) {
+            for (int j = 0; j < LENGTH_BYTE; j++) {
                 if (powerWindow.get(NUMBER_SAMPLES_PREAMBLE + (LENGTH_BYTE_TIME_SCALED * i) + (DISTANCE_SAMPLES * j)) >=
                         powerWindow.get(NUMBER_SAMPLES_PREAMBLE + OFFSET + (LENGTH_BYTE_TIME_SCALED * i) + (DISTANCE_SAMPLES * j))) {
                     bytes[i] |= (byte) (1 << (LENGTH_BYTE - 1 - j));
