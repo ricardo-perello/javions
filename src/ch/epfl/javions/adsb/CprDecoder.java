@@ -4,14 +4,12 @@ import ch.epfl.javions.GeoPos;
 import ch.epfl.javions.Preconditions;
 import ch.epfl.javions.Units;
 
-@SuppressWarnings("SpellCheckingInspection")
 public class CprDecoder {
 
     private static final double NUMBER_ZONES_LATITUDE_0 = 60.0;
     private static final double NUMBER_ZONES_LATITUDE_1 = 59.0;
     private static final double WIDTH_ZONES_LATITUDE_0 = widthCalculator(NUMBER_ZONES_LATITUDE_0);
     private static final double WIDTH_ZONES_LATITUDE_1 = widthCalculator(NUMBER_ZONES_LATITUDE_1);
-    private static final double HALF_TURN = 0.5;
 
 
     /**
@@ -24,11 +22,10 @@ public class CprDecoder {
      * @param mostRecent int tells us the parity of the message
      * @return GeoPos, the position of the plane
      */
-    @SuppressWarnings("SpellCheckingInspection")
     public static GeoPos decodePosition(double x0, double y0, double x1, double y1, int mostRecent) {
 
         Preconditions.checkArgument(mostRecent == 0 || mostRecent == 1);
-        // TODO metodo para zLatitude
+        // TODO metodo para zLatitude???????
         double zLatitude = Math.rint(y0 * NUMBER_ZONES_LATITUDE_1 - y1 * NUMBER_ZONES_LATITUDE_0);
         double zLatitude0 = zCoordinatesPositive(zLatitude, NUMBER_ZONES_LATITUDE_0);
         double zLatitude1 = zCoordinatesPositive(zLatitude, NUMBER_ZONES_LATITUDE_1);
@@ -70,14 +67,14 @@ public class CprDecoder {
      * this means that the value returned belongs to [-0.5 , 0.5[
      */
     private static double turnVerifier(double turn) {
-        return turn >= HALF_TURN ? turn - 1 : turn;
+        return turn >= 0.5 ? turn - 1 : turn;
     }
 
     /**
      * private method that allows us to convert a Turn to a T32
      *
      * @param turn, double, angle we want to convert
-     * @return double the angle but in T32
+     * @return, double the angle but in T32
      */
     private static double convertToT32(double turn) {
         return Units.convert(turn, Units.Angle.TURN, Units.Angle.T32);
@@ -146,13 +143,13 @@ public class CprDecoder {
      * @param zLongitude, double the general
      * @param numberZonesLongitude, double, the number of zones for the longitude depending on the mostRecent
      * @param widthZoneLongitude, double, the width of zones for the longitude depending on the mostRecent
-     * @param x, double, the coordinates for x depending on the mostRecent
+     * @param x, double, the coordinates for x depending on the mostRcent
      * @return null if the Latitude is not valid
      *          new GeoPos of the plane (formula changes depending on the conditions)
      */
     private static GeoPos geoPosComputer(double latitudeTurn, double A, double zLongitude,
-                                            double numberZonesLongitude, double widthZoneLongitude,
-                                            double x) {
+                                         double numberZonesLongitude, double widthZoneLongitude,
+                                         double x) {
 
         latitudeTurn = turnVerifier(latitudeTurn);
         int latitudeT32 = (int) Math.rint(convertToT32(latitudeTurn));
@@ -170,4 +167,21 @@ public class CprDecoder {
         int longitudeT32 = (int) Math.rint(convertToT32(longitudeTurn));
         return new GeoPos(longitudeT32, latitudeT32);
     }
+
+
+
+    private static double numberZonesLongitudeCalculator(double latitudeTurn0, double latitudeTurn1){
+        double A0 = ACalculator(latitudeTurn0);
+        double A1 = ACalculator(latitudeTurn1);
+        double zA0 = zACalculator(A0);
+        double zA1 = zACalculator(A1);
+
+        if (zA1 != zA0 && !Double.isNaN(A0) && !Double.isNaN(A1)) {
+            return Double.NaN;
+        }
+
+        return Double.isNaN(A0) ? 1 : zA0;
+
+    }
+
 }

@@ -41,7 +41,7 @@ public record AirbornePositionMessage(long timeStampNs, IcaoAddress icaoAddress,
     public AirbornePositionMessage {
         requireNonNull(icaoAddress);
         Preconditions.checkArgument(timeStampNs >= 0
-        && (parity == 0) || (parity == 1)
+        && ((parity == 0) || (parity == 1))
         && x >= 0 && x < 1
         && y >= 0 && y < 1);
     }
