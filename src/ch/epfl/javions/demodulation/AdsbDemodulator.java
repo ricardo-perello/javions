@@ -88,8 +88,8 @@ public final class AdsbDemodulator {
     /**
      * this private method allows to determine bits based on the power Window determine if the bit is a 0 or a 1
      *
-     * @param startFirstLoop,  int, beginning of the first fori loop
-     * @param endFirstLoop,    int, end of the first fori loop
+     * @param startFirstLoop,  int, beginning of the first for loop
+     * @param endFirstLoop,    int, end of the first for loop
      * @param bytes,           byte[], table where we place the value of the signal
      */
     private void byteDemodulator(int startFirstLoop, int endFirstLoop, byte[] bytes) {

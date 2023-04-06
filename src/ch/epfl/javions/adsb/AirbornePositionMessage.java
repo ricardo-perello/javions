@@ -32,7 +32,7 @@ public record AirbornePositionMessage(long timeStampNs, IcaoAddress icaoAddress,
      * constructor for AirbornePositionMessage
      *
      * @param timeStampNs long, the timestamp of the message, in nanoseconds, must be non-negative
-     * @param icaoAddress IcaoAdress, ICAO address of the sender of the message, must be non-null
+     * @param icaoAddress IcaoAddress, ICAO address of the sender of the message, must be non-null
      * @param altitude,   double,  the altitude at which the aircraft was at the time the message was sent, in meters
      * @param parity,     int, parity of the message (0 if even, 1 if odd)
      * @param x           double, longitude of plane, (0<=x<1)

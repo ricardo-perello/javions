@@ -10,10 +10,11 @@ import static ch.epfl.javions.adsb.RawMessage.typeCode;
 
 public record AircraftIdentificationMessage(long timeStampNs, IcaoAddress icaoAddress, int category,
                                             CallSign callSign) implements Message {
+    @SuppressWarnings("SpellCheckingInspection")
     private final static String ALPHABET = "?ABCDEFGHIJKLMNOPQRSTUVWXYZ????? ???????????????0123456789??????";
     private static final int CAT_START = 48;
     /**
-     * Register that takes in a RawMessage and returns timeStamp, icao address, category and callsign.
+     * Register that takes in a RawMessage and returns timeStamp, icao address, category and call-sign.
      * Compact constructor checks if the timestamp is bigger than 0. Also checks that ICAO address and
      * callsign are not null.
      *

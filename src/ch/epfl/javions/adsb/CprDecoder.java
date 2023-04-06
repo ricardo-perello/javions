@@ -4,6 +4,7 @@ import ch.epfl.javions.GeoPos;
 import ch.epfl.javions.Preconditions;
 import ch.epfl.javions.Units;
 
+@SuppressWarnings("SpellCheckingInspection")
 public class CprDecoder {
 
     private static final double NUMBER_ZONES_LATITUDE_0 = 60.0;
@@ -23,6 +24,7 @@ public class CprDecoder {
      * @param mostRecent int tells us the parity of the message
      * @return GeoPos, the position of the plane
      */
+    @SuppressWarnings("SpellCheckingInspection")
     public static GeoPos decodePosition(double x0, double y0, double x1, double y1, int mostRecent) {
 
         Preconditions.checkArgument(mostRecent == 0 || mostRecent == 1);
@@ -144,7 +146,7 @@ public class CprDecoder {
      * @param zLongitude, double the general
      * @param numberZonesLongitude, double, the number of zones for the longitude depending on the mostRecent
      * @param widthZoneLongitude, double, the width of zones for the longitude depending on the mostRecent
-     * @param x, double, the coordinates for x depending on the mostRcent
+     * @param x, double, the coordinates for x depending on the mostRecent
      * @return null if the Latitude is not valid
      *          new GeoPos of the plane (formula changes depending on the conditions)
      */

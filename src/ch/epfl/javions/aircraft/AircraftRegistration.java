@@ -5,6 +5,7 @@ import java.util.regex.Pattern;
 import static ch.epfl.javions.Preconditions.checkArgument;
 
 //todo comentarios toda esta mierda
+@SuppressWarnings("SpellCheckingInspection")
 public record AircraftRegistration(String string) {
     final static Pattern check = Pattern.compile("[A-Z0-9 .?/_+-]+");
 

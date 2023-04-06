@@ -45,7 +45,7 @@ public record RawMessage(long timeStampNs, ByteString bytes) {
     /**
      * method size verifies the DL
      *
-     * @param byte0 byte, first byte of the message you want to demodulise
+     * @param byte0 byte, first byte of the message you want to demodularize
      * @return int, if DL equals 17, then LENGTH <=> 14, if not, 0
      */
     public static int size(byte byte0) {
@@ -72,9 +72,9 @@ public record RawMessage(long timeStampNs, ByteString bytes) {
     }
 
     /**
-     * method that find the OACI of the message
+     * method that find the ICAO of the message
      *
-     * @return IcaoAdress, the icao addres of the message found from the 1st to 3rd (included) bytes
+     * @return IcaoAddress, the icao address of the message found from the 1st to 3rd (included) bytes
      */
     public IcaoAddress icaoAddress() {
         return new IcaoAddress(HexFormat.of().withUpperCase().toHexDigits(bytes.bytesInRange(1, 4), 6));

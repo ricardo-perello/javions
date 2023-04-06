@@ -4,6 +4,7 @@ import java.util.regex.Pattern;
 
 import static ch.epfl.javions.Preconditions.checkArgument;
     // todo comentario
+@SuppressWarnings("SpellCheckingInspection")
 public record CallSign(String string) {
     final static Pattern check = Pattern.compile("[A-Z0-9 ]{0,8}");
 

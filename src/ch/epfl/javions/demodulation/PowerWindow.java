@@ -90,7 +90,7 @@ public final class PowerWindow {
     }
 
     /**
-     * method that allows to advance by offsetposition
+     * method that allows to advance by offset amount
      *
      * @param offset int, the number of position we want to move by
      * @throws IOException exception related to advance()

@@ -28,7 +28,7 @@ public final class ByteString {
     /**
      * size of octetTable
      *
-     * @return int lenght of octetTable
+     * @return int length of octetTable
      */
     public int size() {
         return octetTable.length;
@@ -60,7 +60,7 @@ public final class ByteString {
 
 
     /**
-     * method that compares two byteStringd
+     * method that compares two byteStrings
      *
      * @param comparedObject Object, element compared to
      * @return a boolean, true if same, false if different
@@ -82,7 +82,7 @@ public final class ByteString {
     /**
      * method turns octetTable into String
      *
-     * @return string related to octerTable
+     * @return string related to octetTable
      */
     public String toString() {
         HexFormat hf = HexFormat.of().withUpperCase();

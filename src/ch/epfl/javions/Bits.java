@@ -1,7 +1,7 @@
 package ch.epfl.javions;
 
 public class Bits {
-    private final static long FULLLONG = -1;
+    private final static long FULL_LONG = -1;
     private static final int SIZE_LONG = 64;
 
     private Bits() {
@@ -20,7 +20,7 @@ public class Bits {
         if (((start + size) < 0) || (start + size) > Long.SIZE) throw new IndexOutOfBoundsException();
         if (start < 0) throw new IndexOutOfBoundsException();
         int newValue = (int) (value >>> start);
-        long mask = FULLLONG >>> (SIZE_LONG - size);
+        long mask = FULL_LONG >>> (SIZE_LONG - size);
         return (int) ((mask) & (newValue));
     }
 
