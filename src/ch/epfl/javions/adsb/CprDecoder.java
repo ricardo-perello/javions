@@ -25,7 +25,6 @@ public class CprDecoder {
     public static GeoPos decodePosition(double x0, double y0, double x1, double y1, int mostRecent) {
 
         Preconditions.checkArgument(mostRecent == 0 || mostRecent == 1);
-        // TODO metodo para zLatitude???????
         double zLatitude = Math.rint(y0 * NUMBER_ZONES_LATITUDE_1 - y1 * NUMBER_ZONES_LATITUDE_0);
         double zLatitude0 = zCoordinatesPositive(zLatitude, NUMBER_ZONES_LATITUDE_0);
         double zLatitude1 = zCoordinatesPositive(zLatitude, NUMBER_ZONES_LATITUDE_1);
@@ -33,31 +32,32 @@ public class CprDecoder {
         double latitudeTurn1 = coordinateTurnCalculator(WIDTH_ZONES_LATITUDE_1, zLatitude1, y1);
 
         //we compute the values of A0 and A1 so that we can also compute zA0 an zA1
-        double A0 = ACalculator(latitudeTurn0);
+        /*double A0 = ACalculator(latitudeTurn0);
         double A1 = ACalculator(latitudeTurn1);
         double zA0 = zACalculator(A0);
         double zA1 = zACalculator(A1);
 
         if (zA1 != zA0 && !Double.isNaN(A0) && !Double.isNaN(A1)) {
             return null;
+        }*/
+        double numberZonesLongitude0 = numberZonesLongitudeCalculator(latitudeTurn0, latitudeTurn1);
+        if(Double.isNaN(numberZonesLongitude0)){
+            return null;
         }
-        double numberZonesLongitude0 = zA0;
-        double numberZonesLongitude1 = zA0 - 1;
-        // TODO ver si vale la pena usar la private method widthCalculator
+        double numberZonesLongitude1 = numberZonesLongitude0 - 1;
         double widthZoneLongitude0 = widthCalculator(numberZonesLongitude0);
         double widthZoneLongitude1 = widthCalculator(numberZonesLongitude1);
         double zLongitude = Math.rint(x0 * numberZonesLongitude1 - x1 * numberZonesLongitude0);
 
 
         if (mostRecent == 0) {
-            return geoPosComputer(latitudeTurn0, A0, zLongitude, numberZonesLongitude0,
+            return geoPosComputer(latitudeTurn0, zLongitude, numberZonesLongitude0,numberZonesLongitude0,
                     widthZoneLongitude0, x0);
         } else {
-            return geoPosComputer(latitudeTurn1, A0, zLongitude, numberZonesLongitude1,
+            return geoPosComputer(latitudeTurn1, zLongitude, numberZonesLongitude0, numberZonesLongitude1,
                     widthZoneLongitude1, x1);
         }
     }
-    //TODO comentarios
 
     /**
      * private method that allows to verify that turn is not over 0.5 turn
@@ -124,8 +124,6 @@ public class CprDecoder {
         return (zCoordinates < 0) ? zCoordinates + numberZonesCoordinates : zCoordinates;
     }
 
-    // TODO usar o no esa es la question ??????????
-
     /**
      * method that allows us to determine the width of the zone thanks to the number of zones
      * @param numberOfZones, double, number of zones in a given direction(longitude or latitude)
@@ -135,21 +133,21 @@ public class CprDecoder {
         return 1.0 / numberOfZones;
     }
     //todo comentarios
+    // todo preguntar a mateur como llaman zLongitude
 
     /**
-     * private method that allows to calculate the final geoPos of tle plane
+     * private method that allows to calculate the final geoPos of the plane
      * @param latitudeTurn, double, the latitude in its turn form
-     * @param A, double, the value of A calculate with the method ACalculator
-     * @param zLongitude, double the general
-     * @param numberZonesLongitude, double, the number of zones for the longitude depending on the mostRecent
+     * @param zLongitude, double
+     * @param numberZonesLongitude0, double, the number of zones for the longitude for MostRecent = 0
+     * @param numberZonesLongitudeMostRecent double, the number of zones for the longitude depending on the mostRecent
      * @param widthZoneLongitude, double, the width of zones for the longitude depending on the mostRecent
      * @param x, double, the coordinates for x depending on the mostRecent
      * @return null if the Latitude is not valid
-     *          new GeoPos of the plane (formula changes depending on the conditions)
+     *        new GeoPos of the plane (formula changes depending on the conditions)
      */
-    private static GeoPos geoPosComputer(double latitudeTurn, double A, double zLongitude,
-                                         double numberZonesLongitude, double widthZoneLongitude,
-                                         double x) {
+    private static GeoPos geoPosComputer(double latitudeTurn, double zLongitude, double numberZonesLongitude0,
+                                         double numberZonesLongitudeMostRecent, double widthZoneLongitude, double x) {
 
         latitudeTurn = turnVerifier(latitudeTurn);
         int latitudeT32 = (int) Math.rint(convertToT32(latitudeTurn));
@@ -157,12 +155,15 @@ public class CprDecoder {
         if (!GeoPos.isValidLatitudeT32(latitudeT32)) {
             return null;
         }
-        if (Double.isNaN(A)) {
+        if (numberZonesLongitude0 == 1){
             return new GeoPos((int) convertToT32(x), latitudeT32);
         }
+        /*if (Double.isNaN(A)) {
+            return new GeoPos((int) convertToT32(x), latitudeT32);
+        }*/
 
-        double zLongitude1 = zCoordinatesPositive(zLongitude, numberZonesLongitude);
-        double longitudeTurn = coordinateTurnCalculator(widthZoneLongitude, zLongitude1, x);
+        double zLongitudeMostResent = zCoordinatesPositive(zLongitude, numberZonesLongitudeMostRecent);
+        double longitudeTurn = coordinateTurnCalculator(widthZoneLongitude, zLongitudeMostResent, x);
         longitudeTurn = turnVerifier(longitudeTurn);
         int longitudeT32 = (int) Math.rint(convertToT32(longitudeTurn));
         return new GeoPos(longitudeT32, latitudeT32);
