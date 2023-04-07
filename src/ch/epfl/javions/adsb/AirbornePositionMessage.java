@@ -49,8 +49,10 @@ public record AirbornePositionMessage(long timeStampNs, IcaoAddress icaoAddress,
     /**
      * public method of() that allows us to find the position of the plane
      *
-     * @param rawMessage RawMessage, message sent by the plane, we decode it so that we can find the important information
-     * @return either null, if the altitude is NaN (look at altitudeFinder() for conditions), or a new AirbornePositionMessage
+     * @param rawMessage RawMessage, message sent by the plane,
+     *                   we decode it so that we can find the important information
+     * @return either null, if the altitude is NaN (look at altitudeFinder() for conditions),
+     * or a new AirbornePositionMessage
      * using the timeStampNs, icaoAddress, altitude, parity, longitude, latitude we found from the rawMessage
      */
     public static AirbornePositionMessage of(RawMessage rawMessage) {
@@ -132,7 +134,6 @@ public record AirbornePositionMessage(long timeStampNs, IcaoAddress icaoAddress,
      * @param rawMessageAltitude long, only the part of the rawMessage that contains the information for the altitude
      * @return long, the sorted version of the parameter
      */
-    // todo name number
     private static long sortRawMessageAltitude(long rawMessageAltitude) {
         long sortedAltitude = 0;
         for (int i = 0; i < 12; i++) {
