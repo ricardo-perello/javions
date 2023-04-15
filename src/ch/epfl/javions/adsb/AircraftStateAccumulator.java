@@ -80,6 +80,7 @@ public class AircraftStateAccumulator<T extends AircraftStateSetter> {
                 yEven = aim.y();
                 lastMessageTimeStampNsEven = aim.timeStampNs();
                 calculateGeoPos(aim, parity,lastMessageTimeStampNsOdd);
+
             }
             //case where the parity is 1
             case 1 -> {
