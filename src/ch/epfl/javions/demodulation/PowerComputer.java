@@ -28,8 +28,8 @@ public final class PowerComputer {
      */
 
     public PowerComputer(InputStream stream, int batchSize) {
-        Preconditions.checkArgument(batchSize > 0);
-        Preconditions.checkArgument((batchSize % LENGTH_BYTE) == 0);
+        Preconditions.checkArgument(batchSize > 0 &&
+                                    (batchSize % LENGTH_BYTE) == 0);
         samplesDecoded = new short[batchSize * 2];
         samplesDecoder = new SamplesDecoder(stream, 2 * batchSize);
 

@@ -43,7 +43,8 @@ public class AircraftStateAccumulator<T extends AircraftStateSetter> {
         // store the lastMessageTimeStampNs of the message
         state.setLastMessageTimeStampNs(message.timeStampNs());
         switch (message) {
-            // case where the message is an AircraftIdentificationMessage, we store the category and callSign of the plane
+            // case where the message is an AircraftIdentificationMessage,
+            // we store the category and callSign of the plane
             case AircraftIdentificationMessage aim -> {
                 state.setCategory(aim.category());
                 state.setCallSign(aim.callSign());

@@ -96,7 +96,8 @@ public final class AdsbDemodulator {
         for (int i = startFirstLoop; i < endFirstLoop; i++) {
             for (int j = 0; j < LENGTH_BYTE; j++) {
                 if (powerWindow.get(NUMBER_SAMPLES_PREAMBLE + (LENGTH_BYTE_TIME_SCALED * i) + (DISTANCE_SAMPLES * j)) >=
-                        powerWindow.get(NUMBER_SAMPLES_PREAMBLE + OFFSET + (LENGTH_BYTE_TIME_SCALED * i) + (DISTANCE_SAMPLES * j))) {
+                        powerWindow.get(NUMBER_SAMPLES_PREAMBLE + OFFSET +
+                                (LENGTH_BYTE_TIME_SCALED * i) + (DISTANCE_SAMPLES * j))) {
                     bytes[i] |= (byte) (1 << (LENGTH_BYTE - 1 - j));
                 }
             }

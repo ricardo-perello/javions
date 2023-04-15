@@ -33,7 +33,8 @@ public final class SamplesDecoder {
      *
      * @param Batch table where we put in the value decoded for every i
      * @return int, number of batches decoded
-     * or length of the stream divided by two (and rounded downwards) if there are not enough in the stream to fill the batchSize
+     * or length of the stream divided by two (and rounded downwards)
+     * if there are not enough in the stream to fill the batchSize
      * @throws IOException exception in case of error in the input / output
      */
     public int readBatch(short[] Batch) throws IOException {

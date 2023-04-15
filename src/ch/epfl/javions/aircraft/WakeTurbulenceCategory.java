@@ -5,7 +5,12 @@ public enum WakeTurbulenceCategory {
     MEDIUM,
     HEAVY,
     UNKNOWN;
-    // TODO: 6/4/23 comments
+
+    /**
+     * method that allows to verify that the Wake turbulence Category belong to the enumeration
+     * @param s, String, the Wake turbulence category of the plane in a single letter
+     * @return the category from the enum above connected to the plane
+     */
     public static WakeTurbulenceCategory of(String s) {
         return switch (s) {
             case "L" -> LIGHT;
