@@ -30,7 +30,6 @@ public final class AircraftStateManager {
         requireNonNull(aircraftDatabase);
         this.aircraftDatabase = aircraftDatabase;
         aircraftStateAccumulatorMap = FXCollections.observableHashMap();
-        // FXCollections.observableArrayList()
         statePlaneSet = FXCollections.observableSet();
         lastTimeStampNs = 0;
     }
