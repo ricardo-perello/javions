@@ -33,6 +33,7 @@ public final class ObservableAircraftState implements AircraftStateSetter {
         trajectoryProperty = FXCollections.unmodifiableObservableList(trajectory);
     }
 
+
     //******************************* GETTERS *******************************
 
     public IcaoAddress getIcaoAddress() {

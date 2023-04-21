@@ -5,7 +5,10 @@ import ch.epfl.javions.adsb.AircraftStateAccumulator;
 import ch.epfl.javions.adsb.Message;
 import ch.epfl.javions.aircraft.AircraftData;
 import ch.epfl.javions.aircraft.AircraftDatabase;
+import ch.epfl.javions.aircraft.AircraftRegistration;
 import ch.epfl.javions.aircraft.IcaoAddress;
+import com.sun.javafx.collections.UnmodifiableListSet;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableSet;
 
 import java.io.IOException;
@@ -25,7 +28,9 @@ public final class AircraftStateManager {
     public AircraftStateManager(AircraftDatabase aircraftDatabase){
         requireNonNull(aircraftDatabase);
         this.aircraftDatabase = aircraftDatabase;
-
+        aircraftStateAccumulatorMap = FXCollections.observableHashMap();
+        // FXCollections.observableArrayList()
+        statePlaneSet = FXCollections.observableSet();
     }
 
     public void updateWithMessage(Message message) throws IOException {
@@ -52,6 +57,10 @@ public final class AircraftStateManager {
                 statePlaneSet.remove(statePlane);
             }
         }
+    }
+
+    public ObservableSet<ObservableAircraftState> states(){
+        return statePlaneSet;
     }
 }
 
