@@ -14,15 +14,16 @@ import javafx.collections.ObservableSet;
 import java.io.IOException;
 import java.util.Map;
 
+import static ch.epfl.javions.Units.Time.MINUTE;
 import static java.util.Objects.requireNonNull;
 
 public final class AircraftStateManager {
 
-    private Map<IcaoAddress, AircraftStateAccumulator<ObservableAircraftState>> aircraftStateAccumulatorMap; //todo nombre por buscar
-    private ObservableSet<ObservableAircraftState> statePlaneSet;
+    private final Map<IcaoAddress, AircraftStateAccumulator<ObservableAircraftState>> aircraftStateAccumulatorMap;
+    private final ObservableSet<ObservableAircraftState> statePlaneSet;
     private final AircraftDatabase aircraftDatabase;
-    private long lastTimeStampNs = 0;
-    public final long MAX_DIFFERENCE_TIME = (long) Math.pow(10, 9);
+    private long lastTimeStampNs;
+    public final long MAX_DIFFERENCE_TIME = (long) (MINUTE *Math.pow(10, 9));
 
 
     public AircraftStateManager(AircraftDatabase aircraftDatabase){
@@ -31,6 +32,7 @@ public final class AircraftStateManager {
         aircraftStateAccumulatorMap = FXCollections.observableHashMap();
         // FXCollections.observableArrayList()
         statePlaneSet = FXCollections.observableSet();
+        lastTimeStampNs = 0;
     }
 
     public void updateWithMessage(Message message) throws IOException {
