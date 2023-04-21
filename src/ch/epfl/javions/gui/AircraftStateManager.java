@@ -1,5 +1,6 @@
 package ch.epfl.javions.gui;
 
+import ch.epfl.javions.Units;
 import ch.epfl.javions.adsb.AirbornePositionMessage;
 import ch.epfl.javions.adsb.AircraftStateAccumulator;
 import ch.epfl.javions.adsb.Message;
@@ -18,11 +19,11 @@ import static java.util.Objects.requireNonNull;
 
 public final class AircraftStateManager {
 
-    private Map<IcaoAddress, AircraftStateAccumulator<ObservableAircraftState>> aircraftStateAccumulatorMap; //todo nombre por buscar
-    private ObservableSet<ObservableAircraftState> statePlaneSet;
+    private final Map<IcaoAddress, AircraftStateAccumulator<ObservableAircraftState>> aircraftStateAccumulatorMap; //todo nombre por buscar
+    private final ObservableSet<ObservableAircraftState> statePlaneSet;
     private final AircraftDatabase aircraftDatabase;
     private long lastTimeStampNs = 0;
-    public final long MAX_DIFFERENCE_TIME = (long) Math.pow(10, 9);
+    public final long MAX_DIFFERENCE_TIME = (long) (Units.Time.MINUTE * Math.pow(10, 9));
 
 
     public AircraftStateManager(AircraftDatabase aircraftDatabase){
