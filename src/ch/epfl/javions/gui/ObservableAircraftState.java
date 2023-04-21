@@ -13,6 +13,7 @@ public final class ObservableAircraftState implements AircraftStateSetter {
 
     private final IcaoAddress icaoAddress;
     private final AircraftData aircraftData;
+    private long trajectoryTimeStampNs;
     private LongProperty lastMessageTimeStampNsProperty;
     private IntegerProperty categoryProperty;
     private ObjectProperty<CallSign> callSignProperty;
@@ -91,6 +92,9 @@ public final class ObservableAircraftState implements AircraftStateSetter {
 
     @Override
     public void setPosition(GeoPos position) {
+        if (position.equals(getGeoPos())){
+            trajectory.add(new AirbornePos(position, getAltitude()));
+        }
         positionProperty.set(position);
     }
 
@@ -112,6 +116,11 @@ public final class ObservableAircraftState implements AircraftStateSetter {
 
     @Override
     public void setAltitude(double altitude) {
+        if (getLastMessageTimeStampNs() == trajectoryTimeStampNs){
+            trajectory.remove(trajectory.size()-1);
+            trajectory.add(new AirbornePos(getGeoPos(), altitude));
+            trajectoryTimeStampNs = getLastMessageTimeStampNs();
+        }
         altitudeProperty.set(altitude);
     }
 
