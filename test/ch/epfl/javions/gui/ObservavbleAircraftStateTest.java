@@ -9,7 +9,7 @@ import java.io.*;
 
 public class ObservavbleAircraftStateTest {
     @Test
-    void test1() throws IIOException {
+    void test1() throws IOException {
         try (DataInputStream s = new DataInputStream(
                 new BufferedInputStream(
                         new FileInputStream("resources/messages_20230318_0915.bin")))){
@@ -21,9 +21,8 @@ public class ObservavbleAircraftStateTest {
                 ByteString message = new ByteString(bytes);
                 System.out.printf("%13d: %s\n", timeStampNs, message);
             }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        } catch (EOFException e) {}
+
     }
 
 }
