@@ -3,6 +3,7 @@ package ch.epfl.javions.gui;
 import ch.epfl.javions.Units;
 import ch.epfl.javions.adsb.AirbornePositionMessage;
 import ch.epfl.javions.adsb.AircraftStateAccumulator;
+import ch.epfl.javions.adsb.AircraftStateSetter;
 import ch.epfl.javions.adsb.Message;
 import ch.epfl.javions.aircraft.AircraftData;
 import ch.epfl.javions.aircraft.AircraftDatabase;
@@ -42,11 +43,13 @@ public final class AircraftStateManager {
             aircraftStateAccumulatorMap.put(icaoAddress, new AircraftStateAccumulator<>(
                             new ObservableAircraftState(icaoAddress,  aircraftDatabase.get(icaoAddress))));
         }
-
-        if(message instanceof AirbornePositionMessage){
-            statePlaneSet.add(new ObservableAircraftState(icaoAddress, aircraftDatabase.get(icaoAddress)));
-        }
         aircraftStateAccumulatorMap.get(icaoAddress).update(message);
+        AircraftStateAccumulator AAAAA = new AircraftStateAccumulator<>(new ObservableAircraftState(icaoAddress, aircraftDatabase.get(icaoAddress)));
+        if(
+        //usar database.Tsetter o algo asi para el add
+        if(message instanceof AirbornePositionMessage){
+            statePlaneSet.add();
+        }
     }
 
     public void purge(){
