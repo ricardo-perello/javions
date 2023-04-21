@@ -6,9 +6,8 @@ import ch.epfl.javions.adsb.CallSign;
 import ch.epfl.javions.aircraft.AircraftData;
 import ch.epfl.javions.aircraft.IcaoAddress;
 import javafx.beans.property.*;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-
-import java.util.List;
 
 public final class ObservableAircraftState implements AircraftStateSetter {
 
@@ -18,134 +17,148 @@ public final class ObservableAircraftState implements AircraftStateSetter {
     private IntegerProperty categoryProperty;
     private ObjectProperty<CallSign> callSignProperty;
     private ObjectProperty<GeoPos> positionProperty;
-    private ListProperty<AirbornePos> trajectoryProperty;
+    private final ObservableList<AirbornePos> trajectory;
+    private final ObservableList<AirbornePos> trajectoryProperty;
     private DoubleProperty altitudeProperty;
     private DoubleProperty velocityProperty;
     private DoubleProperty trackOrHeadingProperty;
 
-    public ObservableAircraftState(IcaoAddress icaoAddress, AircraftData aircraftData){
+    //******************************* CONSTRUCTOR *******************************
+
+    public ObservableAircraftState(IcaoAddress icaoAddress, AircraftData aircraftData) {
         this.icaoAddress = icaoAddress;
         this.aircraftData = aircraftData;
+        trajectory = FXCollections.observableArrayList();
+        trajectoryProperty = FXCollections.unmodifiableObservableList(trajectory);
     }
+
+    //******************************* GETTERS *******************************
 
     public IcaoAddress getIcaoAddress() {
         return icaoAddress;
     }
+
     public AircraftData getAircraftData() {
         return aircraftData;
     }
 
-
+    //******************************* LAST MESSAGE TIMESTAMP *******************************
     @Override
     public void setLastMessageTimeStampNs(long timeStampsNs) {
         lastMessageTimeStampNsProperty.set(timeStampsNs);
     }
-    public ReadOnlyLongProperty LastMessageTimeStampNsProperty(){
+
+    public ReadOnlyLongProperty LastMessageTimeStampNsProperty() {
         return lastMessageTimeStampNsProperty;
     }
-    public long getLastMessageTimeStampNs(){
+
+    public long getLastMessageTimeStampNs() {
         return lastMessageTimeStampNsProperty.get();
     }
 
 
-
+    //******************************* CATEGORY *******************************
 
     @Override
     public void setCategory(int category) {
         categoryProperty.set(category);
     }
-    public ReadOnlyIntegerProperty categoryProperty(){
+
+    public ReadOnlyIntegerProperty categoryProperty() {
         return categoryProperty;
     }
-    public int getCategory(){
+
+    public int getCategory() {
         return categoryProperty.get();
     }
 
-
+//******************************* CALLSIGN *******************************
 
     @Override
     public void setCallSign(CallSign callSign) {
         callSignProperty.set(callSign);
     }
-    public ReadOnlyObjectProperty<CallSign> callSignProperty(){
+
+    public ReadOnlyObjectProperty<CallSign> callSignProperty() {
         return callSignProperty;
     }
-    public CallSign getCallSign(){
+
+    public CallSign getCallSign() {
         return callSignProperty.get();
     }
 
-
+//******************************* POSITION *******************************
 
     @Override
     public void setPosition(GeoPos position) {
-            positionProperty.set(position);
+        positionProperty.set(position);
     }
-    public ReadOnlyObjectProperty<GeoPos> positionProperty(){
+
+    public ReadOnlyObjectProperty<GeoPos> positionProperty() {
         return positionProperty;
     }
-    public GeoPos getGeoPos(){
+
+    public GeoPos getGeoPos() {
         return positionProperty.get();
     }
 
+    //******************************* TRAJECTORY *******************************
 
-
-
-    public void setTrajectory(List<AirbornePos> trajectory){
-        trajectoryProperty.set((ObservableList<AirbornePos>) trajectory);
-    }
-    public ListProperty<AirbornePos> trajectory(){
-        return trajectoryProperty; // TODO: 21/4/23 change this to make it observable but unmodifiable
-    }
-    public List<AirbornePos> getTrajectory(){
-        return trajectoryProperty.get();
+    public ObservableList<AirbornePos> trajectory() {
+        return trajectoryProperty;
     }
 
-
-
+    //******************************* ALTITUDE *******************************
 
     @Override
     public void setAltitude(double altitude) {
         altitudeProperty.set(altitude);
     }
-    public ReadOnlyDoubleProperty altitude(){
+
+    public ReadOnlyDoubleProperty altitude() {
         return altitudeProperty;
     }
-    public double getAltitude(){
+
+    public double getAltitude() {
         return altitudeProperty.get();
     }
 
-
+//******************************* VELOCITY *******************************
 
 
     @Override
     public void setVelocity(double velocity) {
         velocityProperty.set(velocity);
     }
-    public ReadOnlyDoubleProperty velocityProperty(){
+
+    public ReadOnlyDoubleProperty velocityProperty() {
         return velocityProperty;
     }
-    public double getVelocity(){
+
+    public double getVelocity() {
         return velocityProperty.get();
     }
 
 
-
+//******************************* TRACK OR HEADING *******************************
 
     @Override
     public void setTrackOrHeading(double trackOrHeading) {
         trackOrHeadingProperty.set(trackOrHeading);
     }
-    public ReadOnlyDoubleProperty trackOrHeadingProperty(){
+
+    public ReadOnlyDoubleProperty trackOrHeadingProperty() {
         return trackOrHeadingProperty;
     }
-    public double getTrackOrHeading(){
+
+    public double getTrackOrHeading() {
         return trackOrHeadingProperty.get();
     }
 
+//******************************* AIRBORNE POS  *******************************
 
 
+    public record AirbornePos(GeoPos geoPos, double altitude) {
 
-    public record AirbornePos(GeoPos geoPos, double altitude){
-        
     }
 }
