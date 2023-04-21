@@ -14,15 +14,15 @@ public final class ObservableAircraftState implements AircraftStateSetter {
     private final IcaoAddress icaoAddress;
     private final AircraftData aircraftData;
     private long trajectoryTimeStampNs;
-    private LongProperty lastMessageTimeStampNsProperty;
-    private IntegerProperty categoryProperty;
-    private ObjectProperty<CallSign> callSignProperty;
-    private ObjectProperty<GeoPos> positionProperty;
+    private final LongProperty lastMessageTimeStampNsProperty = new SimpleLongProperty();
+    private final IntegerProperty categoryProperty = new SimpleIntegerProperty();
+    private final ObjectProperty<CallSign> callSignProperty = new SimpleObjectProperty<>();
+    private final ObjectProperty<GeoPos> positionProperty = new SimpleObjectProperty<>();
     private final ObservableList<AirbornePos> trajectory;
     private final ObservableList<AirbornePos> trajectoryProperty;
-    private DoubleProperty altitudeProperty;
-    private DoubleProperty velocityProperty;
-    private DoubleProperty trackOrHeadingProperty;
+    private final DoubleProperty altitudeProperty = new SimpleDoubleProperty();
+    private final DoubleProperty velocityProperty = new SimpleDoubleProperty();
+    private final DoubleProperty trackOrHeadingProperty = new SimpleDoubleProperty();
 
     //******************************* CONSTRUCTOR *******************************
 
@@ -31,6 +31,7 @@ public final class ObservableAircraftState implements AircraftStateSetter {
         this.aircraftData = aircraftData;
         trajectory = FXCollections.observableArrayList();
         trajectoryProperty = FXCollections.unmodifiableObservableList(trajectory);
+
     }
 
 
