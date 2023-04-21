@@ -124,7 +124,7 @@ public final class ObservableAircraftState implements AircraftStateSetter {
         altitudeProperty.set(altitude);
     }
 
-    public ReadOnlyDoubleProperty altitude() {
+    public ReadOnlyDoubleProperty altitudeProperty() {
         return altitudeProperty;
     }
 
