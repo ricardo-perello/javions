@@ -46,21 +46,9 @@ public final class AircraftStateManager {
         aircraftStateAccumulatorMap.get(icaoAddress).update(message);
 
         if( aircraftStateAccumulatorMap.get(icaoAddress).stateSetter().getGeoPos() != null){
-            if (!statePlaneSet.contains(aircraftStateAccumulatorMap.get(icaoAddress).stateSetter())){
-                statePlaneSet.add((ObservableAircraftState) aircraftStateAccumulatorMap.get(icaoAddress).stateSetter());
-            }
+                statePlaneSet.add(aircraftStateAccumulatorMap.get(icaoAddress).stateSetter());
+
         }
-
-
-        /*AircraftStateAccumulator AAAAA = new AircraftStateAccumulator<>(new ObservableAircraftState(icaoAddress, aircraftDatabase.get(icaoAddress)));
-        AAAAA.update(message);
-        if(new ObservableAircraftState(icaoAddress, aircraftDatabase.get(icaoAddress)).getGeoPos()!= null){
-            statePlaneSet.add((ObservableAircraftState) AAAAA.stateSetter());
-        }*/
-        //usar database.Tsetter o algo asi para el add
-        /*if(message instanceof AirbornePositionMessage){
-            statePlaneSet.add();
-        }*/
     }
 
     public void purge(){
