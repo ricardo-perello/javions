@@ -3,6 +3,7 @@ package ch.epfl.javions.gui;
 import ch.epfl.javions.Preconditions;
 import javafx.scene.image.Image;
 
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -13,6 +14,7 @@ import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 
 public final class TileManager {
@@ -36,17 +38,21 @@ public final class TileManager {
         this.serverName = serverName;
     }
 
-    public Image imageForTileAt(TileId tileId){
+    public Image imageForTileAt(TileId tileId) throws IOException {
         String directoryString = "/" + tileId.zoom() + "/" + tileId.x();
         String tileString = directoryString + "/" + tileId.y() + ".png";
         Path tilePath = Path.of(path.toString(), tileString);
 
         if (memoryCache.containsKey(tileId)){
+            System.out.println("Image found in memory cache!");
             return memoryCache.get(tileId);
         }
         else if (Files.exists(tilePath) ){
-            Image image = new Image((InputStream) tilePath);
+            byte[] bytes = Files.readAllBytes(tilePath);
+            ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes);
+            Image image = new Image(inputStream);
             memoryCache.put(tileId, image);
+            System.out.println("Image found in disk cache!");
             return image;
         }
         else{
@@ -60,7 +66,7 @@ public final class TileManager {
 
                 Image image = new Image(new ByteArrayInputStream(bytes));
                 memoryCache.put(tileId, image);
-                System.out.println(path + directoryString);
+                System.out.println("Image retrieved from server!");
                 Files.createDirectories(Path.of(path + directoryString));
                 Files.createFile(tilePath);
                 Files.write(tilePath, bytes);
