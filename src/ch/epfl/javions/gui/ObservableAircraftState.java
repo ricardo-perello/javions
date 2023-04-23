@@ -25,7 +25,7 @@ public final class ObservableAircraftState implements AircraftStateSetter {
     private final DoubleProperty trackOrHeadingProperty = new SimpleDoubleProperty();
 
     //******************************* CONSTRUCTOR *******************************
-
+// TODO: 23/4/23 add comments
     public ObservableAircraftState(IcaoAddress icaoAddress, AircraftData aircraftData) {
         this.icaoAddress = icaoAddress;
         this.aircraftData = aircraftData;

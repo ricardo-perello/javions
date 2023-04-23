@@ -26,7 +26,7 @@ public final class AircraftStateManager {
     private long lastTimeStampNs;
     public final long MAX_DIFFERENCE_TIME = (long) (MINUTE *Math.pow(10, 9));
 
-
+    // TODO: 23/4/23 add comments
     public AircraftStateManager(AircraftDatabase aircraftDatabase){
         requireNonNull(aircraftDatabase);
         this.aircraftDatabase = aircraftDatabase;
