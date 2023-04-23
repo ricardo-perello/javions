@@ -1,14 +1,9 @@
 package ch.epfl.javions.gui;
 
-import ch.epfl.javions.adsb.AirbornePositionMessage;
 import ch.epfl.javions.adsb.AircraftStateAccumulator;
-import ch.epfl.javions.adsb.AircraftStateSetter;
 import ch.epfl.javions.adsb.Message;
-import ch.epfl.javions.aircraft.AircraftData;
 import ch.epfl.javions.aircraft.AircraftDatabase;
-import ch.epfl.javions.aircraft.AircraftRegistration;
 import ch.epfl.javions.aircraft.IcaoAddress;
-import com.sun.javafx.collections.UnmodifiableListSet;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableSet;
 
@@ -26,7 +21,10 @@ public final class AircraftStateManager {
     private long lastTimeStampNs;
     public final long MAX_DIFFERENCE_TIME = (long) (MINUTE *Math.pow(10, 9));
 
-    // TODO: 23/4/23 add comments
+    /**
+     * constructor for AircraftStateManager
+     * @param aircraftDatabase AircraftDatabase, the data base of a given plane
+     */
     public AircraftStateManager(AircraftDatabase aircraftDatabase){
         requireNonNull(aircraftDatabase);
         this.aircraftDatabase = aircraftDatabase;
@@ -35,6 +33,11 @@ public final class AircraftStateManager {
         lastTimeStampNs = 0;
     }
 
+    /**
+     * public method that allows to update the state of the plane that sent the message
+     * @param message Message, message sent by the given plane
+     * @throws IOException if the Map aircraftStateAccumulatorMap does not have a value connected to the key icaoAddress
+     */
     public void updateWithMessage(Message message) throws IOException {
         requireNonNull(message);
         IcaoAddress icaoAddress = message.icaoAddress();
@@ -51,6 +54,10 @@ public final class AircraftStateManager {
         }
     }
 
+    /**
+     * public method that allows to eliminate a plane from our collections if the last message heard from it is over the
+     * maximum we have determined (in this case a minute)
+     */
     public void purge(){
         for (IcaoAddress icaoAddress : aircraftStateAccumulatorMap.keySet()) {
             ObservableAircraftState statePlane = aircraftStateAccumulatorMap.get(icaoAddress).stateSetter();
@@ -62,8 +69,12 @@ public final class AircraftStateManager {
         }
     }
 
+    /**
+     * public method that allows us to see the set of states
+     * @return an ObservableSet of Observable Aircraft State using an unmodifiable view
+     */
     public ObservableSet<ObservableAircraftState> states(){
-        return statePlaneSet;
+        return FXCollections.unmodifiableObservableSet(statePlaneSet);
     }
 }
 
