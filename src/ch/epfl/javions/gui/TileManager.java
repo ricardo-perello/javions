@@ -4,10 +4,7 @@ import ch.epfl.javions.Preconditions;
 import javafx.scene.image.Image;
 
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -16,6 +13,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.Map;
+
+
 
 public final class TileManager {
 
@@ -27,11 +27,21 @@ public final class TileManager {
             return true;
         }
     }
-
+    private static final int MAX_ENTRIES = 100;
     private final Path path;
     private final String serverName;
     private final LinkedHashMap<TileId, Image> memoryCache =
-            new LinkedHashMap<>(100, 1, true);
+            new LinkedHashMap<TileId, Image>(100, 1, true){
+                @Override
+                protected boolean removeEldestEntry(Map.Entry<TileId, Image> eldest) {
+                    return this.size() > MAX_ENTRIES;
+                }
+
+
+    };
+
+
+
 
     public TileManager(Path path, String serverName){
         this.path = path;
@@ -42,7 +52,6 @@ public final class TileManager {
         String directoryString = "/" + tileId.zoom() + "/" + tileId.x();
         String tileString = directoryString + "/" + tileId.y() + ".png";
         Path tilePath = Path.of(path.toString(), tileString);
-
         if (memoryCache.containsKey(tileId)){
             System.out.println("Image found in memory cache!");
             return memoryCache.get(tileId);

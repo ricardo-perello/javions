@@ -14,7 +14,12 @@ public final class TestTileManager extends Application {
         TileManager t = new TileManager(Path.of("tile-cache"),
                 "https://tile.openstreetmap.org");
         t.imageForTileAt(new TileManager.TileId(17, 67927, 46357));
-        t.imageForTileAt(new TileManager.TileId(17, 67927, 46357));
+        for (int i = 0; i < 120; i++) {
+            t.imageForTileAt(new TileManager.TileId(17, i, 46357));
+        }
+        for (int i = 0; i < 120; i++) {
+            t.imageForTileAt(new TileManager.TileId(17, i, 46357));
+        }
         Platform.exit();
     }
 }
