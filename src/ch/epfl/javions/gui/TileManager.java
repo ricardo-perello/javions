@@ -1,5 +1,6 @@
 package ch.epfl.javions.gui;
 
+import ch.epfl.javions.Preconditions;
 import javafx.scene.image.Image;
 
 
@@ -26,7 +27,7 @@ public final class TileManager {
 
     public record TileId(int zoom, int x, int y) {
         public TileId {
-            //Preconditions.checkArgument(isValid(zoom(), x(), y())); this doesnt work (big x)
+            Preconditions.checkArgument(isValid(zoom, x, y)); //this doesnt work (big x)
         }// TODO: 24/4/23 check if we need conditions
 
         public static boolean isValid(int zoom, int x, int y) {
@@ -74,10 +75,7 @@ public final class TileManager {
         URLConnection c = u.openConnection();
         c.setRequestProperty("User-Agent", "I had");
         try (InputStream i = c.getInputStream()) {
-
             byte[] bytes = i.readAllBytes();
-
-
             Image image = new Image(new ByteArrayInputStream(bytes));
             updateCache(tileId, image);
             System.out.println("Image retrieved from server!");
