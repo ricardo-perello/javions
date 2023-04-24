@@ -18,6 +18,18 @@ public final class MapParameters {
         this.minY = new SimpleObjectProperty<>(minY);
     }
 
+    public Integer getZoom(){
+        return zoom.getValue();
+    }
+
+    public Double getMinX(){
+        return minX.getValue();
+    }
+
+    public Double getMinY(){
+        return minY.getValue();
+    }
+
     public void scroll(double x, double y) {
         double newMinX = minX.getValue() + x;
         double newMinY = minY.getValue() + y;
