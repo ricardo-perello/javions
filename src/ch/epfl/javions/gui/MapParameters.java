@@ -34,8 +34,7 @@ public final class MapParameters {
         double newMinX = minX.getValue() + x;
         double newMinY = minY.getValue() + y;
         Preconditions.checkArgument(newMinX >= 0 && newMinX <Math.scalb(2, 8+ zoom.getValue()) &&
-                newMinY >= 0 && newMinY < Math.scalb(2, 8+ zoom.getValue()));
-        //todo condiciones x y
+                                    newMinY >= 0 && newMinY < Math.scalb(2, 8+ zoom.getValue()));
         minX.set(minX.getValue() + x);
         minY.set(minY.getValue() + y);
     }

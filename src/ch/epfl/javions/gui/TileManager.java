@@ -1,5 +1,6 @@
 package ch.epfl.javions.gui;
 
+import ch.epfl.javions.Math2;
 import ch.epfl.javions.Preconditions;
 import javafx.scene.image.Image;
 
@@ -23,8 +24,14 @@ public final class TileManager {
         public TileId{
             Preconditions.checkArgument(isValid(zoom(),x(),y()));
         }
-        public static boolean isValid(int zoom, int x, int y){ // TODO: 23/4/23 use formula
-            return true;
+        public static boolean isValid(int zoom, int x, int y) {
+
+            if (zoom >= 6 && zoom <= 19 &&
+                    x >= 0 && x < Math.scalb(4, zoom) &&
+                    y >= 0 && y < Math.scalb(4, zoom)){
+                return true;
+            }
+            return false;
         }
     }
     private static final int MAX_ENTRIES = 100;
@@ -39,8 +46,6 @@ public final class TileManager {
 
 
     };
-
-
 
 
     public TileManager(Path path, String serverName){
