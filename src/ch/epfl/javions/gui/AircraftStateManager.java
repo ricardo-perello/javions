@@ -23,7 +23,7 @@ public final class AircraftStateManager {
 
     /**
      * constructor for AircraftStateManager
-     * @param aircraftDatabase AircraftDatabase, the data base of a given plane
+     * @param aircraftDatabase AircraftDatabase, the database of a given plane
      */
     public AircraftStateManager(AircraftDatabase aircraftDatabase){
         requireNonNull(aircraftDatabase);
