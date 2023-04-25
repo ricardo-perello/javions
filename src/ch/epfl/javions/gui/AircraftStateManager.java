@@ -80,7 +80,7 @@ public final class AircraftStateManager {
                 aircraftStateAccumulatorMap.remove(icaoAddress);
                 statePlaneSet.remove(statePlane);
             }
-        }
+        }*/
     }
 
     /**
