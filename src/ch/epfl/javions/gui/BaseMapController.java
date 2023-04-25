@@ -104,6 +104,7 @@ public final class BaseMapController {
     private void redrawIfNeeded() {
         if (!redrawNeeded) return;
         redrawNeeded = false;
+        //redrawOnNextPulse();
         drawMap();
     }
     private void eventHandler() {
