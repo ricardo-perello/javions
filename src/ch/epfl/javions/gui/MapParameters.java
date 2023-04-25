@@ -13,23 +13,21 @@ public final class MapParameters {
     private final DoubleProperty minY;
 
     public MapParameters(int zoom, double minX, double minY) {
-        Preconditions.checkArgument(zoom >= MIN_ZOOM && zoom <= MAX_ZOOM); //&&
-                                    //minX < Math.scalb(2, 8 + zoom) && minX >= 0 &&
-                                    //minY < Math.scalb(2, 8 + zoom) && minY >= 0);
+        Preconditions.checkArgument(zoom >= MIN_ZOOM && zoom <= MAX_ZOOM);
         this.zoom = new SimpleIntegerProperty(zoom);
         this.minX = new SimpleDoubleProperty(minX);
         this.minY = new SimpleDoubleProperty(minY);
     }
 
-    public Integer getZoomValue(){
+    public int getZoomValue(){
         return zoom.getValue();
     }
 
-    public Double getMinXValue(){
+    public double getMinXValue(){
         return minX.getValue();
     }
 
-    public Double getMinYValue(){
+    public double getMinYValue(){
         return minY.getValue();
     }
 
@@ -48,8 +46,6 @@ public final class MapParameters {
     public void scroll(double x, double y) {
         double newMinX = minX.getValue() + x;
         double newMinY = minY.getValue() + y;
-        /*Preconditions.checkArgument(newMinX >= 0 && newMinX <Math.scalb(2, 8+ zoom.getValue()) &&
-                                    newMinY >= 0 && newMinY < Math.scalb(2, 8+ zoom.getValue()));*/
         minX.set(newMinX);
         minY.set(newMinY);
     }
@@ -58,8 +54,8 @@ public final class MapParameters {
         int newValueZoom = zoom.getValue() + zoomChange;
         Preconditions.checkArgument(newValueZoom >= MIN_ZOOM && newValueZoom <= MAX_ZOOM);
         //todo mirar con tota si esta bien
-        minX.set(minX.getValue() * Math.scalb(2, zoomChange));
-        minY.set(minY.getValue() * Math.scalb(2, zoomChange));
+        minX.set(minX.getValue() * Math.scalb(1, zoomChange));
+        minY.set(minY.getValue() * Math.scalb(1, zoomChange));
         //todo adapter les valeurs de minX et minY
         zoom.set(newValueZoom);
     }
