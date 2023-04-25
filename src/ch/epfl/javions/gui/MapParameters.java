@@ -61,7 +61,5 @@ public final class MapParameters {
         //todo adapter les valeurs de minX et minY
         zoom.set(newValueZoom);
     }
-    public Point2D topLeft() {
-        return new Point2D(minX.getValue(), minY.getValue());
-    }
+
 }

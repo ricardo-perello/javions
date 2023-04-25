@@ -16,7 +16,7 @@ import java.io.IOException;
 public final class BaseMapController {
 
     private static final int TILE_SIZE = 256;
-    private static final int MIN_ZOOM_LEVEL = 8;
+    private static final int MIN_ZOOM_LEVEL = 6;
     private static final int MAX_ZOOM_LEVEL = 19;
     private static final int MIN_TIME_BETWEEN_SCROLLS_MS = 200;
 
@@ -63,15 +63,15 @@ public final class BaseMapController {
     }
 
     private void drawMap() {
-        GraphicsContext gc = canvas.getGraphicsContext2D();
-        MapParameters actualMP = mapParametersProperty.get();
+        GraphicsContext graphicsContext = canvas.getGraphicsContext2D();
+        MapParameters actualMapParameters = mapParametersProperty.get();
 
-        //Coordonnées du point en haut à gauche de la fenêtre.
-        Point2D topLeft = actualMP.topLeft();
-        //Coordonnées du point en bas à droite de la fenêtre.
+        //finds coordinates of top left corner of map
+        Point2D topLeft = topLeft(actualMapParameters);
+        //Coordinates of bottom right corner of map
         Point2D bottomRight = topLeft.add(canvas.getWidth(), canvas.getHeight());
 
-        int zoomLevel = actualMP.getZoomValue();
+        int zoomLevel = actualMapParameters.getZoomValue();
         //Coordonnées des tuiles minimales et maximales à dessiner (le rectangle de tuiles depuis
         //la tuile de coordonnées (xMin, yMin) à la tuile (xMax, yMax)).
         int xMin = (int) topLeft.getX() / TILE_SIZE;
@@ -89,7 +89,7 @@ public final class BaseMapController {
                     //Dessine la tuile actuelle, au niveau de zoom demandé, et à partir du pixel
                     //du bord du canevas, ce qui permet d'avoir des bouts de tuile, et non seulement
                     //des tuiles entières.
-                    gc.drawImage(tileManager.imageForTileAt(new TileManager.TileId(zoomLevel, x, y)),
+                    graphicsContext.drawImage(tileManager.imageForTileAt(new TileManager.TileId(zoomLevel, x, y)),
                             destinationX, destinationY);
                 } catch (IOException ignored) {} //Exception ignorée.
 
@@ -100,11 +100,15 @@ public final class BaseMapController {
         }
     }
 
+    private Point2D topLeft(MapParameters actualMapParameters) {
+        return new Point2D(actualMapParameters.getMinXValue(), actualMapParameters.getMinYValue());
+    }
+
 
     private void redrawIfNeeded() {
         if (!redrawNeeded) return;
         redrawNeeded = false;
-        //redrawOnNextPulse();
+        redrawOnNextPulse();
         drawMap();
     }
     private void eventHandler() {
@@ -130,7 +134,9 @@ public final class BaseMapController {
 
             //Mise à jour de la coordonnée actuelle.
             previousCoordsOnScreen.set(new Point2D(e.getX(), e.getY()));
+
         });
+
     }
 
     private void addMouseClicking(){}
@@ -149,7 +155,6 @@ public final class BaseMapController {
 
            // int newZoomLevel = Math2.clamp();
         });
-
 
     }
 
