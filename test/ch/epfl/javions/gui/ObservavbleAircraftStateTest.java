@@ -65,7 +65,7 @@ class AircraftStateManagerTest {
                 ObservableSet<ObservableAircraftState> states = manager.states();
                 String CSI = "\u001B[";
                 String CLEAR_SCREEN = CSI + "2J";
-                Thread.sleep(100);
+                Thread.sleep(1);
 
                 System.out.print(CLEAR_SCREEN);
                 System.out.print(CSI + ";H");

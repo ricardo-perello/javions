@@ -8,6 +8,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableSet;
 
 import java.io.IOException;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.Map;
 
 import static ch.epfl.javions.Units.Time.MINUTE;
@@ -41,6 +43,8 @@ public final class AircraftStateManager {
     public void updateWithMessage(Message message) throws IOException {
         requireNonNull(message);
         IcaoAddress icaoAddress = message.icaoAddress();
+        if ((icaoAddress == null)||(aircraftDatabase.get(icaoAddress) == null)) return;
+
         lastTimeStampNs = message.timeStampNs();
         if (!aircraftStateAccumulatorMap.containsKey(icaoAddress)){
             aircraftStateAccumulatorMap.put(icaoAddress, new AircraftStateAccumulator<>(
@@ -59,7 +63,17 @@ public final class AircraftStateManager {
      * maximum we have determined (in this case a minute)
      */
     public void purge(){
-        for (IcaoAddress icaoAddress : aircraftStateAccumulatorMap.keySet()) {
+        Collection<AircraftStateAccumulator<ObservableAircraftState>> values = aircraftStateAccumulatorMap.values();
+        Iterator<AircraftStateAccumulator<ObservableAircraftState>> iterator = values.iterator();
+        while(iterator.hasNext()){
+            ObservableAircraftState statePlane = iterator.next().stateSetter();
+            if (lastTimeStampNs - statePlane.getLastMessageTimeStampNs()
+                    >= MAX_DIFFERENCE_TIME ){
+                values.remove(statePlane);
+                statePlaneSet.remove(statePlane);
+            }
+        }
+        /*for (IcaoAddress icaoAddress : aircraftStateAccumulatorMap.keySet()) {
             ObservableAircraftState statePlane = aircraftStateAccumulatorMap.get(icaoAddress).stateSetter();
             if (lastTimeStampNs - statePlane.getLastMessageTimeStampNs()
                     >= MAX_DIFFERENCE_TIME ){
