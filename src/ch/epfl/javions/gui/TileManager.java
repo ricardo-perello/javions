@@ -27,7 +27,7 @@ public final class TileManager {
 
     public record TileId(int zoom, int x, int y) {
         public TileId {
-            Preconditions.checkArgument(isValid(zoom, x, y)); //this doesnt work (big x)
+            Preconditions.checkArgument(isValid(zoom, x, y));
         }// TODO: 24/4/23 check if we need conditions
 
         public static boolean isValid(int zoom, int x, int y) {
