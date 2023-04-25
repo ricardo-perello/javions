@@ -32,6 +32,10 @@ public final class BaseMapController {
         canvas.widthProperty().bind(pane.widthProperty());
         canvas.heightProperty().bind(pane.heightProperty());
 
+        canvas.sceneProperty().addListener((p, oldS, newS) -> {
+            assert oldS == null;
+            newS.addPreLayoutPulseListener(this::redrawIfNeeded);
+        });
         setUpListeners();
 
         eventHandler();
@@ -57,7 +61,7 @@ public final class BaseMapController {
     private void redrawIfNeeded() {
         if (!redrawNeeded) return;
         redrawNeeded = false;
-        //drawMap();
+        redrawOnNextPulse();
     }
     private void eventHandler() {
         addMouseDragging();
