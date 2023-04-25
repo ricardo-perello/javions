@@ -2,6 +2,7 @@ package ch.epfl.javions.gui;
 
 import ch.epfl.javions.Preconditions;
 import javafx.beans.property.*;
+import javafx.geometry.Point2D;
 
 public final class MapParameters {
 
@@ -13,7 +14,8 @@ public final class MapParameters {
     private final DoubleProperty minY;
 
     public MapParameters(int zoom, double minX, double minY) {
-        Preconditions.checkArgument(zoom >= MIN_ZOOM && zoom <= MAX_ZOOM);
+        Preconditions.checkArgument(zoom >= MIN_ZOOM
+                && zoom <= MAX_ZOOM);
         this.zoom = new SimpleIntegerProperty(zoom);
         this.minX = new SimpleDoubleProperty(minX);
         this.minY = new SimpleDoubleProperty(minY);
@@ -58,5 +60,8 @@ public final class MapParameters {
         minY.set(minY.getValue() * Math.scalb(1, zoomChange));
         //todo adapter les valeurs de minX et minY
         zoom.set(newValueZoom);
+    }
+    public Point2D topLeft() {
+        return new Point2D(minX.getValue(), minY.getValue());
     }
 }
