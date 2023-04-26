@@ -54,18 +54,23 @@ public final class MapParameters {
     }
 
     public void changeZoomLevel(int zoomChange) {
-        //todo mirar con tota si esta bien
-        //todo 11<n == 2^n
          zoomChange = zoomChange > 0 ? 1 : -1;
         int newZoomLevel = Math2.clamp(MIN_ZOOM_LEVEL, getZoomValue()
                 + (zoomChange), MAX_ZOOM_LEVEL);
         if(zoom.getValue() != newZoomLevel) {
-            minX.set(minX.getValue() * Math.scalb(1, zoomChange));
-            minY.set(minY.getValue() * Math.scalb(1, zoomChange));
+            adjustCoordinates(zoomChange);
             zoom.set(newZoomLevel);
         }
+    }
 
-
+    private void adjustCoordinates(int zoomChange){
+        if(zoomChange < 0){
+            minX.set(minX.getValue() / (1<<-zoomChange));
+            minY.set(minY.getValue() / (1<<-zoomChange));
+        }else{
+            minX.set(minX.getValue() * (1<<zoomChange));
+            minY.set(minY.getValue() * (1<<zoomChange));
+        }
     }
 
 }

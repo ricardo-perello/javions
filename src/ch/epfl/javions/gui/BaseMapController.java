@@ -115,29 +115,17 @@ public final class BaseMapController {
         addMouseClicking();
         addMouseScrolling();
     }
-    private void addMouseDragging(){/*
+    private void addMouseDragging(){
 
-        //Prise de la coordonnée au début du clic.
-        canvas.setOnMousePressed((e) -> previousCoordsOnScreen.set(new Point2D(e.getX(), e.getY())));
+        canvas.setOnMousePressed((e) -> previousMouseCoordsOnScreen.set(new Point2D(e.getX(), e.getY())));
 
-        //Calcul de la position actuelle de la carte affichée en fonction du déplacement.
         canvas.setOnMouseDragged((e) -> {
 
-            double deltaX = e.getX() - previousCoordsOnScreen.get().getX(),
-                    deltaY = e.getY() - previousCoordsOnScreen.get().getY();
-            int zoomLevel = mapParametersProperty.get().getZoomValue();
-            WebMercator pointWebMercator = mapParametersProperty.get().pointAt(0, 0);
-
-            mapParametersProperty.set(mapParametersProperty.get().withMinXY(
-                    pointWebMercator.xAtZoomLevel(zoomLevel) - deltaX,
-                    pointWebMercator.yAtZoomLevel(zoomLevel) - deltaY));
-
-            //Mise à jour de la coordonnée actuelle.
-            previousCoordsOnScreen.set(new Point2D(e.getX(), e.getY()));
-
-
-        });*/
-
+            double deltaX = previousMouseCoordsOnScreen.getValue().getX() - e.getX(),
+                    deltaY =  previousMouseCoordsOnScreen.getValue().getY() - e.getY();
+            mapParameters.scroll(deltaX, deltaY);
+            previousMouseCoordsOnScreen.set(new Point2D(e.getX(), e.getY()));
+        });
     }
 
     private void addMouseClicking(){}
@@ -149,28 +137,10 @@ public final class BaseMapController {
             long currentTime = System.currentTimeMillis();
             if ((zoomDelta == 0)||(currentTime < minScrollTime.get())) return;
             minScrollTime.set(currentTime + MIN_TIME_BETWEEN_SCROLLS_MS);
-/*
-            double mouseX = e.getX();
-            double mouseY = e.getY();
-            previousMouseCoordsOnScreen.set(new Point2D(mouseX, mouseY));
-            //topLeft = topLeft.add(previousMouseCoordsOnScreen.getValue());
-
-            System.out.println("x" + mouseX);
-            System.out.println("y" + mouseY);
-            System.out.println("zoom: " + mapParameters.getZoomValue());
-*/
 
             mapParameters.scroll(e.getX(),e.getY());
             mapParameters.changeZoomLevel((int) zoomDelta);
             mapParameters.scroll(-e.getX(),-e.getY());
-
-/*
-            mapParametersProperty.set(new MapParameters(mapParameters.getZoomValue()
-                    ,  mapParameters.getMinXValue() - e.getX(),
-                      mapParameters.getMinYValue() - e.getY()));
-
-
- */
         });
 
     }
