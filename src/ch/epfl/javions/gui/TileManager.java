@@ -11,6 +11,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.LinkedHashMap;
 
+import static ch.epfl.javions.gui.BaseMapController.MAX_ZOOM_LEVEL;
+import static ch.epfl.javions.gui.BaseMapController.MIN_ZOOM_LEVEL;
+
 
 public final class TileManager {
 
@@ -32,7 +35,7 @@ public final class TileManager {
 
         public static boolean isValid(int zoom, int x, int y) {
 
-            return zoom >= 6 && zoom <= 19 &&
+            return zoom >= MIN_ZOOM_LEVEL && zoom <= MAX_ZOOM_LEVEL &&
                     x >= 0 && x < Math.scalb(4, zoom) &&
                     y >= 0 && y < Math.scalb(4, zoom);
         }
@@ -60,14 +63,12 @@ public final class TileManager {
         Path tilePath = Path.of(tileString);
 
         if (memoryCache.containsKey(tileId)) {
-            System.out.println("Image found in memory cache!");
             return memoryCache.get(tileId);
         }
         if (Files.exists(tilePath)) {
             byte[] bytes = Files.readAllBytes(tilePath);
             Image image = new Image(new ByteArrayInputStream(bytes));
             updateCache(tileId, image);
-            System.out.println("Image found in disk cache!");
             return image;
         }
 

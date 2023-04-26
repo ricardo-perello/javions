@@ -1,12 +1,8 @@
 package ch.epfl.javions.gui;
 
-import ch.epfl.javions.GeoPos;
-import ch.epfl.javions.Math2;
-import ch.epfl.javions.WebMercator;
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.geometry.Point2D;
-import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.Pane;
@@ -16,8 +12,8 @@ import java.io.IOException;
 public final class BaseMapController {
 
     private static final int TILE_SIZE = 256;
-    private static final int MIN_ZOOM_LEVEL = 6;
-    private static final int MAX_ZOOM_LEVEL = 19;
+    static final int MIN_ZOOM_LEVEL = 6;
+    static final int MAX_ZOOM_LEVEL = 19;
     private static final int MIN_TIME_BETWEEN_SCROLLS_MS = 200;
 
     private final TileManager tileManager;
@@ -26,7 +22,8 @@ public final class BaseMapController {
     private final Canvas canvas;
     private final Pane pane;
     private boolean redrawNeeded;
-    private final ObjectProperty<Point2D> previousCoordsOnScreen;
+    private final ObjectProperty<Point2D> previousMouseCoordsOnScreen;
+    private Point2D topLeft;
     GraphicsContext graphicsContext;
 
 
@@ -36,13 +33,12 @@ public final class BaseMapController {
         this.canvas = new Canvas();
         this.pane = new Pane(canvas);
         mapParametersProperty = new SimpleObjectProperty<>(this.mapParameters);
-        previousCoordsOnScreen = new SimpleObjectProperty<>(new Point2D(0, 0));
+        previousMouseCoordsOnScreen = new SimpleObjectProperty<>(new Point2D(0, 0));
         redrawNeeded = false;
         canvas.widthProperty().bind(pane.widthProperty());
         canvas.heightProperty().bind(pane.heightProperty());
 
         setUpListeners();
-
         eventHandler();
 
     }
@@ -67,7 +63,7 @@ public final class BaseMapController {
         MapParameters actualMapParameters = mapParametersProperty.get();
 
         //finds coordinates of top left corner of map
-        Point2D topLeft = topLeft(actualMapParameters);
+        topLeft = topLeft(actualMapParameters);
         //Coordinates of bottom right corner of map
         Point2D bottomRight = topLeft.add(canvas.getWidth(), canvas.getHeight());
 
@@ -136,25 +132,40 @@ public final class BaseMapController {
             //Mise à jour de la coordonnée actuelle.
             previousCoordsOnScreen.set(new Point2D(e.getX(), e.getY()));
 
-        });
+
+        });*/
 
     }
 
     private void addMouseClicking(){}
 
     private void addMouseScrolling(){
-
         LongProperty minScrollTime = new SimpleLongProperty();
         pane.setOnScroll(e ->{
-            int zoomDelta =(int) Math.signum(e.getDeltaY());
-            if (zoomDelta == 0) return;
-
+            double zoomDelta = e.getDeltaY();
             long currentTime = System.currentTimeMillis();
-            if (currentTime < minScrollTime.get()) return;
+            if ((zoomDelta == 0)||(currentTime < minScrollTime.get())) return;
             minScrollTime.set(currentTime + MIN_TIME_BETWEEN_SCROLLS_MS);
+/*
+            double mouseX = e.getX();
+            double mouseY = e.getY();
+            previousMouseCoordsOnScreen.set(new Point2D(mouseX, mouseY));
+            //topLeft = topLeft.add(previousMouseCoordsOnScreen.getValue());
+
+            System.out.println("x" + mouseX);
+            System.out.println("y" + mouseY);
+            System.out.println("zoom: " + mapParameters.getZoomValue());
+*/
 
 
-           // int newZoomLevel = Math2.clamp();
+            mapParameters.changeZoomLevel((int) zoomDelta);
+/*
+            mapParametersProperty.set(new MapParameters(mapParameters.getZoomValue()
+                    ,  mapParameters.getMinXValue() - e.getX(),
+                      mapParameters.getMinYValue() - e.getY()));
+
+
+ */
         });
 
     }
