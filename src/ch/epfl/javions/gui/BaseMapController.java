@@ -22,8 +22,6 @@ public final class BaseMapController {
     private final Canvas canvas;
     private final Pane pane;
     private boolean redrawNeeded;
-    private final ObjectProperty<Point2D> previousMouseCoordsOnScreen;
-    private Point2D topLeft;
     GraphicsContext graphicsContext;
 
 
@@ -33,7 +31,7 @@ public final class BaseMapController {
         this.canvas = new Canvas();
         this.pane = new Pane(canvas);
         mapParametersProperty = new SimpleObjectProperty<>(this.mapParameters);
-        previousMouseCoordsOnScreen = new SimpleObjectProperty<>(new Point2D(0, 0));
+        ObjectProperty<Point2D> previousMouseCoordsOnScreen = new SimpleObjectProperty<>(new Point2D(0, 0));
         redrawNeeded = false;
         canvas.widthProperty().bind(pane.widthProperty());
         canvas.heightProperty().bind(pane.heightProperty());
@@ -63,7 +61,7 @@ public final class BaseMapController {
         MapParameters actualMapParameters = mapParametersProperty.get();
 
         //finds coordinates of top left corner of map
-        topLeft = topLeft(actualMapParameters);
+        Point2D topLeft = topLeft(actualMapParameters);
         //Coordinates of bottom right corner of map
         Point2D bottomRight = topLeft.add(canvas.getWidth(), canvas.getHeight());
 
