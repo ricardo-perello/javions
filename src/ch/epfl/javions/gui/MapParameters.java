@@ -3,7 +3,6 @@ package ch.epfl.javions.gui;
 import ch.epfl.javions.Math2;
 import ch.epfl.javions.Preconditions;
 import javafx.beans.property.*;
-import javafx.geometry.Point2D;
 
 import static ch.epfl.javions.gui.BaseMapController.MAX_ZOOM_LEVEL;
 import static ch.epfl.javions.gui.BaseMapController.MIN_ZOOM_LEVEL;
