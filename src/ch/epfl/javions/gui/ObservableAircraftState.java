@@ -26,6 +26,7 @@ public final class ObservableAircraftState implements AircraftStateSetter {
 
     //******************************* CONSTRUCTOR *******************************
 // TODO: 23/4/23 add comments
+    //todo poner en readOnly
     public ObservableAircraftState(IcaoAddress icaoAddress, AircraftData aircraftData) {
 
         this.icaoAddress = icaoAddress;
