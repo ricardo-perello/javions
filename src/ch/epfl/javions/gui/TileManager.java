@@ -17,7 +17,6 @@ import static ch.epfl.javions.gui.BaseMapController.MIN_ZOOM_LEVEL;
 
 
 public final class TileManager {
-    // TODO: 26/4/23 comments
     private static final int CACHE_MAX_ENTRIES = 100;
     private static final float DEFAULT_LOAD_FACTOR = 0.75F;
     private static final String PROTOCOL_STRING = "https://";
@@ -132,7 +131,7 @@ public final class TileManager {
      * add a new tile to the cache.
      *
      * @param tileId tileId of the tile you want to put in the cache.
-     * @param image image of the tile you want to put in the cache.
+     * @param image  image of the tile you want to put in the cache.
      */
     private void updateCache(TileId tileId, Image image) {
         if (memoryCache.size() >= CACHE_MAX_ENTRIES) {
