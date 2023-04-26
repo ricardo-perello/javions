@@ -116,7 +116,8 @@ public final class BaseMapController {
         addMouseClicking();
         addMouseScrolling();
     }
-    private void addMouseDragging(){
+    private void addMouseDragging(){/*
+
         //Prise de la coordonnée au début du clic.
         canvas.setOnMousePressed((e) -> previousCoordsOnScreen.set(new Point2D(e.getX(), e.getY())));
 

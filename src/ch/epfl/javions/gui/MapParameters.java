@@ -56,6 +56,9 @@ public final class MapParameters {
         int newValueZoom = zoom.getValue() + zoomChange;
         Preconditions.checkArgument(newValueZoom >= MIN_ZOOM && newValueZoom <= MAX_ZOOM);
         //todo mirar con tota si esta bien
+        //todo 11<n == 2^n
+        int newZoomLevel = Math2.clamp(MIN_ZOOM_LEVEL, getZoomValue()
+                + (zoomChange > 0 ? 1 : -1), MAX_ZOOM_LEVEL);
         minX.set(minX.getValue() * Math.scalb(1, zoomChange));
         minY.set(minY.getValue() * Math.scalb(1, zoomChange));
         //todo adapter les valeurs de minX et minY
