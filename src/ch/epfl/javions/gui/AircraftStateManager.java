@@ -15,6 +15,7 @@ import java.util.Map;
 import static ch.epfl.javions.Units.Time.MINUTE;
 import static java.util.Objects.requireNonNull;
 
+@SuppressWarnings("ALL")
 public final class AircraftStateManager {
 
     private final Map<IcaoAddress, AircraftStateAccumulator<ObservableAircraftState>> aircraftStateAccumulatorMap;
@@ -62,9 +63,11 @@ public final class AircraftStateManager {
      * public method that allows to eliminate a plane from our collections if the last message heard from it is over the
      * maximum we have determined (in this case a minute)
      */
+    @SuppressWarnings("GrazieInspection")
     public void purge(){
         Collection<AircraftStateAccumulator<ObservableAircraftState>> values = aircraftStateAccumulatorMap.values();
         Iterator<AircraftStateAccumulator<ObservableAircraftState>> iterator = values.iterator();
+        //noinspection WhileLoopReplaceableByForEach
         while(iterator.hasNext()){
             ObservableAircraftState statePlane = iterator.next().stateSetter();
             if (lastTimeStampNs - statePlane.getLastMessageTimeStampNs()
