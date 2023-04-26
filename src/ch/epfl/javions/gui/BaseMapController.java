@@ -22,6 +22,7 @@ public final class BaseMapController {
     private final Canvas canvas;
     private final Pane pane;
     private boolean redrawNeeded;
+    private final ObjectProperty<Point2D> previousMouseCoordsOnScreen;
     GraphicsContext graphicsContext;
 
 
@@ -31,7 +32,7 @@ public final class BaseMapController {
         this.canvas = new Canvas();
         this.pane = new Pane(canvas);
         mapParametersProperty = new SimpleObjectProperty<>(this.mapParameters);
-        ObjectProperty<Point2D> previousMouseCoordsOnScreen = new SimpleObjectProperty<>(new Point2D(0, 0));
+        previousMouseCoordsOnScreen = new SimpleObjectProperty<>(new Point2D(0, 0));
         redrawNeeded = false;
         canvas.widthProperty().bind(pane.widthProperty());
         canvas.heightProperty().bind(pane.heightProperty());
