@@ -3,8 +3,9 @@ package ch.epfl.javions.gui;
 import ch.epfl.javions.Preconditions;
 import javafx.scene.image.Image;
 
-
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.file.Files;
@@ -16,7 +17,7 @@ import static ch.epfl.javions.gui.BaseMapController.MIN_ZOOM_LEVEL;
 
 
 public final class TileManager {
-
+    // TODO: 26/4/23 comments
     private static final int CACHE_MAX_ENTRIES = 100;
     private static final float DEFAULT_LOAD_FACTOR = 0.75F;
     private static final String PROTOCOL_STRING = "https://";
@@ -90,9 +91,9 @@ public final class TileManager {
     }
 
     private void updateCache(TileId tileId, Image image) {
-        if(memoryCache.size() >= CACHE_MAX_ENTRIES){
+        if (memoryCache.size() >= CACHE_MAX_ENTRIES) {
             memoryCache.remove(memoryCache.keySet().iterator().next());
         }
-        memoryCache.put(tileId,image);
+        memoryCache.put(tileId, image);
     }
 }
