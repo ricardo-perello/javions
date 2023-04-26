@@ -85,8 +85,11 @@ public final class BaseMapController {
                     //Dessine la tuile actuelle, au niveau de zoom demandé, et à partir du pixel
                     //du bord du canevas, ce qui permet d'avoir des bouts de tuile, et non seulement
                     //des tuiles entières.
+
+
                     graphicsContext.drawImage(tileManager.imageForTileAt(new TileManager.TileId(zoomLevel, x, y)),
                             destinationX, destinationY);
+
                 } catch (IOException ignored) {} //Exception ignorée.
 
                 //Incrémente les positions des valeurs X et Y de la longueur/largeur des tuiles.
@@ -157,8 +160,10 @@ public final class BaseMapController {
             System.out.println("zoom: " + mapParameters.getZoomValue());
 */
 
-
+            mapParameters.scroll(e.getX(),e.getY());
             mapParameters.changeZoomLevel((int) zoomDelta);
+            mapParameters.scroll(-e.getX(),-e.getY());
+
 /*
             mapParametersProperty.set(new MapParameters(mapParameters.getZoomValue()
                     ,  mapParameters.getMinXValue() - e.getX(),

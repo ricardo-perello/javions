@@ -36,8 +36,8 @@ public final class TileManager {
         public static boolean isValid(int zoom, int x, int y) {
 
             return zoom >= MIN_ZOOM_LEVEL && zoom <= MAX_ZOOM_LEVEL &&
-                    x >= 0 && x < Math.scalb(4, zoom) &&
-                    y >= 0 && y < Math.scalb(4, zoom);
+                    x >= 0 && x < Math.scalb(1, zoom) &&
+                    y >= 0 && y < Math.scalb(1, zoom);
         }
     }
 
@@ -79,7 +79,6 @@ public final class TileManager {
             byte[] bytes = i.readAllBytes();
             Image image = new Image(new ByteArrayInputStream(bytes));
             updateCache(tileId, image);
-            System.out.println("Image retrieved from server!");
             Files.createDirectories(directoryPath);
             Files.write(tilePath, bytes);
             return image;
