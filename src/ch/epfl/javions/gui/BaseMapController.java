@@ -10,7 +10,7 @@ import javafx.scene.layout.Pane;
 import java.io.IOException;
 
 public final class BaseMapController {
-
+    // TODO: 26/4/23 comments 
     private static final int TILE_SIZE = 256;
     static final int MIN_ZOOM_LEVEL = 6;
     static final int MAX_ZOOM_LEVEL = 19;
@@ -26,7 +26,7 @@ public final class BaseMapController {
     GraphicsContext graphicsContext;
 
 
-    public BaseMapController(TileManager tileManager, MapParameters mapParameters){
+    public BaseMapController(TileManager tileManager, MapParameters mapParameters) {
         this.tileManager = tileManager;
         this.mapParameters = mapParameters;
         this.canvas = new Canvas();
@@ -75,10 +75,10 @@ public final class BaseMapController {
         int yMax = (int) bottomRight.getY() / TILE_SIZE;
 
         //Position Y de destination du coin haut-gauche de la tuile à dessiner sur le canevas.
-        int destinationY  = (int) -topLeft.getY() % TILE_SIZE;
+        int destinationY = (int) -topLeft.getY() % TILE_SIZE;
         for (int y = yMin; y <= yMax; y++) {
             //Position X de destination du coin haut-gauche de la tuile à dessiner sur le canevas.
-            int destinationX = (int) - topLeft.getX() % TILE_SIZE;
+            int destinationX = (int) -topLeft.getX() % TILE_SIZE;
             for (int x = xMin; x <= xMax; x++) {
                 try {
                     //Dessine la tuile actuelle, au niveau de zoom demandé, et à partir du pixel
@@ -89,7 +89,8 @@ public final class BaseMapController {
                     graphicsContext.drawImage(tileManager.imageForTileAt(new TileManager.TileId(zoomLevel, x, y)),
                             destinationX, destinationY);
 
-                } catch (IOException ignored) {} //Exception ignorée.
+                } catch (IOException ignored) {
+                } //Exception ignorée.
 
                 //Incrémente les positions des valeurs X et Y de la longueur/largeur des tuiles.
                 destinationX += TILE_SIZE;
@@ -109,37 +110,40 @@ public final class BaseMapController {
         redrawOnNextPulse();
         drawMap();
     }
+
     private void eventHandler() {
         addMouseDragging();
         addMouseClicking();
         addMouseScrolling();
     }
-    private void addMouseDragging(){
+
+    private void addMouseDragging() {
 
         canvas.setOnMousePressed((e) -> previousMouseCoordsOnScreen.set(new Point2D(e.getX(), e.getY())));
 
         canvas.setOnMouseDragged((e) -> {
 
             double deltaX = previousMouseCoordsOnScreen.getValue().getX() - e.getX(),
-                    deltaY =  previousMouseCoordsOnScreen.getValue().getY() - e.getY();
+                    deltaY = previousMouseCoordsOnScreen.getValue().getY() - e.getY();
             mapParameters.scroll(deltaX, deltaY);
             previousMouseCoordsOnScreen.set(new Point2D(e.getX(), e.getY()));
         });
     }
 
-    private void addMouseClicking(){}
+    private void addMouseClicking() {
+    }
 
-    private void addMouseScrolling(){
+    private void addMouseScrolling() {
         LongProperty minScrollTime = new SimpleLongProperty();
-        pane.setOnScroll(e ->{
+        pane.setOnScroll(e -> {
             double zoomDelta = e.getDeltaY();
             long currentTime = System.currentTimeMillis();
-            if ((zoomDelta == 0)||(currentTime < minScrollTime.get())) return;
+            if ((zoomDelta == 0) || (currentTime < minScrollTime.get())) return;
             minScrollTime.set(currentTime + MIN_TIME_BETWEEN_SCROLLS_MS);
 
-            mapParameters.scroll(e.getX(),e.getY());
+            mapParameters.scroll(e.getX(), e.getY());
             mapParameters.changeZoomLevel((int) zoomDelta);
-            mapParameters.scroll(-e.getX(),-e.getY());
+            mapParameters.scroll(-e.getX(), -e.getY());
         });
 
     }
@@ -149,7 +153,7 @@ public final class BaseMapController {
         Platform.requestNextPulse();
     }
 
-    public ReadOnlyObjectProperty<MapParameters> getMapParametersProperty(){
+    public ReadOnlyObjectProperty<MapParameters> getMapParametersProperty() {
         return mapParametersProperty;
     }
 

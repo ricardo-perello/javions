@@ -8,7 +8,7 @@ import static ch.epfl.javions.gui.BaseMapController.MAX_ZOOM_LEVEL;
 import static ch.epfl.javions.gui.BaseMapController.MIN_ZOOM_LEVEL;
 
 public final class MapParameters {
-
+    // TODO: 26/4/23 comments
     private final IntegerProperty zoom;
     private final DoubleProperty minX;
     private final DoubleProperty minY;
@@ -21,27 +21,27 @@ public final class MapParameters {
         this.minY = new SimpleDoubleProperty(minY);
     }
 
-    public int getZoomValue(){
+    public int getZoomValue() {
         return zoom.getValue();
     }
 
-    public double getMinXValue(){
+    public double getMinXValue() {
         return minX.getValue();
     }
 
-    public double getMinYValue(){
+    public double getMinYValue() {
         return minY.getValue();
     }
 
-    public ReadOnlyIntegerProperty getZoomProperty(){
+    public ReadOnlyIntegerProperty getZoomProperty() {
         return IntegerProperty.readOnlyIntegerProperty(zoom);
     }
 
-    public ReadOnlyDoubleProperty getMinXProperty(){
+    public ReadOnlyDoubleProperty getMinXProperty() {
         return DoubleProperty.readOnlyDoubleProperty(minX);
     }
 
-    public ReadOnlyDoubleProperty getMinYProperty(){
+    public ReadOnlyDoubleProperty getMinYProperty() {
         return DoubleProperty.readOnlyDoubleProperty(minY);
     }
 
@@ -53,22 +53,22 @@ public final class MapParameters {
     }
 
     public void changeZoomLevel(int zoomChange) {
-         zoomChange = zoomChange > 0 ? 1 : -1;
+        zoomChange = zoomChange > 0 ? 1 : -1;
         int newZoomLevel = Math2.clamp(MIN_ZOOM_LEVEL, getZoomValue()
                 + (zoomChange), MAX_ZOOM_LEVEL);
-        if(zoom.getValue() != newZoomLevel) {
+        if (zoom.getValue() != newZoomLevel) {
             adjustCoordinates(zoomChange);
             zoom.set(newZoomLevel);
         }
     }
 
-    private void adjustCoordinates(int zoomChange){
-        if(zoomChange < 0){
-            minX.set(minX.getValue() / (1<<-zoomChange));
-            minY.set(minY.getValue() / (1<<-zoomChange));
-        }else{
-            minX.set(minX.getValue() * (1<<zoomChange));
-            minY.set(minY.getValue() * (1<<zoomChange));
+    private void adjustCoordinates(int zoomChange) {
+        if (zoomChange < 0) {
+            minX.set(minX.getValue() / (1 << -zoomChange));
+            minY.set(minY.getValue() / (1 << -zoomChange));
+        } else {
+            minX.set(minX.getValue() * (1 << zoomChange));
+            minY.set(minY.getValue() * (1 << zoomChange));
         }
     }
 
