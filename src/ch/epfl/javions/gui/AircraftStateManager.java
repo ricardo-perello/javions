@@ -76,14 +76,6 @@ public final class AircraftStateManager {
                 statePlaneSet.remove(statePlane);
             }
         }
-        /*for (IcaoAddress icaoAddress : aircraftStateAccumulatorMap.keySet()) {
-            ObservableAircraftState statePlane = aircraftStateAccumulatorMap.get(icaoAddress).stateSetter();
-            if (lastTimeStampNs - statePlane.getLastMessageTimeStampNs()
-                    >= MAX_DIFFERENCE_TIME ){
-                aircraftStateAccumulatorMap.remove(icaoAddress);
-                statePlaneSet.remove(statePlane);
-            }
-        }*/
     }
 
     /**
