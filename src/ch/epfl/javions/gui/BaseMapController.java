@@ -10,7 +10,6 @@ import javafx.scene.layout.Pane;
 import java.io.IOException;
 
 public final class BaseMapController {
-    // TODO: 26/4/23 comments
     // TODO: 26/4/23 create centerOn method
     private static final int TILE_SIZE = 256;
     static final int MIN_ZOOM_LEVEL = 6;
@@ -24,9 +23,15 @@ public final class BaseMapController {
     private final Pane pane;
     private boolean redrawNeeded;
     private final ObjectProperty<Point2D> previousMouseCoordsOnScreen;
-    GraphicsContext graphicsContext;
 
-
+    /**
+     * BaseMapController constructor initialises tileManager, mapParameters, mapParametersProperty,
+     * canvas, pane, previousMouseCoordsOnScreen, redrawNeeded. It also binds the dimensions of the
+     * canvas to the dimensions of the pane. It also sets up the listeners and sets up the event handlers.
+     *
+     * @param tileManager   tileManager that is in charge of finding the images for the tiles.
+     * @param mapParameters mapParameters of the viewed map.
+     */
     public BaseMapController(TileManager tileManager, MapParameters mapParameters) {
         this.tileManager = tileManager;
         this.mapParameters = mapParameters;
@@ -43,10 +48,18 @@ public final class BaseMapController {
 
     }
 
+    /**
+     * Pane simply returns the pane.
+     *
+     * @return pane.
+     */
     public Pane pane() {
         return pane;
     }
 
+    /**
+     * setUpListeners adds the listeners needed to resize the window and move around the map.
+     */
     private void setUpListeners() {
         canvas.sceneProperty().addListener((p, oldS, newS) -> {
             assert oldS == null;
@@ -58,67 +71,88 @@ public final class BaseMapController {
         mapParametersProperty.addListener((p, oldS, newS) -> redrawOnNextPulse());
     }
 
-    private void drawMap() {
+    /**
+     * drawMap method uses the graphicsContext.drawImage method to draw all the tiles from the map.
+     * These images are found using the tile manager and using a double for loop to find the image
+     * of the tile (x,y).
+     */
+    private void renderMap() {
         GraphicsContext graphicsContext = canvas.getGraphicsContext2D();
-        MapParameters actualMapParameters = mapParametersProperty.get();
+        MapParameters currentMapParameters = mapParametersProperty.get();
 
-        //finds coordinates of top left corner of map
-        Point2D topLeft = topLeft(actualMapParameters);
-        //Coordinates of bottom right corner of map
-        Point2D bottomRight = topLeft.add(canvas.getWidth(), canvas.getHeight());
 
-        int zoomLevel = actualMapParameters.getZoomValue();
-        //Coordonnées des tuiles minimales et maximales à dessiner (le rectangle de tuiles depuis
-        //la tuile de coordonnées (xMin, yMin) à la tuile (xMax, yMax)).
-        int xMin = (int) topLeft.getX() / TILE_SIZE;
-        int xMax = (int) bottomRight.getX() / TILE_SIZE;
-        int yMin = (int) topLeft.getY() / TILE_SIZE;
-        int yMax = (int) bottomRight.getY() / TILE_SIZE;
+        Point2D origin = findTopLeft(currentMapParameters);
 
-        //Position Y de destination du coin haut-gauche de la tuile à dessiner sur le canevas.
-        int destinationY = (int) -topLeft.getY() % TILE_SIZE;
-        for (int y = yMin; y <= yMax; y++) {
-            //Position X de destination du coin haut-gauche de la tuile à dessiner sur le canevas.
-            int destinationX = (int) -topLeft.getX() % TILE_SIZE;
-            for (int x = xMin; x <= xMax; x++) {
+        Point2D end = origin.add(canvas.getWidth(), canvas.getHeight());
+
+        int zoomLevel = currentMapParameters.getZoomValue();
+
+        int xMinTile = (int) origin.getX() / TILE_SIZE;
+        int xMaxTile = (int) end.getX() / TILE_SIZE;
+        int yMinTile = (int) origin.getY() / TILE_SIZE;
+        int yMaxTile = (int) end.getY() / TILE_SIZE;
+
+        int destY = (int) -origin.getY() % TILE_SIZE;
+        for (int y = yMinTile; y <= yMaxTile; y++) {
+
+            int destX = (int) -origin.getX() % TILE_SIZE;
+            for (int x = xMinTile; x <= xMaxTile; x++) {
                 try {
-                    //Dessine la tuile actuelle, au niveau de zoom demandé, et à partir du pixel
-                    //du bord du canevas, ce qui permet d'avoir des bouts de tuile, et non seulement
-                    //des tuiles entières.
-
-
                     graphicsContext.drawImage(tileManager.imageForTileAt(new TileManager.TileId(zoomLevel, x, y)),
-                            destinationX, destinationY);
+                            destX, destY);
 
                 } catch (IOException ignored) {
-                } //Exception ignorée.
+                }
 
-                //Incrémente les positions des valeurs X et Y de la longueur/largeur des tuiles.
-                destinationX += TILE_SIZE;
+                destX += TILE_SIZE;
             }
-            destinationY += TILE_SIZE;
+            destY += TILE_SIZE;
         }
     }
 
-    private Point2D topLeft(MapParameters actualMapParameters) {
-        return new Point2D(actualMapParameters.getMinXValue(), actualMapParameters.getMinYValue());
+    /**
+     * findTopLeft returns a 2D point of the position of the top left corner of the map.
+     *
+     * @param currentMapParameters map parameters at the moment the method is called.
+     * @return Point2D of the position of the top left corner of the map.
+     */
+    private Point2D findTopLeft(MapParameters currentMapParameters) {
+        return new Point2D(currentMapParameters.getMinXValue(), currentMapParameters.getMinYValue());
     }
 
-
+    /**
+     * redrawIfNeeded is a method that draws the new map when the map changes and needs to be redrawn.
+     */
     private void redrawIfNeeded() {
         if (!redrawNeeded) return;
         redrawNeeded = false;
         redrawOnNextPulse();
-        drawMap();
+        renderMap();
     }
 
+    /**
+     * redrawOnNextPulse method is called when the map changes and needs to be redrawn. It will activate
+     * the method redrawIfNeeded, and it requests a new pulse.
+     */
+    private void redrawOnNextPulse() {
+        redrawNeeded = true;
+        Platform.requestNextPulse();
+    }
+
+    /**
+     * EventHandler installs the event handlers on the panel that contains the map.
+     */
     private void eventHandler() {
-        addMouseDragging();
-        addMouseClicking();
-        addMouseScrolling();
+        addEventMouseDragging();
+        addEventMouseClicking();
+        addEventMouseScrolling();
     }
 
-    private void addMouseDragging() {
+    /**
+     * AddEventMouseDragging method calls the scroll method to pan the map by the same displacement as the
+     * mouse was dragged.
+     */
+    private void addEventMouseDragging() {
 
         canvas.setOnMousePressed((e) -> previousMouseCoordsOnScreen.set(new Point2D(e.getX(), e.getY())));
 
@@ -131,10 +165,14 @@ public final class BaseMapController {
         });
     }
 
-    private void addMouseClicking() {
+    private void addEventMouseClicking() {
     }
 
-    private void addMouseScrolling() {
+    /**
+     * addEventMouseScrolling method is used to change the zoom level of the map. When the mouse wheel is
+     * scrolled, the map will zoom in/out with the mouse pointer as perspective center.
+     */
+    private void addEventMouseScrolling() {
         LongProperty minScrollTime = new SimpleLongProperty();
         pane.setOnScroll(e -> {
             double zoomDelta = e.getDeltaY();
@@ -149,15 +187,20 @@ public final class BaseMapController {
 
     }
 
-    private void redrawOnNextPulse() {
-        redrawNeeded = true;
-        Platform.requestNextPulse();
-    }
-
+    /**
+     * getMapParametersProperty method returns the value of mapParametersProperty.
+     *
+     * @return the value of mapParametersProperty.
+     */
     public ReadOnlyObjectProperty<MapParameters> getMapParametersProperty() {
         return mapParametersProperty;
     }
 
+    /**
+     * setMapParameters sets the mapParametersProperty.
+     *
+     * @param mapParameters double, value we will change to.
+     */
     public void setMapParameters(MapParameters mapParameters) {
         mapParametersProperty.set(mapParameters);
     }
