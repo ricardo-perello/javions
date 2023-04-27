@@ -10,7 +10,8 @@ import javafx.scene.layout.Pane;
 import java.io.IOException;
 
 public final class BaseMapController {
-    // TODO: 26/4/23 comments 
+    // TODO: 26/4/23 comments
+    // TODO: 26/4/23 create centerOn method
     private static final int TILE_SIZE = 256;
     static final int MIN_ZOOM_LEVEL = 6;
     static final int MAX_ZOOM_LEVEL = 19;
