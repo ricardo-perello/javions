@@ -164,8 +164,14 @@ public final class BaseMapController {
             previousMouseCoordsOnScreen.set(new Point2D(e.getX(), e.getY()));
         });
     }
-
+    //todo cambiar el metodo cuando haya aviones
     private void addEventMouseClicking() {
+        canvas.setOnMouseClicked((e)-> {
+            if(e.isStillSincePress()){
+                mapParameters.scroll((-pane.getWidth()/2)+e.getX(), (-pane.getHeight()/2)+e.getY());
+
+            }
+        });
     }
 
     /**
