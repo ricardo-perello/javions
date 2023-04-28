@@ -39,7 +39,7 @@ public final class MapParameters {
      * public method to get the zoom
      * @return int, the value of the IntegerProperty zoom
      */
-    public int getZoomValue() {
+    public int getZoom() {
         return zoom.getValue();
     }
 
@@ -47,7 +47,7 @@ public final class MapParameters {
      * public method to get the minX
      * @return double, the value stored in the DoubleProperty minX
      */
-    public double getMinXValue() {
+    public double getMinX() {
         return minX.getValue();
     }
 
@@ -55,7 +55,7 @@ public final class MapParameters {
      * public method to get minY
      * @return double, the values stored in the DoubleProperty minY
      */
-    public double getMinYValue() {
+    public double getMinY() {
         return minY.getValue();
     }
 
@@ -63,7 +63,7 @@ public final class MapParameters {
      * public method to get zoom
      * @return ReadOnlyIntegerProperty, the IntegerProperty zoom
      */
-    public ReadOnlyIntegerProperty getZoomProperty() {
+    public ReadOnlyIntegerProperty zoomProperty() {
         return IntegerProperty.readOnlyIntegerProperty(zoom);
     }
 
@@ -71,7 +71,7 @@ public final class MapParameters {
      * public method to get minX
      * @return ReadOnlyDoubleProperty, the DoubleProperty minX
      */
-    public ReadOnlyDoubleProperty getMinXProperty() {
+    public ReadOnlyDoubleProperty minXProperty() {
         return DoubleProperty.readOnlyDoubleProperty(minX);
     }
 
@@ -79,7 +79,7 @@ public final class MapParameters {
      * public method to get minY
      * @return ReadOnlyDoubleProperty, the DoubleProperty minY
      */
-    public ReadOnlyDoubleProperty getMinYProperty() {
+    public ReadOnlyDoubleProperty minYProperty() {
         return DoubleProperty.readOnlyDoubleProperty(minY);
     }
 
@@ -104,7 +104,7 @@ public final class MapParameters {
         //we do not check if it equals to 0 since we exclude that situation in addMouseScrolling from BaseMapController
         zoomChange = zoomChange > 0 ? 1 : -1;
         // we make sure that it is between 6 (included) and 19 (included)
-        int newZoomLevel = Math2.clamp(MIN_ZOOM_LEVEL, getZoomValue()
+        int newZoomLevel = Math2.clamp(MIN_ZOOM_LEVEL, getZoom()
                 + (zoomChange), MAX_ZOOM_LEVEL);
         //we adjust the coordinates of the top left corner using adjustCoordinates
         if (zoom.getValue() != newZoomLevel) {

@@ -15,8 +15,6 @@ import java.io.IOException;
 public final class BaseMapController {
     // TODO: 26/4/23 create centerOn method
     private static final int TILE_SIZE = 256;
-    static final int MIN_ZOOM_LEVEL = 6;
-    static final int MAX_ZOOM_LEVEL = 19;
     private static final int MIN_TIME_BETWEEN_SCROLLS_MS = 200;
 
     private final TileManager tileManager;
@@ -88,7 +86,7 @@ public final class BaseMapController {
 
         Point2D end = origin.add(canvas.getWidth(), canvas.getHeight());
 
-        int zoomLevel = currentMapParameters.getZoomValue();
+        int zoomLevel = currentMapParameters.getZoom();
 
         int xMinTile = (int) origin.getX() / TILE_SIZE;
         int xMaxTile = (int) end.getX() / TILE_SIZE;
@@ -104,8 +102,7 @@ public final class BaseMapController {
                     graphicsContext.drawImage(tileManager.imageForTileAt(new TileManager.TileId(zoomLevel, x, y)),
                             destX, destY);
 
-                } catch (IOException ignored) {
-                }
+                } catch (IOException ignored) {}
 
                 destX += TILE_SIZE;
             }
@@ -120,7 +117,7 @@ public final class BaseMapController {
      * @return Point2D of the position of the top left corner of the map.
      */
     private Point2D findTopLeft(MapParameters currentMapParameters) {
-        return new Point2D(currentMapParameters.getMinXValue(), currentMapParameters.getMinYValue());
+        return new Point2D(currentMapParameters.getMinX(), currentMapParameters.getMinY());
     }
 
     /**
@@ -217,10 +214,10 @@ public final class BaseMapController {
 
     //todo comentarios
     public void centerOn(GeoPos geoPos){
-        double x = WebMercator.x(mapParameters.getZoomValue(), geoPos.longitude())
-                - mapParameters.getMinXValue() - pane.getWidth()/2;
-        double y = WebMercator.y(mapParameters.getZoomValue(), geoPos.latitude())
-                - mapParameters.getMinYValue() - pane.getHeight()/2;
+        double x = WebMercator.x(mapParameters.getZoom(), geoPos.longitude())
+                - mapParameters.getMinX() - pane.getWidth()/2;
+        double y = WebMercator.y(mapParameters.getZoom(), geoPos.latitude())
+                - mapParameters.getMinY() - pane.getHeight()/2;
 
         mapParameters.scroll(x,y);
     }
