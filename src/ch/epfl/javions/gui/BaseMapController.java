@@ -1,5 +1,8 @@
 package ch.epfl.javions.gui;
 
+import ch.epfl.javions.GeoPos;
+import ch.epfl.javions.Units;
+import ch.epfl.javions.WebMercator;
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.geometry.Point2D;
@@ -168,8 +171,9 @@ public final class BaseMapController {
     private void addEventMouseClicking() {
         canvas.setOnMouseClicked((e)-> {
             if(e.isStillSincePress()){
-                mapParameters.scroll((-pane.getWidth()/2)+e.getX(), (-pane.getHeight()/2)+e.getY());
-
+                //mapParameters.scroll((-pane.getWidth()/2)+e.getX(), (-pane.getHeight()/2)+e.getY());
+                centerOn(new GeoPos((int) Units.convert(-6.3515000,Units.Angle.DEGREE, Units.Angle.T32),
+                        (int) Units.convert(36.7780800, Units.Angle.DEGREE, Units.Angle.T32)));
             }
         });
     }
@@ -211,5 +215,13 @@ public final class BaseMapController {
         mapParametersProperty.set(mapParameters);
     }
 
+    //todo comentarios
+    public void centerOn(GeoPos geoPos){
+        double x = WebMercator.x(mapParameters.getZoomValue(), geoPos.longitude())
+                - mapParameters.getMinXValue() - pane.getWidth()/2;
+        double y = WebMercator.y(mapParameters.getZoomValue(), geoPos.latitude())
+                - mapParameters.getMinYValue() - pane.getHeight()/2;
 
+        mapParameters.scroll(x,y);
+    }
 }
