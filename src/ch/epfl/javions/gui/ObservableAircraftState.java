@@ -215,7 +215,7 @@ public final class ObservableAircraftState implements AircraftStateSetter {
      * @return the value of altitudeProperty.
      */
     public double getAltitude() {
-        return altitudeProperty.get();
+        return altitudeProperty.getValue();
     }
 //******************************* TRAJECTORY *******************************
 
