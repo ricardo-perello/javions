@@ -4,8 +4,6 @@ import ch.epfl.javions.Math2;
 import ch.epfl.javions.Preconditions;
 import javafx.beans.property.*;
 
-import static ch.epfl.javions.gui.BaseMapController.MAX_ZOOM_LEVEL;
-import static ch.epfl.javions.gui.BaseMapController.MIN_ZOOM_LEVEL;
 
 public final class MapParameters {
 
@@ -18,6 +16,10 @@ public final class MapParameters {
     //DoubleProperty that stores the y coordinate of the top left corner of the window
 
     private final DoubleProperty minY;
+
+
+    static final int MIN_ZOOM_LEVEL = 6;
+    static final int MAX_ZOOM_LEVEL = 19;
 
     /**
      * constructor for MapParameters

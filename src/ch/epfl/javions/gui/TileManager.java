@@ -12,8 +12,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.LinkedHashMap;
 
-import static ch.epfl.javions.gui.BaseMapController.MAX_ZOOM_LEVEL;
-import static ch.epfl.javions.gui.BaseMapController.MIN_ZOOM_LEVEL;
+import static ch.epfl.javions.gui.MapParameters.MAX_ZOOM_LEVEL;
+import static ch.epfl.javions.gui.MapParameters.MIN_ZOOM_LEVEL;
 
 
 public final class TileManager {

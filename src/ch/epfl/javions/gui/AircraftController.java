@@ -4,9 +4,9 @@ public final class AircraftController {
 
     public AircraftController(){}
 
-    public void pane(){
+    /*public  pane(){
         return pane;
-    }
+    }*/
 
 
 }

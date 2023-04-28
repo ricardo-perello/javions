@@ -1,6 +1,6 @@
 package ch.epfl.javions;
 
-public class Math2 {
+public final class Math2 {
     private Math2() {
     }
 
@@ -15,7 +15,7 @@ public class Math2 {
      * if v greater than max, return max.
      */
     public static int clamp(int min, int v, int max) {
-        Preconditions.checkArgument(min < max);
+        Preconditions.checkArgument(min <= max);
         if (v < min) return min;
         else return Math.min(v, max);
     }
