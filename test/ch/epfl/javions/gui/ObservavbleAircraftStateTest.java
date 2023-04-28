@@ -19,7 +19,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 import static org.junit.jupiter.api.Assertions.*;
 class AircraftStateManagerTest {
-    private static AircraftDatabase getDatabase() {
+    static AircraftDatabase getDatabase() {
         // Try to get the database from the resources
         var aircraftResourceUrl = AircraftStateManagerTest.class.getResource("/aircraft.zip");
         if (aircraftResourceUrl != null)

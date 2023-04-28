@@ -17,7 +17,7 @@ import static com.sun.javafx.css.StyleClassSet.getStyleClass;
 
 public final class AircraftController {
     Scene scene;
-    Pane pane;
+    Pane pane = new Pane();
 
 
     MapParameters parameters;
