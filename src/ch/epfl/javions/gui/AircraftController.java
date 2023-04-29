@@ -2,10 +2,8 @@ package ch.epfl.javions.gui;
 
 import ch.epfl.javions.GeoPos;
 import ch.epfl.javions.WebMercator;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.ReadOnlyDoubleProperty;
-import javafx.beans.property.ReadOnlyObjectProperty;
-import javafx.beans.property.SimpleDoubleProperty;
+import javafx.application.Platform;
+import javafx.beans.property.*;
 import javafx.collections.ObservableSet;
 import javafx.collections.SetChangeListener;
 import javafx.geometry.Point2D;
@@ -19,17 +17,25 @@ public final class AircraftController {
     Pane pane = new Pane();
 
 
-    MapParameters parameters;
+    MapParameters mapParameters;
     ObservableSet<ObservableAircraftState> aircraftStates;
     ObservableAircraftState observableAircraftState;
+    SimpleIntegerProperty zoomProperty = new SimpleIntegerProperty();
+    SimpleDoubleProperty minXProperty = new SimpleDoubleProperty();
+    SimpleDoubleProperty minYProperty = new SimpleDoubleProperty();
+
+
 
     public AircraftController(MapParameters mapParameters,
                               ObservableSet<ObservableAircraftState> aircraftStates,
                               ObjectProperty<ObservableAircraftState> observableAircraftStateObjectProperty){
 
-        this.parameters = mapParameters;
+        this.mapParameters = mapParameters;
         this.aircraftStates = aircraftStates;
         this.observableAircraftState = observableAircraftStateObjectProperty.get();
+        zoomProperty.bind(mapParameters.zoomProperty());
+        minXProperty.bind(mapParameters.minXProperty());
+        minYProperty.bind(mapParameters.minYProperty());
         addAnnotatedGroups();
         aircraftStates.addListener((SetChangeListener<ObservableAircraftState>)
                 change -> { if(change.wasAdded()){
@@ -68,8 +74,26 @@ public final class AircraftController {
     }
 
     private Group setAircraftInfo(ObservableAircraftState aircraftState) {
-        return new Group(setIcon(aircraftState));//, setLabel(aircraftState));
+        Group aircraftInfo = new Group(setIcon(aircraftState));//, setLabel(aircraftState));
+        SimpleObjectProperty<GeoPos> aircraftPositionProperty = new SimpleObjectProperty<>();
+        aircraftPositionProperty.bind(aircraftState.positionProperty());
+
+        aircraftInfo.layoutXProperty().bind(xOnScreen(aircraftPositionProperty));
+        aircraftInfo.layoutYProperty().bind(yOnScreen(aircraftPositionProperty));
+        return aircraftInfo;
     }
+
+    private ReadOnlyDoubleProperty xOnScreen(SimpleObjectProperty<GeoPos> aircraftPositionProperty) {
+        double x = WebMercator.x(zoomProperty.get(), aircraftPositionProperty.getValue().longitude())
+                - minXProperty.get();
+        return new SimpleDoubleProperty(x) ;
+    }
+    private ReadOnlyDoubleProperty yOnScreen(SimpleObjectProperty<GeoPos> aircraftPositionProperty) {
+        double y = WebMercator.y(zoomProperty.get(), aircraftPositionProperty.getValue().latitude())
+                - minYProperty.get();
+        return new SimpleDoubleProperty(y) ;
+    }
+
 
     /*private Group setLabel(ObservableAircraftState aircraftState) {
         StringBuilder s
