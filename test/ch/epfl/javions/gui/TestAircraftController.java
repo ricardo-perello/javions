@@ -27,30 +27,7 @@ import static ch.epfl.javions.gui.AircraftStateManagerTest.getDatabase;
 public  final  class  TestAircraftController  extends Application {
     public  static  void  main (String[] args) { launch(args); }
 
-    static List<RawMessage> readAllMessages (String fileName) throws IOException { /* … to do */
-        AircraftStateManager manager = new AircraftStateManager(getDatabase());
-        long startTime = System.nanoTime();
-        ArrayList<RawMessage> rm = new ArrayList<>();
-        try (DataInputStream s = new DataInputStream(
-                new BufferedInputStream(
-                        new FileInputStream("resources/"+fileName)))) {
-            byte[] bytes = new byte[RawMessage.LENGTH];
 
-            int length = s.available();
-
-            while (s.available() > 0) {
-                long timeStampNs = s.readLong();
-                int bytesRead = s.readNBytes(bytes, 0, bytes.length);
-                assert bytesRead == RawMessage.LENGTH;
-                ByteString message = new ByteString(bytes);
-
-                rm.add(new RawMessage(timeStampNs, message));
-            }
-        }catch (EOFException e) { /* nothing to do */ } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-        return rm;
-    }
 
     @Override
     public  void  start (Stage primaryStage)  throws Exception {
@@ -96,5 +73,29 @@ public  final  class  TestAircraftController  extends Application {
                 }
             }
         }.start();
+    }
+    static List<RawMessage> readAllMessages (String fileName) throws IOException { /* … to do */
+        AircraftStateManager manager = new AircraftStateManager(getDatabase());
+        long startTime = System.nanoTime();
+        ArrayList<RawMessage> rm = new ArrayList<>();
+        try (DataInputStream s = new DataInputStream(
+                new BufferedInputStream(
+                        new FileInputStream("resources/"+fileName)))) {
+            byte[] bytes = new byte[RawMessage.LENGTH];
+
+            int length = s.available();
+
+            while (s.available() > 0) {
+                long timeStampNs = s.readLong();
+                int bytesRead = s.readNBytes(bytes, 0, bytes.length);
+                assert bytesRead == RawMessage.LENGTH;
+                ByteString message = new ByteString(bytes);
+
+                rm.add(new RawMessage(timeStampNs, message));
+            }
+        }catch (EOFException e) { /* nothing to do */ } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        return rm;
     }
 }
