@@ -1,19 +1,18 @@
 package ch.epfl.javions.gui;
 
-import com.sun.javafx.scene.shape.SVGPathHelper;
+import ch.epfl.javions.GeoPos;
+import ch.epfl.javions.WebMercator;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.ReadOnlyDoubleProperty;
+import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.collections.ObservableSet;
 import javafx.collections.SetChangeListener;
+import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.SVGPath;
-import javafx.scene.text.Text;
-
-import javax.swing.*;
-import java.util.HashSet;
-
-import static com.sun.javafx.css.StyleClassSet.getStyleClass;
 
 public final class AircraftController {
     Scene scene;
@@ -24,11 +23,11 @@ public final class AircraftController {
     ObservableSet<ObservableAircraftState> aircraftStates;
     ObservableAircraftState observableAircraftState;
 
-    public AircraftController(MapParameters parameters,
+    public AircraftController(MapParameters mapParameters,
                               ObservableSet<ObservableAircraftState> aircraftStates,
                               ObjectProperty<ObservableAircraftState> observableAircraftStateObjectProperty){
 
-        this.parameters = parameters;
+        this.parameters = mapParameters;
         this.aircraftStates = aircraftStates;
         this.observableAircraftState = observableAircraftStateObjectProperty.get();
         addAnnotatedGroups();
@@ -117,6 +116,13 @@ public final class AircraftController {
                 aircraftState.getAircraftData().wakeTurbulenceCategory() );
         SVGPath icon = new SVGPath();
         icon.setContent(aircraftIcon.svgPath());
+        SimpleDoubleProperty xOnScreenProperty = new SimpleDoubleProperty();
+
+
+
+        SimpleDoubleProperty yOnScreen = new SimpleDoubleProperty();
+        icon.layoutXProperty().bind(xOnScreenProperty);
+        icon.layoutYProperty().bind(yOnScreen);
         //todo fix css file
         // icon.setStyle(getStyleClass());
         return icon;
