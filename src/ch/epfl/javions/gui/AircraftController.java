@@ -3,14 +3,22 @@ package ch.epfl.javions.gui;
 import ch.epfl.javions.GeoPos;
 import ch.epfl.javions.WebMercator;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableSet;
 import javafx.collections.SetChangeListener;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.SVGPath;
+
+import java.util.concurrent.Callable;
+
+import static javafx.beans.binding.Bindings.createDoubleBinding;
 
 public final class AircraftController {
     Scene scene;
@@ -20,9 +28,9 @@ public final class AircraftController {
     MapParameters mapParameters;
     ObservableSet<ObservableAircraftState> aircraftStates;
     ObservableAircraftState observableAircraftState;
-    SimpleIntegerProperty zoomProperty = new SimpleIntegerProperty();
-    SimpleDoubleProperty minXProperty = new SimpleDoubleProperty();
-    SimpleDoubleProperty minYProperty = new SimpleDoubleProperty();
+    int zoom;
+    double minX;
+    double minY;
 
 
 
@@ -30,26 +38,30 @@ public final class AircraftController {
                               ObservableSet<ObservableAircraftState> aircraftStates,
                               ObjectProperty<ObservableAircraftState> observableAircraftStateObjectProperty){
 
+
         this.mapParameters = mapParameters;
         this.aircraftStates = aircraftStates;
         this.observableAircraftState = observableAircraftStateObjectProperty.get();
-        zoomProperty.bind(mapParameters.zoomProperty());
-        minXProperty.bind(mapParameters.minXProperty());
-        minYProperty.bind(mapParameters.minYProperty());
         addAnnotatedGroups();
+
+        pane.setPickOnBounds(false);
+        scene = new Scene(pane);
+        addListeners();
+
+    }
+
+    private void addListeners() {
         aircraftStates.addListener((SetChangeListener<ObservableAircraftState>)
                 change -> { if(change.wasAdded()){
-                   addAnnotated(change.getElementAdded());
+                    addAnnotated(change.getElementAdded());
                 }
                 else{
                     pane.getChildren().remove(pane.lookup("#"+
                             change.getElementRemoved().getIcaoAddress().toString()));
                 }
-                });
-
-        pane.setPickOnBounds(false);
-        scene = new Scene(pane);
+        });
     }
+
 
     private void addAnnotatedGroups() {
         for (ObservableAircraftState aircraftState : aircraftStates) {
@@ -69,28 +81,48 @@ public final class AircraftController {
         return  null;
     }
 
-    private void setLinks() {
-
-    }
 
     private Group setAircraftInfo(ObservableAircraftState aircraftState) {
         Group aircraftInfo = new Group(setIcon(aircraftState));//, setLabel(aircraftState));
         SimpleObjectProperty<GeoPos> aircraftPositionProperty = new SimpleObjectProperty<>();
         aircraftPositionProperty.bind(aircraftState.positionProperty());
+        mapParameters.minXProperty().addListener((observable, oldValue, newValue) ->
+            aircraftInfo.setLayoutX(xOnScreen(aircraftPositionProperty).doubleValue()));
 
+        mapParameters.minYProperty().addListener((observable, oldValue, newValue) ->{
+                aircraftInfo.setLayoutY(yOnScreen(aircraftPositionProperty).doubleValue());
+            System.out.println(newValue);
+                });
+
+        /*
         aircraftInfo.layoutXProperty().bind(xOnScreen(aircraftPositionProperty));
         aircraftInfo.layoutYProperty().bind(yOnScreen(aircraftPositionProperty));
+
+         */
         return aircraftInfo;
     }
 
+    private SVGPath setIcon(ObservableAircraftState aircraftState) {
+        AircraftIcon aircraftIcon = AircraftIcon.iconFor(aircraftState.getAircraftData().typeDesignator(),
+                aircraftState.getAircraftData().description(),
+                aircraftState.getCategory(),
+                aircraftState.getAircraftData().wakeTurbulenceCategory() );
+        SVGPath icon = new SVGPath();
+        icon.setContent(aircraftIcon.svgPath());
+        //todo fix css file
+        // icon.setStyle(getStyleClass());
+        return icon;
+    }
+
     private ReadOnlyDoubleProperty xOnScreen(SimpleObjectProperty<GeoPos> aircraftPositionProperty) {
-        double x = WebMercator.x(zoomProperty.get(), aircraftPositionProperty.getValue().longitude())
-                - minXProperty.get();
+        double x = WebMercator.x(zoom, aircraftPositionProperty.getValue().longitude())
+                - mapParameters.minXProperty().get();
         return new SimpleDoubleProperty(x) ;
     }
+
     private ReadOnlyDoubleProperty yOnScreen(SimpleObjectProperty<GeoPos> aircraftPositionProperty) {
-        double y = WebMercator.y(zoomProperty.get(), aircraftPositionProperty.getValue().latitude())
-                - minYProperty.get();
+        double y = WebMercator.y(zoom, aircraftPositionProperty.getValue().latitude())
+                - mapParameters.minYProperty().get();
         return new SimpleDoubleProperty(y) ;
     }
 
@@ -98,7 +130,7 @@ public final class AircraftController {
     /*private Group setLabel(ObservableAircraftState aircraftState) {
         StringBuilder s
         String text1 = " ";
-        
+
         if(aircraftState.getAircraftData().registration() != null){
             text1 += aircraftState.getAircraftData().registration().toString();
         } else if (aircraftState.getCallSign() != null) {
@@ -132,20 +164,6 @@ public final class AircraftController {
 
 
     }*/
-
-    private SVGPath setIcon(ObservableAircraftState aircraftState) {
-        AircraftIcon aircraftIcon = AircraftIcon.iconFor(aircraftState.getAircraftData().typeDesignator(),
-                aircraftState.getAircraftData().description(),
-                aircraftState.getCategory(),
-                aircraftState.getAircraftData().wakeTurbulenceCategory() );
-        SVGPath icon = new SVGPath();
-        icon.setContent(aircraftIcon.svgPath());
-        SimpleDoubleProperty xOnScreenProperty = new SimpleDoubleProperty();
-        SimpleDoubleProperty yOnScreen = new SimpleDoubleProperty();
-        //todo fix css file
-        // icon.setStyle(getStyleClass());
-        return icon;
-    }
 
     public Pane pane(){
         return pane;
