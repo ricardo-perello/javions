@@ -141,12 +141,7 @@ public final class AircraftController {
         SVGPath icon = new SVGPath();
         icon.setContent(aircraftIcon.svgPath());
         SimpleDoubleProperty xOnScreenProperty = new SimpleDoubleProperty();
-
-
-
         SimpleDoubleProperty yOnScreen = new SimpleDoubleProperty();
-        icon.layoutXProperty().bind(xOnScreenProperty);
-        icon.layoutYProperty().bind(yOnScreen);
         //todo fix css file
         // icon.setStyle(getStyleClass());
         return icon;
