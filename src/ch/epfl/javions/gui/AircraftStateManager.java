@@ -54,7 +54,7 @@ public final class AircraftStateManager {
         }
         aircraftStateAccumulatorMap.get(icaoAddress).update(message);
 
-        if (aircraftStateAccumulatorMap.get(icaoAddress).stateSetter().getGeoPos() != null) {
+        if (aircraftStateAccumulatorMap.get(icaoAddress).stateSetter().getPosition() != null) {
             statePlaneSet.add(aircraftStateAccumulatorMap.get(icaoAddress).stateSetter());
 
         }
