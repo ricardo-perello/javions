@@ -182,7 +182,7 @@ public final class ObservableAircraftState implements AircraftStateSetter {
      *
      * @return the value of positionProperty.
      */
-    public GeoPos getGeoPos() {
+    public GeoPos getPosition() {
         return positionProperty.get();
     }
 
@@ -196,7 +196,7 @@ public final class ObservableAircraftState implements AircraftStateSetter {
      */
     @Override
     public void setAltitude(double altitude) {
-        updateTrajectory(getGeoPos(), altitude);
+        updateTrajectory(getPosition(), altitude);
         altitudeProperty.set(altitude);
     }
 
@@ -244,7 +244,7 @@ public final class ObservableAircraftState implements AircraftStateSetter {
         if ((Double.isNaN(altitude)) || (position == null)) return;
         if (trajectory.isEmpty()) {
             trajectory.add(new AirbornePos(position, altitude));
-        } else if (!position.equals(getGeoPos())) {
+        } else if (!position.equals(getPosition())) {
             trajectory.add(new AirbornePos(position, altitude));
         } else if (getLastMessageTimeStampNs() == trajectoryTimeStampNs) {
             trajectory.remove(trajectory.size() - 1);
