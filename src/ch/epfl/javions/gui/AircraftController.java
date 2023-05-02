@@ -2,24 +2,14 @@ package ch.epfl.javions.gui;
 
 import ch.epfl.javions.GeoPos;
 import ch.epfl.javions.WebMercator;
-import javafx.application.Platform;
-import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableSet;
 import javafx.collections.SetChangeListener;
-import javafx.geometry.Point2D;
 import javafx.scene.Group;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.SVGPath;
 
-import java.util.Objects;
-import java.util.concurrent.Callable;
-
-import static javafx.beans.binding.Bindings.createDoubleBinding;
 import static javafx.beans.binding.Bindings.negate;
 
 public final class AircraftController {
@@ -57,11 +47,11 @@ public final class AircraftController {
         pane.setPickOnBounds(false);
         scene = new Scene(pane);
         pane.getStylesheets().add("aircraft.css");
-        addListeners();
+        addListenerToSet();
 
     }
 
-    private void addListeners() {
+    private void addListenerToSet() {
         aircraftStates.addListener((SetChangeListener<ObservableAircraftState>)
                 change -> { if(change.wasAdded()){
                     addAnnotated(change.getElementAdded());
@@ -95,19 +85,19 @@ public final class AircraftController {
         return  null;
     }
 
-
     private Group setAircraftInfo(ObservableAircraftState aircraftState) {
         SVGPath icon = setIcon(aircraftState);
         Group aircraftInfo = new Group(icon);//, setLabel(aircraftState));
-        SimpleObjectProperty<GeoPos> aircraftPositionProperty = new SimpleObjectProperty<>();
-        aircraftPositionProperty.bind(aircraftState.positionProperty());
+
         minXProperty.addListener((observable, oldValue, newValue) -> {
-            aircraftInfo.setLayoutX(xOnScreen(aircraftPositionProperty).doubleValue());
+            repositionAircraft(aircraftState, aircraftInfo);
         });
         minYProperty.addListener((observable, oldValue, newValue) ->{
-            aircraftInfo.setLayoutY(yOnScreen(aircraftPositionProperty).doubleValue());
+            repositionAircraft(aircraftState, aircraftInfo);
         });
-
+        aircraftState.positionProperty().addListener((observable, oldValue, newValue) -> {
+            repositionAircraft(aircraftState, aircraftInfo);
+        });
 
 
         //aircraftInfo.layoutXProperty().bind(xOnScreen(aircraftPositionProperty));
@@ -116,7 +106,6 @@ public final class AircraftController {
 
         return aircraftInfo;
     }
-
     private SVGPath setIcon(ObservableAircraftState aircraftState) {
         AircraftIcon aircraftIcon = AircraftIcon.iconFor(aircraftState.getAircraftData().typeDesignator(),
                 aircraftState.getAircraftData().description(),
@@ -126,6 +115,14 @@ public final class AircraftController {
         icon.setContent(aircraftIcon.svgPath());
         icon.getStyleClass().add("aircraft");
         return icon;
+    }
+
+    private void repositionAircraft(ObservableAircraftState aircraftState, Group aircraftInfo){
+        SimpleObjectProperty<GeoPos> aircraftPositionProperty = new SimpleObjectProperty<>();
+        aircraftPositionProperty.bind(aircraftState.positionProperty());
+        aircraftInfo.setLayoutX(xOnScreen(aircraftPositionProperty).doubleValue());
+        aircraftInfo.setLayoutY(yOnScreen(aircraftPositionProperty).doubleValue());
+
     }
 
     private ReadOnlyDoubleProperty xOnScreen(SimpleObjectProperty<GeoPos> aircraftPositionProperty) {
