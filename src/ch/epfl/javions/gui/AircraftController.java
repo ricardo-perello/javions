@@ -107,14 +107,26 @@ public final class AircraftController {
         return aircraftInfo;
     }
     private SVGPath setIcon(ObservableAircraftState aircraftState) {
+
         AircraftIcon aircraftIcon = AircraftIcon.iconFor(aircraftState.getAircraftData().typeDesignator(),
                 aircraftState.getAircraftData().description(),
                 aircraftState.getCategory(),
                 aircraftState.getAircraftData().wakeTurbulenceCategory() );
+
         SVGPath icon = new SVGPath();
         icon.setContent(aircraftIcon.svgPath());
+        aircraftState.trackOrHeadingProperty().addListener((observable, oldValue, newValue) -> {
+            if (aircraftIcon.canRotate()){
+            setIconRotation(icon, aircraftState);
+            }
+        });
         icon.getStyleClass().add("aircraft");
         return icon;
+    }
+
+    private void setIconRotation(SVGPath icon, ObservableAircraftState aircraftState) {
+        icon.setRotate(aircraftState.getTrackOrHeading());
+
     }
 
     private void repositionAircraft(ObservableAircraftState aircraftState, Group aircraftInfo){
