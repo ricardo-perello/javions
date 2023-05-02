@@ -26,9 +26,9 @@ public final class AircraftController {
     ObservableSet<ObservableAircraftState> aircraftStates;
     ObservableAircraftState observableAircraftState;
     IntegerProperty zoomProperty;
-
     DoubleProperty minXProperty;
     DoubleProperty minYProperty;
+    ColorRamp colorRamp;
 
 
 
@@ -41,12 +41,10 @@ public final class AircraftController {
         this.mapParameters = mapParameters;
         this.aircraftStates = aircraftStates;
         this.observableAircraftState = observableAircraftStateObjectProperty.get();
-        /*minXProperty.bind(mapParameters.minXProperty());
-        minYProperty.bind(mapParameters.minYProperty());*/
         minXProperty = (DoubleProperty) mapParameters.minXProperty();
         minYProperty = (DoubleProperty) mapParameters.minYProperty();
-        //zoomProperty.bind(mapParameters.zoomProperty());
         zoomProperty = (IntegerProperty) mapParameters.zoomProperty();
+        colorRamp = ColorRamp.PLASMA;
         addAnnotatedGroups();
 
         pane.setPickOnBounds(false);
@@ -79,7 +77,7 @@ public final class AircraftController {
         Group trajectory = setTrajectory(aircraftState);
         Group annotated = new Group(aircraftInfo);//, trajectory);
         annotated.setId(aircraftState.getIcaoAddress().toString());
-        annotated.viewOrderProperty().bind(negate(aircraftState.altitudeProperty()));
+        annotated.viewOrderProperty().bind(aircraftState.altitudeProperty().negate());
         pane.getChildren().add(annotated);
     }
 
@@ -92,6 +90,7 @@ public final class AircraftController {
     private Group setAircraftInfo(ObservableAircraftState aircraftState) {
         SVGPath icon = setIcon(aircraftState);
         Group aircraftInfo = new Group(icon);//, setLabel(aircraftState));
+        repositionAircraft(aircraftState, aircraftInfo);
 
         minXProperty.addListener((observable, oldValue, newValue) -> {
             repositionAircraft(aircraftState, aircraftInfo);
@@ -103,13 +102,9 @@ public final class AircraftController {
             repositionAircraft(aircraftState, aircraftInfo);
         });
 
-
-        //aircraftInfo.layoutXProperty().bind(xOnScreen(aircraftPositionProperty));
-        //aircraftInfo.layoutYProperty().bind(yOnScreen(aircraftPositionProperty));
-
-
         return aircraftInfo;
     }
+
     private SVGPath setIcon(ObservableAircraftState aircraftState) {
 
         AircraftIcon aircraftIcon = AircraftIcon.iconFor(aircraftState.getAircraftData().typeDesignator(),
@@ -119,19 +114,26 @@ public final class AircraftController {
 
         SVGPath icon = new SVGPath();
         icon.setContent(aircraftIcon.svgPath());
+        altitudeColorFill(icon, aircraftState);
         aircraftState.trackOrHeadingProperty().addListener((observable, oldValue, newValue) -> {
             if (aircraftIcon.canRotate()){
             setIconRotation(icon, aircraftState);
             }
         });
+        aircraftState.altitudeProperty().addListener((observable, oldValue, newValue) ->
+                altitudeColorFill(icon, aircraftState));
+
         icon.getStyleClass().add("aircraft");
         return icon;
     }
 
+    private void altitudeColorFill(SVGPath icon, ObservableAircraftState aircraftState) {
+        icon.setFill(colorRamp.at(aircraftState.getAltitude()));
+    }
+
+
     private void setIconRotation(SVGPath icon, ObservableAircraftState aircraftState) {
         icon.setRotate(Units.convertTo(aircraftState.getTrackOrHeading(), DEGREE));
-        System.out.println(Units.convertTo(aircraftState.getTrackOrHeading(), DEGREE));
-
     }
 
     private void repositionAircraft(ObservableAircraftState aircraftState, Group aircraftInfo){
