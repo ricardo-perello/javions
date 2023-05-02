@@ -54,6 +54,7 @@ public final class AircraftController {
 
         pane.setPickOnBounds(false);
         scene = new Scene(pane);
+        pane.getStylesheets().add("aircraft.css");
         addListeners();
 
     }
