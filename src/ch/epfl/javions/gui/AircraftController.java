@@ -3,6 +3,8 @@ package ch.epfl.javions.gui;
 import ch.epfl.javions.GeoPos;
 import ch.epfl.javions.Units;
 import ch.epfl.javions.WebMercator;
+import ch.epfl.javions.adsb.CallSign;
+import ch.epfl.javions.aircraft.AircraftRegistration;
 import javafx.beans.property.*;
 import javafx.collections.ObservableSet;
 import javafx.collections.SetChangeListener;
@@ -10,6 +12,7 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.SVGPath;
+import javafx.scene.text.Text;
 
 import static ch.epfl.javions.Units.Angle.DEGREE;
 import static javafx.beans.binding.Bindings.negate;
@@ -50,7 +53,6 @@ public final class AircraftController {
         scene = new Scene(pane);
         pane.getStylesheets().add("aircraft.css");
         addListenerToSet();
-
     }
 
     private void addListenerToSet() {
@@ -153,7 +155,39 @@ public final class AircraftController {
     }
 
 
-    /*private Group setLabel(ObservableAircraftState aircraftState) {
+    private Group setLabel(ObservableAircraftState aircraftState) {
+
+        Text t1 = new Text();
+        AircraftRegistration registration = aircraftState.getAircraftData().registration();
+        if(aircraftState.getAircraftData().registration() != null){
+            t1.textProperty().setValue(registration.string());
+        }else{
+            CallSign callSign = aircraftState.getCallSign();
+            if (callSign != null){
+                t1.textProperty().setValue(callSign.string());
+            }
+            else{
+                t1.textProperty().setValue(aircraftState.getIcaoAddress().string());
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         StringBuilder s;
         String text1 = " ";
 
@@ -190,7 +224,7 @@ public final class AircraftController {
         label.getStyleClass().add("label");
 
 
-    }*/
+    }
 
     public Pane pane(){
         return pane;
