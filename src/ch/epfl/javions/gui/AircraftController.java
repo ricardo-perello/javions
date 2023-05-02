@@ -19,6 +19,7 @@ import javafx.scene.shape.SVGPath;
 import java.util.concurrent.Callable;
 
 import static javafx.beans.binding.Bindings.createDoubleBinding;
+import static javafx.beans.binding.Bindings.negate;
 
 public final class AircraftController {
     Scene scene;
@@ -75,6 +76,7 @@ public final class AircraftController {
         Group trajectory = setTrajectory(aircraftState);
         Group annotated = new Group(aircraftInfo);//, trajectory);
         annotated.setId(aircraftState.getIcaoAddress().toString());
+        annotated.viewOrderProperty().bind(negate(aircraftState.altitudeProperty()));
         pane.getChildren().add(annotated);
     }
 
@@ -84,9 +86,13 @@ public final class AircraftController {
 
 
     private Group setAircraftInfo(ObservableAircraftState aircraftState) {
-        Group aircraftInfo = new Group(setIcon(aircraftState));//, setLabel(aircraftState));
+        SVGPath icon = setIcon(aircraftState);
+        Group aircraftInfo = new Group(icon);//, setLabel(aircraftState));
         SimpleObjectProperty<GeoPos> aircraftPositionProperty = new SimpleObjectProperty<>();
         aircraftPositionProperty.bind(aircraftState.positionProperty());
+        aircraftInfo.setLayoutX(xOnScreen(aircraftPositionProperty).doubleValue());
+        aircraftInfo.setLayoutY(yOnScreen(aircraftPositionProperty).doubleValue());
+
         mapParameters.minXProperty().addListener((observable, oldValue, newValue) ->
             aircraftInfo.setLayoutX(xOnScreen(aircraftPositionProperty).doubleValue()));
 
@@ -100,6 +106,9 @@ public final class AircraftController {
         aircraftInfo.layoutYProperty().bind(yOnScreen(aircraftPositionProperty));
 
          */
+
+
+
         return aircraftInfo;
     }
 
@@ -110,8 +119,7 @@ public final class AircraftController {
                 aircraftState.getAircraftData().wakeTurbulenceCategory() );
         SVGPath icon = new SVGPath();
         icon.setContent(aircraftIcon.svgPath());
-        //todo fix css file
-        // icon.setStyle(getStyleClass());
+        icon.getStyleClass().add("aircraft");
         return icon;
     }
 
