@@ -90,6 +90,8 @@ public final class AircraftController {
     }
 
     private Group setTrajectory(ObservableAircraftState aircraftState) {
+        //trajectory.getStyleClass().add("trajectory");
+
         return  null;
     }
 
@@ -149,7 +151,7 @@ public final class AircraftController {
 
 
     /*private Group setLabel(ObservableAircraftState aircraftState) {
-        StringBuilder s
+        StringBuilder s;
         String text1 = " ";
 
         if(aircraftState.getAircraftData().registration() != null){
@@ -182,6 +184,7 @@ public final class AircraftController {
 
         Text text = new Text();
         text.setText(text1 + text2);
+        label.getStyleClass().add("label");
 
 
     }*/
