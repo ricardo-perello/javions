@@ -5,13 +5,14 @@ import ch.epfl.javions.Units;
 import ch.epfl.javions.WebMercator;
 import ch.epfl.javions.adsb.CallSign;
 import ch.epfl.javions.aircraft.AircraftRegistration;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
 import javafx.collections.ObservableSet;
 import javafx.collections.SetChangeListener;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
-import javafx.scene.shape.SVGPath;
+import javafx.scene.shape.*;
 import javafx.scene.text.Text;
 
 import static ch.epfl.javions.Units.Angle.DEGREE;
@@ -89,7 +90,7 @@ public final class AircraftController {
 
     private Group setAircraftInfo(ObservableAircraftState aircraftState) {
         SVGPath icon = setIcon(aircraftState);
-        Group aircraftInfo = new Group(icon);//, setLabel(aircraftState));
+        Group aircraftInfo = new Group(icon, setLabel(aircraftState));
         repositionAircraft(aircraftState, aircraftInfo);
 
         minXProperty.addListener((observable, oldValue, newValue) -> {
@@ -173,13 +174,22 @@ public final class AircraftController {
             }
         }
 
+        Text t2 = new Text();
 
+        t2.textProperty().bind(Bindings.createStringBinding(() -> String.format("%f km/h",
+                        (Double.isNaN(aircraftState.getVelocity()) ? "?" : Double.toString(aircraftState.getVelocity()))),
+                aircraftState.velocityProperty()));
+        t2.textProperty().bind(Bindings.createStringBinding(() -> String.format("%f m",
+                        (Double.isNaN(aircraftState.getAltitude()) ? "?" : Double.toString(aircraftState.getAltitude()))),
+                aircraftState.altitudeProperty()));
+        Text text = new Text();
 
-
-
-
-
-
+        Rectangle rectangle = new Rectangle();
+        rectangle.widthProperty().bind(text.layoutBoundsProperty().map(b -> b.getWidth() + 4));
+        rectangle.heightProperty().bind(text.layoutBoundsProperty().map(b -> b.getHeight() + 4));
+        Group label = new Group(rectangle, text);
+        label.getStyleClass().add("label");
+        label.setVisible(zoomProperty.get() >= 11);
 
 
 
