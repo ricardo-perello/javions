@@ -1,6 +1,7 @@
 package ch.epfl.javions.gui;
 
 import ch.epfl.javions.GeoPos;
+import ch.epfl.javions.Units;
 import ch.epfl.javions.WebMercator;
 import javafx.beans.property.*;
 import javafx.collections.ObservableSet;
@@ -10,6 +11,7 @@ import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.SVGPath;
 
+import static ch.epfl.javions.Units.Angle.DEGREE;
 import static javafx.beans.binding.Bindings.negate;
 
 public final class AircraftController {
@@ -125,7 +127,8 @@ public final class AircraftController {
     }
 
     private void setIconRotation(SVGPath icon, ObservableAircraftState aircraftState) {
-        icon.setRotate(aircraftState.getTrackOrHeading());
+        icon.setRotate(Units.convertTo(aircraftState.getTrackOrHeading(), DEGREE));
+        System.out.println(Units.convertTo(aircraftState.getTrackOrHeading(), DEGREE));
 
     }
 
