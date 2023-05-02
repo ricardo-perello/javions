@@ -102,19 +102,10 @@ public final class AircraftController {
         SimpleObjectProperty<GeoPos> aircraftPositionProperty = new SimpleObjectProperty<>();
         aircraftPositionProperty.bind(aircraftState.positionProperty());
         minXProperty.addListener((observable, oldValue, newValue) -> {
-            System.out.println("oldValue : " + oldValue);
-            System.out.println("newValue : " + newValue);
             aircraftInfo.setLayoutX(xOnScreen(aircraftPositionProperty).doubleValue());
-
-            System.out.println("aircraftPositionProperty : " + aircraftPositionProperty);
-            System.out.println(" x :" + aircraftInfo.getLayoutX());
-            System.out.println("mapParameters.minXProperty().get() : " + mapParameters.minXProperty().get());
-
         });
         minYProperty.addListener((observable, oldValue, newValue) ->{
             aircraftInfo.setLayoutY(yOnScreen(aircraftPositionProperty).doubleValue());
-
-            System.out.println(" y : " + aircraftInfo.getLayoutY());
         });
 
 
