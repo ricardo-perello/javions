@@ -29,7 +29,7 @@ public final class AircraftController {
     MapParameters mapParameters;
     ObservableSet<ObservableAircraftState> aircraftStates;
     ObservableAircraftState observableAircraftState;
-    DoubleProperty zoom;
+    IntegerProperty zoomProperty;
 
     DoubleProperty minXProperty;
     DoubleProperty minYProperty;
@@ -49,7 +49,8 @@ public final class AircraftController {
         minYProperty.bind(mapParameters.minYProperty());*/
         minXProperty = (DoubleProperty) mapParameters.minXProperty();
         minYProperty = (DoubleProperty) mapParameters.minYProperty();
-        //zoom =
+        //zoomProperty.bind(mapParameters.zoomProperty());
+        zoomProperty = (IntegerProperty) mapParameters.zoomProperty();
         addAnnotatedGroups();
 
         pane.setPickOnBounds(false);
@@ -95,7 +96,7 @@ public final class AircraftController {
         Group aircraftInfo = new Group(setIcon(aircraftState));//, setLabel(aircraftState));
         SimpleObjectProperty<GeoPos> aircraftPositionProperty = new SimpleObjectProperty<>();
         aircraftPositionProperty.bind(aircraftState.positionProperty());
-        mapParameters.minXProperty().addListener((observable, oldValue, newValue) -> {
+        minXProperty.addListener((observable, oldValue, newValue) -> {
             System.out.println("oldValue : " + oldValue);
             System.out.println("newValue : " + newValue);
             aircraftInfo.setLayoutX(xOnScreen(aircraftPositionProperty).doubleValue());
@@ -105,7 +106,7 @@ public final class AircraftController {
             System.out.println("mapParameters.minXProperty().get() : " + mapParameters.minXProperty().get());
 
         });
-        mapParameters.minYProperty().addListener((observable, oldValue, newValue) ->{
+        minYProperty.addListener((observable, oldValue, newValue) ->{
             aircraftInfo.setLayoutY(yOnScreen(aircraftPositionProperty).doubleValue());
 
             System.out.println(" y : " + aircraftInfo.getLayoutY());
@@ -135,14 +136,14 @@ public final class AircraftController {
     }
 
     private ReadOnlyDoubleProperty xOnScreen(SimpleObjectProperty<GeoPos> aircraftPositionProperty) {
-        double x = WebMercator.x(mapParameters.zoomProperty().get(), aircraftPositionProperty.getValue().longitude())
-                - mapParameters.minXProperty().get();
+        double x = WebMercator.x(zoomProperty.get(), aircraftPositionProperty.getValue().longitude())
+                - minXProperty.get();
         return new SimpleDoubleProperty(x) ;
     }
 
     private ReadOnlyDoubleProperty yOnScreen(SimpleObjectProperty<GeoPos> aircraftPositionProperty) {
-        double y = WebMercator.y(mapParameters.zoomProperty().get(), aircraftPositionProperty.getValue().latitude())
-                - mapParameters.minYProperty().get();
+        double y = WebMercator.y(zoomProperty.get(), aircraftPositionProperty.getValue().latitude())
+                - minYProperty.get();
         return new SimpleDoubleProperty(y);
     }
 
