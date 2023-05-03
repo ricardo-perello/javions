@@ -16,6 +16,7 @@ import javafx.scene.shape.*;
 import javafx.scene.text.Text;
 
 import static ch.epfl.javions.Units.Angle.DEGREE;
+import static javafx.beans.binding.Bindings.createStringBinding;
 import static javafx.beans.binding.Bindings.negate;
 
 public final class AircraftController {
@@ -90,7 +91,8 @@ public final class AircraftController {
 
     private Group setAircraftInfo(ObservableAircraftState aircraftState) {
         SVGPath icon = setIcon(aircraftState);
-        Group aircraftInfo = new Group(icon, setLabel(aircraftState));
+        Group label = setLabel(aircraftState);
+        Group aircraftInfo = new Group(icon, label);
         repositionAircraft(aircraftState, aircraftInfo);
 
         minXProperty.addListener((observable, oldValue, newValue) -> {
@@ -102,12 +104,15 @@ public final class AircraftController {
         aircraftState.positionProperty().addListener((observable, oldValue, newValue) -> {
             repositionAircraft(aircraftState, aircraftInfo);
         });
+        aircraftState.altitudeProperty().addListener((observable)-> setLabel(aircraftState));
+        aircraftState.velocityProperty().addListener((observable -> setLabel(aircraftState)));
+        mapParameters.zoomProperty().addListener((observable -> changeVisibility(label)));
 
         return aircraftInfo;
     }
 
     private SVGPath setIcon(ObservableAircraftState aircraftState) {
-
+//todo hay q mirar si esto puede ser null
         AircraftIcon aircraftIcon = AircraftIcon.iconFor(aircraftState.getAircraftData().typeDesignator(),
                 aircraftState.getAircraftData().description(),
                 aircraftState.getCategory(),
@@ -161,82 +166,57 @@ public final class AircraftController {
     private Group setLabel(ObservableAircraftState aircraftState) {
 
         Text t1 = new Text();
-        AircraftRegistration registration = aircraftState.getAircraftData().registration();
-        if(aircraftState.getAircraftData().registration() != null){
-            t1.textProperty().setValue(registration.string());
+        if (aircraftState.getAircraftData().registration() != null){
+            t1.textProperty().bind(Bindings.createStringBinding(
+                    ()->aircraftState.getAircraftData().registration().string()));
+        } else if (aircraftState.getCallSign() != null) {
+            t1.textProperty().bind(Bindings.createStringBinding(
+                    ()->aircraftState.getCallSign().string()));
         }else{
-            CallSign callSign = aircraftState.getCallSign();
-            if (callSign != null){
-                t1.textProperty().setValue(callSign.string());
-            }
-            else{
-                t1.textProperty().setValue(aircraftState.getIcaoAddress().string());
-            }
+            t1.textProperty().bind(Bindings.createStringBinding(
+                    ()->aircraftState.getIcaoAddress().string()));
         }
 
         Text t2 = new Text();
 
-        t2.textProperty().bind(Bindings.createStringBinding(() -> String.format("%f km/h",
-                        (Double.isNaN(aircraftState.getVelocity()) ? "?" : Double.toString(aircraftState.getVelocity()))),
-                aircraftState.velocityProperty()));
-        t2.textProperty().bind(Bindings.createStringBinding(() -> String.format("%f m",
-                        (Double.isNaN(aircraftState.getAltitude()) ? "?" : Double.toString(aircraftState.getAltitude()))),
-                aircraftState.altitudeProperty()));
-        Text text = new Text();
+        if ( !Double.isNaN(aircraftState.velocityProperty().get()) && !Double.isNaN(aircraftState.altitudeProperty().get())){
+            t2.textProperty().bind(Bindings.createStringBinding(()->
+                String.format("\n%.0f\u2002km/h,\u2002%.0f\u2002m",
+                    Units.convertTo(aircraftState.getVelocity(),Units.Speed.KILOMETER_PER_HOUR),
+                    aircraftState.getAltitude()),
+                    aircraftState.velocityProperty(),
+                    aircraftState.altitudeProperty()));
+        }else if (!Double.isNaN(aircraftState.velocityProperty().get()) && Double.isNaN(aircraftState.altitudeProperty().get())) {
+            t2.textProperty().bind(Bindings.createStringBinding(()->
+                String.format("\n%.0f\u2002km/h,\u2002%?\u2002m",
+                    Units.convertTo(aircraftState.getVelocity(),Units.Speed.KILOMETER_PER_HOUR),
+                    aircraftState.velocityProperty())));
+        }else if (Double.isNaN(aircraftState.velocityProperty().get()) && !Double.isNaN(aircraftState.altitudeProperty().get())) {
+            t2.textProperty().bind(Bindings.createStringBinding(()->
+                    String.format("\n%?\u2002km/h,\u2002%.0f\u2002m",
+                    aircraftState.getAltitude()),
+                    aircraftState.altitudeProperty()
+            ));
+        }else{
+            t2.textProperty().bind(Bindings.createStringBinding(()->
+                    String.format("\n%?\u2002km/h,\u2002%?\u2002m")));
+        }
 
         Rectangle rectangle = new Rectangle();
-        rectangle.widthProperty().bind(text.layoutBoundsProperty().map(b -> b.getWidth() + 4));
-        rectangle.heightProperty().bind(text.layoutBoundsProperty().map(b -> b.getHeight() + 4));
-        Group label = new Group(rectangle, text);
+        rectangle.widthProperty().bind(t2.layoutBoundsProperty().map(b -> b.getWidth() + 4));
+        rectangle.heightProperty().bind(t2.layoutBoundsProperty().map(b -> b.getHeight() + 4));
+        Group label = new Group(rectangle, t1, t2);
         label.getStyleClass().add("label");
-        label.setVisible(zoomProperty.get() >= 11);
+        changeVisibility(label);
 
 
-
-
-
-
-
-
-
-
-        StringBuilder s;
-        String text1 = " ";
-
-        if(aircraftState.getAircraftData().registration() != null){
-            text1 += aircraftState.getAircraftData().registration().toString();
-        } else if (aircraftState.getCallSign() != null) {
-            text1 += aircraftState.getCallSign().toString();
-        }else{
-            text1 += aircraftState.getIcaoAddress();
-        }
-
-        String text2 = " ";
-
-        if (Double.isNaN(aircraftState.getVelocity())){
-            text2 += "?";
-        }else {
-            text2 += Double.toString(aircraftState.getVelocity());
-        }
-
-        text2 += " m/s ";
-
-        if (Double.isNaN(aircraftState.getAltitude())){
-            text2 += "?";
-        }
-        else{
-            text2 += Double.toString(aircraftState.getAltitude());
-        }
-
-        text2 += " m";
-
-
-        Text text = new Text();
-        text.setText(text1 + text2);
-        label.getStyleClass().add("label");
-
-
+        return label;
     }
+
+    private void changeVisibility(Group label){
+        label.setVisible(mapParameters.zoomProperty().get()>= 11);
+    }
+
 
     public Pane pane(){
         return pane;
