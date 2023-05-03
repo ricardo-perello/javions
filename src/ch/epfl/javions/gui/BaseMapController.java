@@ -166,13 +166,7 @@ public final class BaseMapController {
     }
     //todo cambiar el metodo cuando haya aviones
     private void addEventMouseClicking() {
-        canvas.setOnMouseClicked((e)-> {
-            if(e.isStillSincePress()){
-                //mapParameters.scroll((-pane.getWidth()/2)+e.getX(), (-pane.getHeight()/2)+e.getY());
-                centerOn(new GeoPos((int) Units.convert(-6.3515000,Units.Angle.DEGREE, Units.Angle.T32),
-                        (int) Units.convert(36.7780800, Units.Angle.DEGREE, Units.Angle.T32)));
-            }
-        });
+        //canvas.setOnMouseClicked((e)-> );
     }
 
     /**
