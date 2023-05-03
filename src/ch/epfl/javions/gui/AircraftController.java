@@ -11,11 +11,16 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableSet;
 import javafx.collections.SetChangeListener;
+import javafx.event.EventHandler;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.*;
 import javafx.scene.text.Text;
+
+import java.util.Iterator;
 
 import static ch.epfl.javions.Units.Angle.DEGREE;
 import static javafx.beans.binding.Bindings.negate;
@@ -27,7 +32,7 @@ public final class AircraftController {
 
     MapParameters mapParameters;
     ObservableSet<ObservableAircraftState> aircraftStates;
-    ObservableAircraftState observableAircraftState;
+    ObjectProperty<ObservableAircraftState> selected;
     IntegerProperty zoomProperty;
     DoubleProperty minXProperty;
     DoubleProperty minYProperty;
@@ -38,12 +43,12 @@ public final class AircraftController {
 
     public AircraftController(MapParameters mapParameters,
                               ObservableSet<ObservableAircraftState> aircraftStates,
-                              ObjectProperty<ObservableAircraftState> observableAircraftStateObjectProperty) {
+                              ObjectProperty<ObservableAircraftState> selected) {
 
 
         this.mapParameters = mapParameters;
         this.aircraftStates = aircraftStates;
-        this.observableAircraftState = observableAircraftStateObjectProperty.get();
+        this.selected = selected;
         minXProperty = (DoubleProperty) mapParameters.minXProperty();
         minYProperty = (DoubleProperty) mapParameters.minYProperty();
         zoomProperty = (IntegerProperty) mapParameters.zoomProperty();
@@ -54,6 +59,7 @@ public final class AircraftController {
         scene = new Scene(pane);
         pane.getStylesheets().add("aircraft.css");
         addListenerToSet();
+        eventHandlers();
     }
 
     private void addListenerToSet() {
@@ -67,7 +73,21 @@ public final class AircraftController {
                     }
                 });
     }
-
+    private void eventHandlers() {
+        pane.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                Node clicked = ((Node) mouseEvent.getTarget()).getParent().getParent();
+                if (pane.getChildren().contains(clicked)){
+                    for (ObservableAircraftState state : aircraftStates) {
+                        if (pane.lookup("#" + state.getIcaoAddress().toString()).equals(clicked)) {
+                            selected.set(state);
+                        }
+                    }
+                }
+            }
+        });
+    }
 
     private void addAnnotatedGroups() {
         for (ObservableAircraftState aircraftState : aircraftStates) {
