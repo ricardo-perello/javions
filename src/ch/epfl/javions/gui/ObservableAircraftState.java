@@ -37,7 +37,7 @@ public final class ObservableAircraftState implements AircraftStateSetter {
         this.icaoAddress = icaoAddress;
         this.aircraftData = aircraftData;
         trajectory = FXCollections.observableArrayList();
-        trajectoryProperty = FXCollections.unmodifiableObservableList(trajectory);
+        trajectoryProperty =  FXCollections.unmodifiableObservableList(trajectory);
 
     }
 
@@ -225,7 +225,7 @@ public final class ObservableAircraftState implements AircraftStateSetter {
      *
      * @return ObservableList of type AirbornePos
      */
-    public ObservableList<AirbornePos> trajectory() {
+    public ObservableList<AirbornePos> getTrajectory() {
         return trajectoryProperty;
     }
 

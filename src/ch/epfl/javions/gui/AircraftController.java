@@ -7,6 +7,8 @@ import ch.epfl.javions.adsb.CallSign;
 import ch.epfl.javions.aircraft.AircraftRegistration;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.collections.ObservableSet;
 import javafx.collections.SetChangeListener;
 import javafx.scene.Group;
@@ -16,7 +18,6 @@ import javafx.scene.shape.*;
 import javafx.scene.text.Text;
 
 import static ch.epfl.javions.Units.Angle.DEGREE;
-import static javafx.beans.binding.Bindings.negate;
 
 public final class AircraftController {
     Scene scene;
@@ -32,11 +33,9 @@ public final class AircraftController {
     ColorRamp colorRamp;
 
 
-
-
     public AircraftController(MapParameters mapParameters,
                               ObservableSet<ObservableAircraftState> aircraftStates,
-                              ObjectProperty<ObservableAircraftState> observableAircraftStateObjectProperty){
+                              ObjectProperty<ObservableAircraftState> observableAircraftStateObjectProperty) {
 
 
         this.mapParameters = mapParameters;
@@ -56,14 +55,14 @@ public final class AircraftController {
 
     private void addListenerToSet() {
         aircraftStates.addListener((SetChangeListener<ObservableAircraftState>)
-                change -> { if(change.wasAdded()){
-                    addAnnotated(change.getElementAdded());
-                }
-                else{
-                    pane.getChildren().remove(pane.lookup("#"+
-                            change.getElementRemoved().getIcaoAddress().toString()));
-                }
-        });
+                change -> {
+                    if (change.wasAdded()) {
+                        addAnnotated(change.getElementAdded());
+                    } else {
+                        pane.getChildren().remove(pane.lookup("#" +
+                                change.getElementRemoved().getIcaoAddress().toString()));
+                    }
+                });
     }
 
 
@@ -76,27 +75,52 @@ public final class AircraftController {
     private void addAnnotated(ObservableAircraftState aircraftState) {
         Group aircraftInfo = setAircraftInfo(aircraftState);
         Group trajectory = setTrajectory(aircraftState);
-        Group annotated = new Group(aircraftInfo);//, trajectory);
+        Group annotated = new Group(aircraftInfo, trajectory);
         annotated.setId(aircraftState.getIcaoAddress().toString());
         annotated.viewOrderProperty().bind(aircraftState.altitudeProperty().negate());
         pane.getChildren().add(annotated);
     }
 
     private Group setTrajectory(ObservableAircraftState aircraftState) {
-        //trajectory.getStyleClass().add("trajectory");
+        Group trajectory;
+        ObservableList<ObservableAircraftState.AirbornePos> trajectoryList = aircraftState.getTrajectory();
+        GeoPos startingPos = trajectoryList.get(0).geoPos();
+        Path path = new Path();
+        path.getElements().add(new MoveTo(startingPos.latitude(), startingPos.longitude()));
+        for (ObservableAircraftState.AirbornePos airbornePos : trajectoryList) {
+            double xEnd = airbornePos.geoPos().latitude();
+            double yEnd = airbornePos.geoPos().longitude();
+            path.getElements().add(new LineTo(xEnd, yEnd));
+        }
+        trajectoryList.addListener((ListChangeListener<? super ObservableAircraftState.AirbornePos>) observable -> {
+            if (aircraftState.getTrajectory().size() > 1) {
+                double xStart = trajectoryList.get(trajectoryList.size()-1).geoPos().latitude();
+                double yStart = trajectoryList.get(trajectoryList.size()-1).geoPos().longitude();
+                path.getElements().add(new LineTo(xStart, yStart));
+            }
+        });
 
-        return  null;
+        trajectory = new Group(path);
+        minXProperty.addListener((observable, oldValue, newValue) -> {
+            repositionTrajectoryPath(aircraftState, trajectory);
+        });
+        minYProperty.addListener((observable, oldValue, newValue) -> {
+            repositionTrajectoryPath(aircraftState, trajectory);
+        });
+        trajectory.getStyleClass().add("trajectory");
+
+        return trajectory;
     }
 
     private Group setAircraftInfo(ObservableAircraftState aircraftState) {
         SVGPath icon = setIcon(aircraftState);
-        Group aircraftInfo = new Group(icon, setLabel(aircraftState));
+        Group aircraftInfo = new Group(icon);//, setLabel(aircraftState));
         repositionAircraft(aircraftState, aircraftInfo);
 
         minXProperty.addListener((observable, oldValue, newValue) -> {
             repositionAircraft(aircraftState, aircraftInfo);
         });
-        minYProperty.addListener((observable, oldValue, newValue) ->{
+        minYProperty.addListener((observable, oldValue, newValue) -> {
             repositionAircraft(aircraftState, aircraftInfo);
         });
         aircraftState.positionProperty().addListener((observable, oldValue, newValue) -> {
@@ -111,14 +135,14 @@ public final class AircraftController {
         AircraftIcon aircraftIcon = AircraftIcon.iconFor(aircraftState.getAircraftData().typeDesignator(),
                 aircraftState.getAircraftData().description(),
                 aircraftState.getCategory(),
-                aircraftState.getAircraftData().wakeTurbulenceCategory() );
+                aircraftState.getAircraftData().wakeTurbulenceCategory());
 
         SVGPath icon = new SVGPath();
         icon.setContent(aircraftIcon.svgPath());
         altitudeColorFill(icon, aircraftState);
         aircraftState.trackOrHeadingProperty().addListener((observable, oldValue, newValue) -> {
-            if (aircraftIcon.canRotate()){
-            setIconRotation(icon, aircraftState);
+            if (aircraftIcon.canRotate()) {
+                setIconRotation(icon, aircraftState);
             }
         });
         aircraftState.altitudeProperty().addListener((observable, oldValue, newValue) ->
@@ -137,7 +161,7 @@ public final class AircraftController {
         icon.setRotate(Units.convertTo(aircraftState.getTrackOrHeading(), DEGREE));
     }
 
-    private void repositionAircraft(ObservableAircraftState aircraftState, Group aircraftInfo){
+    private void repositionAircraft(ObservableAircraftState aircraftState, Group aircraftInfo) {
         SimpleObjectProperty<GeoPos> aircraftPositionProperty = new SimpleObjectProperty<>();
         aircraftPositionProperty.bind(aircraftState.positionProperty());
         aircraftInfo.setLayoutX(xOnScreen(aircraftPositionProperty).doubleValue());
@@ -145,10 +169,18 @@ public final class AircraftController {
 
     }
 
+    private void repositionTrajectoryPath(ObservableAircraftState aircraftState, Group trajectory) {
+        SimpleObjectProperty<GeoPos> aircraftPositionProperty = new SimpleObjectProperty<>();
+        aircraftPositionProperty.bind(aircraftState.positionProperty());
+        trajectory.setLayoutX(xOnScreen(aircraftPositionProperty).doubleValue());
+        trajectory.setLayoutY(yOnScreen(aircraftPositionProperty).doubleValue());
+
+    }
+
     private ReadOnlyDoubleProperty xOnScreen(SimpleObjectProperty<GeoPos> aircraftPositionProperty) {
         double x = WebMercator.x(zoomProperty.get(), aircraftPositionProperty.getValue().longitude())
                 - minXProperty.get();
-        return new SimpleDoubleProperty(x) ;
+        return new SimpleDoubleProperty(x);
     }
 
     private ReadOnlyDoubleProperty yOnScreen(SimpleObjectProperty<GeoPos> aircraftPositionProperty) {
@@ -162,14 +194,13 @@ public final class AircraftController {
 
         Text t1 = new Text();
         AircraftRegistration registration = aircraftState.getAircraftData().registration();
-        if(aircraftState.getAircraftData().registration() != null){
+        if (aircraftState.getAircraftData().registration() != null) {
             t1.textProperty().setValue(registration.string());
-        }else{
+        } else {
             CallSign callSign = aircraftState.getCallSign();
-            if (callSign != null){
+            if (callSign != null) {
                 t1.textProperty().setValue(callSign.string());
-            }
-            else{
+            } else {
                 t1.textProperty().setValue(aircraftState.getIcaoAddress().string());
             }
         }
@@ -191,54 +222,10 @@ public final class AircraftController {
         label.getStyleClass().add("label");
         label.setVisible(zoomProperty.get() >= 11);
 
-
-
-
-
-
-
-
-
-
-        StringBuilder s;
-        String text1 = " ";
-
-        if(aircraftState.getAircraftData().registration() != null){
-            text1 += aircraftState.getAircraftData().registration().toString();
-        } else if (aircraftState.getCallSign() != null) {
-            text1 += aircraftState.getCallSign().toString();
-        }else{
-            text1 += aircraftState.getIcaoAddress();
-        }
-
-        String text2 = " ";
-
-        if (Double.isNaN(aircraftState.getVelocity())){
-            text2 += "?";
-        }else {
-            text2 += Double.toString(aircraftState.getVelocity());
-        }
-
-        text2 += " m/s ";
-
-        if (Double.isNaN(aircraftState.getAltitude())){
-            text2 += "?";
-        }
-        else{
-            text2 += Double.toString(aircraftState.getAltitude());
-        }
-
-        text2 += " m";
-
-
-        Text text = new Text();
-        text.setText(text1 + text2);
-        label.getStyleClass().add("label");
-
-
+        return label;
     }
 
-    public Pane pane(){
+    public Pane pane() {
         return pane;
     }
 
