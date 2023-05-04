@@ -23,6 +23,7 @@ import javafx.scene.text.Text;
 import java.util.Iterator;
 
 import static ch.epfl.javions.Units.Angle.DEGREE;
+
 import static javafx.beans.binding.Bindings.negate;
 
 public final class AircraftController {
@@ -224,19 +225,22 @@ public final class AircraftController {
 
         Text t2 = new Text();
 
-        if ( !Double.isNaN(aircraftState.velocityProperty().get()) && !Double.isNaN(aircraftState.altitudeProperty().get())){
+        if ( !Double.isNaN(aircraftState.velocityProperty().get()) &&
+                !Double.isNaN(aircraftState.altitudeProperty().get())){
             t2.textProperty().bind(Bindings.createStringBinding(()->
                 String.format("\n%.0f\u2002km/h,\u2002%.0f\u2002m",
                     Units.convertTo(aircraftState.getVelocity(),Units.Speed.KILOMETER_PER_HOUR),
                     aircraftState.getAltitude()),
                     aircraftState.velocityProperty(),
                     aircraftState.altitudeProperty()));
-        }else if (!Double.isNaN(aircraftState.velocityProperty().get()) && Double.isNaN(aircraftState.altitudeProperty().get())) {
+        }else if (!Double.isNaN(aircraftState.velocityProperty().get()) &&
+                Double.isNaN(aircraftState.altitudeProperty().get())){
             t2.textProperty().bind(Bindings.createStringBinding(()->
                 String.format("\n%.0f\u2002km/h,\u2002%?\u2002m",
                     Units.convertTo(aircraftState.getVelocity(),Units.Speed.KILOMETER_PER_HOUR),
                     aircraftState.velocityProperty())));
-        }else if (Double.isNaN(aircraftState.velocityProperty().get()) && !Double.isNaN(aircraftState.altitudeProperty().get())) {
+        }else if (Double.isNaN(aircraftState.velocityProperty().get()) &&
+                !Double.isNaN(aircraftState.altitudeProperty().get())){
             t2.textProperty().bind(Bindings.createStringBinding(()->
                     String.format("\n%?\u2002km/h,\u2002%.0f\u2002m",
                     aircraftState.getAltitude()),
@@ -256,6 +260,13 @@ public final class AircraftController {
 
 
         return label;
+    }
+
+    private boolean requireNonNull(Double v) {
+        if (v != null){
+            return  true;
+        }
+        return false;
     }
 
     private void changeVisibility(Group label){
