@@ -3,8 +3,6 @@ package ch.epfl.javions.gui;
 import ch.epfl.javions.GeoPos;
 import ch.epfl.javions.Units;
 import ch.epfl.javions.WebMercator;
-import ch.epfl.javions.adsb.CallSign;
-import ch.epfl.javions.aircraft.AircraftRegistration;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
 import javafx.collections.ListChangeListener;
@@ -12,6 +10,7 @@ import javafx.collections.ObservableList;
 import javafx.collections.ObservableSet;
 import javafx.collections.SetChangeListener;
 import javafx.event.EventHandler;
+import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -20,10 +19,11 @@ import javafx.scene.layout.Pane;
 import javafx.scene.shape.*;
 import javafx.scene.text.Text;
 
-import java.util.Iterator;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static ch.epfl.javions.Units.Angle.DEGREE;
-import static javafx.beans.binding.Bindings.negate;
 
 public final class AircraftController {
     Scene scene;
@@ -78,11 +78,12 @@ public final class AircraftController {
             @Override
             public void handle(MouseEvent mouseEvent) {
                 Node clicked = ((Node) mouseEvent.getTarget()).getParent().getParent();
-                if (pane.getChildren().contains(clicked)){
-                    for (ObservableAircraftState state : aircraftStates) {
-                        if (pane.lookup("#" + state.getIcaoAddress().toString()).equals(clicked)) {
-                            selected.set(state);
-                        }
+
+                for (ObservableAircraftState state : aircraftStates) {
+                    if (pane.lookup("#" + state.getIcaoAddress().toString()).equals(clicked)) {
+                        selected.set(state);
+                        System.out.println(selected.get().getIcaoAddress().toString());
+                        break;
                     }
                 }
             }
@@ -98,32 +99,50 @@ public final class AircraftController {
     private void addAnnotated(ObservableAircraftState aircraftState) {
         Group aircraftInfo = setAircraftInfo(aircraftState);
         Group trajectory = setTrajectory(aircraftState);
-        Group annotated = new Group(aircraftInfo);//, trajectory);
+        Group annotated = new Group(aircraftInfo, trajectory);
         annotated.setId(aircraftState.getIcaoAddress().toString());
         annotated.viewOrderProperty().bind(aircraftState.altitudeProperty().negate());
         pane.getChildren().add(annotated);
     }
 
     private Group setTrajectory(ObservableAircraftState aircraftState) {
-        Group trajectory;
+        Group trajectory = new Group();
+        trajectory.getStyleClass().add("trajectory");
         ObservableList<ObservableAircraftState.AirbornePos> trajectoryList = aircraftState.getTrajectory();
-        GeoPos startingPos = trajectoryList.get(0).geoPos();
-        Path path = new Path();
-        path.getElements().add(new MoveTo(startingPos.latitude(), startingPos.longitude()));
-        for (ObservableAircraftState.AirbornePos airbornePos : trajectoryList) {
-            double xEnd = airbornePos.geoPos().latitude();
-            double yEnd = airbornePos.geoPos().longitude();
-            path.getElements().add(new LineTo(xEnd, yEnd));
-        }
-        trajectoryList.addListener((ListChangeListener<? super ObservableAircraftState.AirbornePos>) observable -> {
-            if (aircraftState.getTrajectory().size() > 1) {
-                double xStart = trajectoryList.get(trajectoryList.size()-1).geoPos().latitude();
-                double yStart = trajectoryList.get(trajectoryList.size()-1).geoPos().longitude();
-                path.getElements().add(new LineTo(xStart, yStart));
+        AtomicBoolean isVisible = new AtomicBoolean(false);
+        AtomicReference<GeoPos> startingPos = new AtomicReference<>(trajectoryList.get(0).geoPos());
+        AtomicInteger count = new AtomicInteger();
+        selected.addListener((observable, oldValue, newValue) -> {
+            isVisible.set(newValue == aircraftState);
+            trajectory.setVisible(isVisible.get());
+        });
+        trajectoryList.addListener((ListChangeListener.Change<? extends ObservableAircraftState.AirbornePos> change) ->{
+            if(isVisible.get()){
+                for (int i = count.get(); i < trajectoryList.size(); i++) {
+                    addLine(trajectory, startingPos, change.getList().get(i));
+                    count.getAndIncrement();
+                }
+                /*
+                for (ObservableAircraftState.AirbornePos airbornePos : change.getList()) {
+
+                    addLine(trajectory, startingPos, airbornePos);
+                    System.out.println("New line added for" + aircraftState.getIcaoAddress().toString());
+
+                }
+
+                 */
             }
         });
 
-        return  null;
+        return trajectory;
+    }
+
+    private void addLine(Group trajectory, AtomicReference<GeoPos> startingPos, ObservableAircraftState.AirbornePos airbornePos) {
+        Point2D start = GeoPosToPoint2D(startingPos.get());
+        Point2D end = GeoPosToPoint2D(airbornePos.geoPos());
+        Line line = new Line(start.getX(), start.getY(), end.getX(), end.getY());
+        trajectory.getChildren().add(line);
+        startingPos.set(airbornePos.geoPos());
     }
 
     private Group setAircraftInfo(ObservableAircraftState aircraftState) {
@@ -182,27 +201,26 @@ public final class AircraftController {
     private void repositionAircraft(ObservableAircraftState aircraftState, Group aircraftInfo) {
         SimpleObjectProperty<GeoPos> aircraftPositionProperty = new SimpleObjectProperty<>();
         aircraftPositionProperty.bind(aircraftState.positionProperty());
-        aircraftInfo.setLayoutX(xOnScreen(aircraftPositionProperty).doubleValue());
-        aircraftInfo.setLayoutY(yOnScreen(aircraftPositionProperty).doubleValue());
+        aircraftInfo.setLayoutX(xOnScreen(aircraftPositionProperty.getValue()).doubleValue());
+        aircraftInfo.setLayoutY(yOnScreen(aircraftPositionProperty.getValue()).doubleValue());
 
     }
 
-    private void repositionTrajectoryPath(ObservableAircraftState aircraftState, Group trajectory) {
-        SimpleObjectProperty<GeoPos> aircraftPositionProperty = new SimpleObjectProperty<>();
-        aircraftPositionProperty.bind(aircraftState.positionProperty());
-        trajectory.setLayoutX(xOnScreen(aircraftPositionProperty).doubleValue());
-        trajectory.setLayoutY(yOnScreen(aircraftPositionProperty).doubleValue());
+    private Point2D GeoPosToPoint2D(GeoPos pos) {
+        return new Point2D(
+                xOnScreen(pos).doubleValue(),
+                yOnScreen(pos).doubleValue());
 
     }
 
-    private ReadOnlyDoubleProperty xOnScreen(SimpleObjectProperty<GeoPos> aircraftPositionProperty) {
-        double x = WebMercator.x(zoomProperty.get(), aircraftPositionProperty.getValue().longitude())
+    private ReadOnlyDoubleProperty xOnScreen(GeoPos aircraftPositionProperty) {
+        double x = WebMercator.x(zoomProperty.get(), aircraftPositionProperty.longitude())
                 - minXProperty.get();
         return new SimpleDoubleProperty(x);
     }
 
-    private ReadOnlyDoubleProperty yOnScreen(SimpleObjectProperty<GeoPos> aircraftPositionProperty) {
-        double y = WebMercator.y(zoomProperty.get(), aircraftPositionProperty.getValue().latitude())
+    private ReadOnlyDoubleProperty yOnScreen(GeoPos aircraftPositionProperty) {
+        double y = WebMercator.y(zoomProperty.get(), aircraftPositionProperty.latitude())
                 - minYProperty.get();
         return new SimpleDoubleProperty(y);
     }
@@ -244,7 +262,7 @@ public final class AircraftController {
             ));
         }else{
             t2.textProperty().bind(Bindings.createStringBinding(()->
-                    String.format("\n%?\u2002km/h,\u2002%?\u2002m")));
+                    "\n%?\u2002km/h,\u2002%?\u2002m"));
         }
 
         Rectangle rectangle = new Rectangle();
@@ -253,13 +271,16 @@ public final class AircraftController {
         Group label = new Group(rectangle, t1, t2);
         label.getStyleClass().add("label");
         changeVisibility(label);
+        selected.addListener((observable, oldValue, newValue) -> {
+            changeVisibility(label);
+        });
 
 
         return label;
     }
 
     private void changeVisibility(Group label){
-        label.setVisible(mapParameters.zoomProperty().get()>= 11);
+        label.setVisible(mapParameters.zoomProperty().get()>= 11 || selected == aircraftStates); //todo add label visibility when selected
     }
 
 
