@@ -45,7 +45,7 @@ public final class ColorRamp {
         if(colorCode <= 0){
             return colors.get(0);
         } else if (colorCode >= 1) {
-            return colors.get(1);
+            return colors.get(colors.size()-1);
         }else{
             double space  = 1.0 / (double) (colors.size() - 1);
             int indexFirstColor = (int) Math.floor(colorCode / space);

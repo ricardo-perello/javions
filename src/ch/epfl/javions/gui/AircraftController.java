@@ -19,6 +19,9 @@ import javafx.scene.Scene;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.CycleMethod;
+import javafx.scene.paint.LinearGradient;
+import javafx.scene.paint.Stop;
 import javafx.scene.shape.*;
 import javafx.scene.text.Text;
 
@@ -114,39 +117,11 @@ public final class AircraftController {
         trajectory.setVisible(false);
 
         aircraftState.getTrajectory().addListener((ListChangeListener<ObservableAircraftState.AirbornePos>) observable -> {
-            if (trajectory.isVisible()){
-                trajectory.getChildren().clear();
-                ObservableList<ObservableAircraftState.AirbornePos> trajectoryPlane = aircraftState.getTrajectory();
-                for (int i = 1; i < trajectoryPlane.size(); i++) {
-                    GeoPos start = trajectoryPlane.get(i - 1).geoPos();
-                    GeoPos end = trajectoryPlane.get(i).geoPos();
-                    Line line = new Line(WebMercator.x(zoomProperty.get(), start.longitude()),
-                                        WebMercator.y(zoomProperty.get(), start.latitude()),
-                                        WebMercator.x(zoomProperty.get(), end.longitude()),
-                                        WebMercator.y(zoomProperty.get(), end.latitude()));
-                    line.layoutXProperty().bind(mapParameters.minXProperty().negate());
-                    line.layoutYProperty().bind(mapParameters.minYProperty().negate());
-                    trajectory.getChildren().add(line);
-                }
-            }
+            updateTrajectory(aircraftState, trajectory);
         });
 
         zoomProperty.addListener((observable -> {
-            if (trajectory.isVisible()){
-                trajectory.getChildren().clear();
-                ObservableList<ObservableAircraftState.AirbornePos> trajectoryPlane = aircraftState.getTrajectory();
-                for (int i = 1; i < trajectoryPlane.size(); i++) {
-                    GeoPos start = trajectoryPlane.get(i - 1).geoPos();
-                    GeoPos end = trajectoryPlane.get(i).geoPos();
-                    Line line = new Line(WebMercator.x(zoomProperty.get(), start.longitude()),
-                            WebMercator.y(zoomProperty.get(), start.latitude()),
-                            WebMercator.x(zoomProperty.get(), end.longitude()),
-                            WebMercator.y(zoomProperty.get(), end.latitude()));
-                    line.layoutXProperty().bind(mapParameters.minXProperty().negate());
-                    line.layoutYProperty().bind(mapParameters.minYProperty().negate());
-                    trajectory.getChildren().add(line);
-                }
-            }
+            updateTrajectory(aircraftState, trajectory);
         }));
 
 
@@ -154,91 +129,40 @@ public final class AircraftController {
             trajectory.setVisible(newValue == aircraftState);
         });
 
-        /*zoomProperty.addListener(((observable, oldValue, newValue) -> {
-            if(selected.get() == aircraftState){
-                positionLine(aircraftState, trajectory);
-            }
-        }));
-
-
-
-
-        selected.addListener(((observable, oldValue, newValue) -> {
-            if(newValue == aircraftState){
-                positionLine(aircraftState, trajectory);
-                //todo crear una nueva trajectory
-            }
-        }));*/
-
-
-        /*ObservableList<ObservableAircraftState.AirbornePos> trajectoryList = aircraftState.getTrajectory();
-        AtomicBoolean isVisible = new AtomicBoolean(false);
-        AtomicReference<GeoPos> startingPos = new AtomicReference<>(trajectoryList.get(0).geoPos());
-        AtomicInteger count = new AtomicInteger();
-        selected.addListener((observable, oldValue, newValue) -> {
-            isVisible.set(newValue == aircraftState);
-            trajectory.setVisible(isVisible.get());
-        });
-
-
-
-        trajectoryList.addListener((ListChangeListener.Change<? extends ObservableAircraftState.AirbornePos> change) ->{
-            if(isVisible.get()){
-                for (int i = count.get(); i < trajectoryList.size(); i++) {
-                    addLine(trajectory, startingPos, change.getList().get(i));
-                    count.getAndIncrement();
-                }
-                /*
-                for (ObservableAircraftState.AirbornePos airbornePos : change.getList()) {
-
-                    addLine(trajectory, startingPos, airbornePos);
-                    System.out.println("New line added for" + aircraftState.getIcaoAddress().toString());
-
-                }
-
-
-            }
-        });*/
-
-
         return trajectory;
     }
 
-    private void addLine(Group trajectory, AtomicReference<GeoPos> startingPos, ObservableAircraftState.AirbornePos airbornePos) {
-        Point2D start = GeoPosToPoint2D(startingPos.get());
-        Point2D end = GeoPosToPoint2D(airbornePos.geoPos());
-        Line line = new Line(start.getX(), start.getY(), end.getX(), end.getY());
-        //todo creo que esto esta mal
-        line.setStroke(ColorRamp.PLASMA.at(airbornePos.altitude()));
-        trajectory.getChildren().add(line);
-        startingPos.set(airbornePos.geoPos());
-    }
+    private void updateTrajectory(ObservableAircraftState aircraftState, Group trajectory) {
+        if (trajectory.isVisible()){
+            trajectory.getChildren().clear();
+            ObservableList<ObservableAircraftState.AirbornePos> trajectoryPlane = aircraftState.getTrajectory();
+            for (int i = 1; i < trajectoryPlane.size(); i++) {
+                GeoPos start = trajectoryPlane.get(i - 1).geoPos();
+                GeoPos end = trajectoryPlane.get(i).geoPos();
 
-    private void positionLine(ObservableAircraftState aircraftState, Group trajectory){
-        ObservableList<ObservableAircraftState.AirbornePos> trajectoryPlane = aircraftState.getTrajectory();
-        GeoPos startPos = trajectoryPlane.get(0).geoPos();
-        for (int i = 0; i < trajectoryPlane.size(); i++) {
-            Line line = new Line(startPos.longitude(), startPos.latitude(),
-                    trajectoryPlane.get(i).geoPos().longitude(), trajectoryPlane.get(i).geoPos().latitude());
-            System.out.println(line);
-            line.setStroke(ColorRamp.PLASMA.at(aircraftState.getAltitude()));
-            trajectory.getChildren().add(line);
-            startPos = trajectoryPlane.get(i).geoPos();
-
+                Line line = new Line(WebMercator.x(zoomProperty.get(), start.longitude()),
+                                    WebMercator.y(zoomProperty.get(), start.latitude()),
+                                    WebMercator.x(zoomProperty.get(), end.longitude()),
+                                    WebMercator.y(zoomProperty.get(), end.latitude()));
+                colourTrajectory(trajectoryPlane.get(i - 1).altitude(), trajectoryPlane.get(i).altitude(), line);
+                line.layoutXProperty().bind(mapParameters.minXProperty().negate());
+                line.layoutYProperty().bind(mapParameters.minYProperty().negate());
+                trajectory.getChildren().add(line);
+            }
         }
-
-
-
-
-
-
-
-        /*SimpleObjectProperty<GeoPos> aircraftPositionProperty = new SimpleObjectProperty<>();
-        aircraftPositionProperty.bind(aircraftState.positionProperty());
-        aircraftInfo.setLayoutX(xOnScreen(aircraftPositionProperty.getValue()).doubleValue());
-        aircraftInfo.setLayoutY(yOnScreen(aircraftPositionProperty.getValue()).doubleValue());*/
     }
 
+    private void colourTrajectory(double altitude1, double altitude2,Line line){
+
+        if (altitude1 == altitude2){
+            line.setStroke(ColorRamp.PLASMA.at(altitude1));
+        }else{
+            Stop s1 = new Stop(0, ColorRamp.PLASMA.at(altitude1));
+            Stop s2 = new Stop(0.1, ColorRamp.PLASMA.at(altitude2));
+            line.setStroke(new LinearGradient(0, 0, 1, 0,
+                    true, CycleMethod.NO_CYCLE, s1, s2));
+        }
+    }
 
 
     private Group setAircraftInfo(ObservableAircraftState aircraftState) {
