@@ -8,7 +8,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableSet;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 

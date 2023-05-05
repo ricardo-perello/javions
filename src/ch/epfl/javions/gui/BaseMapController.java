@@ -1,7 +1,6 @@
 package ch.epfl.javions.gui;
 
 import ch.epfl.javions.GeoPos;
-import ch.epfl.javions.Units;
 import ch.epfl.javions.WebMercator;
 import javafx.application.Platform;
 import javafx.beans.property.*;
