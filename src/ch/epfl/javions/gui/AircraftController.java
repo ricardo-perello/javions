@@ -136,8 +136,8 @@ public final class AircraftController {
             trajectory.getChildren().clear();
             ObservableList<ObservableAircraftState.AirbornePos> trajectoryPlane = aircraftState.getTrajectory();
             for (int i = 1; i < trajectoryPlane.size(); i++) {
-                GeoPos start = trajectoryPlane.get(i - 1).geoPos();
-                GeoPos end = trajectoryPlane.get(i).geoPos();
+                GeoPos start = trajectoryPlane.get(i - 1).position();
+                GeoPos end = trajectoryPlane.get(i).position();
 
                 Line line = new Line(WebMercator.x(zoomProperty.get(), start.longitude()),
                                     WebMercator.y(zoomProperty.get(), start.latitude()),
@@ -286,7 +286,7 @@ public final class AircraftController {
             ));
         }else{
             t2.textProperty().bind(Bindings.createStringBinding(()->
-                    String.format("\n%?\u2002km/h,\u2002%?\u2002m")));
+                    "\n%?\u2002km/h,\u2002%?\u2002m"));
         }
 
         Rectangle rectangle = new Rectangle();
