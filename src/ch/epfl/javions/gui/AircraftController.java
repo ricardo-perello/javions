@@ -105,7 +105,7 @@ public final class AircraftController {
     private void addAnnotated(ObservableAircraftState aircraftState) {
         Group aircraftInfo = setAircraftInfo(aircraftState);
         Group trajectory = setTrajectory(aircraftState);
-        Group annotated = new Group(aircraftInfo, trajectory);
+        Group annotated = new Group(trajectory, aircraftInfo);
         annotated.setId(aircraftState.getIcaoAddress().toString());
         annotated.viewOrderProperty().bind(aircraftState.altitudeProperty().negate());
         pane.getChildren().add(annotated);
@@ -117,8 +117,8 @@ public final class AircraftController {
         trajectory.setVisible(false);
 
         aircraftState.getTrajectory().addListener((ListChangeListener<ObservableAircraftState.AirbornePos>) observable -> {
-            trajectory.getChildren().clear();
             if (trajectory.isVisible()){
+                trajectory.getChildren().clear();
                 ObservableList<ObservableAircraftState.AirbornePos> trajectoryPlane = aircraftState.getTrajectory();
                 for (int i = 1; i < trajectoryPlane.size(); i++) {
                     GeoPos start = trajectoryPlane.get(i - 1).geoPos();
@@ -130,10 +130,28 @@ public final class AircraftController {
                     line.layoutXProperty().bind(mapParameters.minXProperty().negate());
                     line.layoutYProperty().bind(mapParameters.minYProperty().negate());
                     trajectory.getChildren().add(line);
-                    System.out.println(aircraftState.getIcaoAddress().toString());
                 }
             }
         });
+
+        zoomProperty.addListener((observable -> {
+            if (trajectory.isVisible()){
+                trajectory.getChildren().clear();
+                ObservableList<ObservableAircraftState.AirbornePos> trajectoryPlane = aircraftState.getTrajectory();
+                for (int i = 1; i < trajectoryPlane.size(); i++) {
+                    GeoPos start = trajectoryPlane.get(i - 1).geoPos();
+                    GeoPos end = trajectoryPlane.get(i).geoPos();
+                    Line line = new Line(WebMercator.x(zoomProperty.get(), start.longitude()),
+                            WebMercator.y(zoomProperty.get(), start.latitude()),
+                            WebMercator.x(zoomProperty.get(), end.longitude()),
+                            WebMercator.y(zoomProperty.get(), end.latitude()));
+                    line.layoutXProperty().bind(mapParameters.minXProperty().negate());
+                    line.layoutYProperty().bind(mapParameters.minYProperty().negate());
+                    trajectory.getChildren().add(line);
+                }
+            }
+        }));
+
 
         selected.addListener((observable, oldValue, newValue) -> {
             trajectory.setVisible(newValue == aircraftState);
@@ -237,7 +255,6 @@ public final class AircraftController {
         });
         minYProperty.addListener((observable, oldValue, newValue) -> {
             repositionAircraft(aircraftState, aircraftInfo);
-            setTrajectory(aircraftState);
         });
         aircraftState.positionProperty().addListener((observable, oldValue, newValue) -> {
             repositionAircraft(aircraftState, aircraftInfo);
