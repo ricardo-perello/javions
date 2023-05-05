@@ -94,7 +94,7 @@ public class AircraftStateAccumulator<T extends AircraftStateSetter> {
     }
 
     /**
-     * private method that allows us to determine the geoPos of the plane
+     * private method that allows us to determine the position of the plane
      * @param aim AirbornePositionMessage, message sent by the plane
      * @param parity, int, equivalent to the mostRecent in CprDecoder
      * @param lastMessageTimeStampsNsOppositeParity, long, the time stamps of the message of opposite parity

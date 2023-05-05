@@ -116,7 +116,7 @@ public class CprDecoder {
     }
 
     /**
-     * private method that allows to calculate the final geoPos of the plane
+     * private method that allows to calculate the final position of the plane
      * @param latitudeTurn, double, the latitude in its turn form
      * @param zLongitude, double, current longitude zone
      * @param numberZonesLongitude0, double, the number of zones for the longitude for MostRecent = 0

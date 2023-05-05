@@ -322,9 +322,9 @@ public final class ObservableAircraftState implements AircraftStateSetter {
     /**
      * AirbornePos record that includes GeoPos position and its altitude
      *
-     * @param geoPos   position
+     * @param position   position
      * @param altitude altitude
      */
-    public record AirbornePos(GeoPos geoPos, double altitude) {
+    public record AirbornePos(GeoPos position, double altitude) {
     }
 }
