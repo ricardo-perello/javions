@@ -51,7 +51,7 @@ public final class ColorRamp {
             int indexFirstColor = (int) Math.floor(colorCode / space);
             int indexSecondColor = indexFirstColor + 1;
             double differencePercentage = (colorCode - space * indexFirstColor) / space;
-            return colors.get(indexFirstColor).interpolate(colors.get(indexSecondColor), 1-differencePercentage);
+            return colors.get(indexFirstColor).interpolate(colors.get(indexSecondColor), differencePercentage);
         }
     }
 }

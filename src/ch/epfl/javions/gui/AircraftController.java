@@ -89,7 +89,6 @@ public final class AircraftController {
             for (ObservableAircraftState state : aircraftStates) {
                 if (pane.lookup("#" + state.getIcaoAddress().toString()).equals(clicked)) {
                     selected.set(state);
-                    System.out.println(selected.get().getIcaoAddress().toString());
                     break;
                 }
             }
