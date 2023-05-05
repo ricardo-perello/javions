@@ -21,6 +21,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.shape.*;
 import javafx.scene.text.Text;
 
+import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
@@ -95,9 +96,13 @@ public final class AircraftController {
     }
 
     private void addAnnotatedGroups() {
-        for (ObservableAircraftState aircraftState : aircraftStates) {
-            addAnnotated(aircraftState);
+        Iterator<ObservableAircraftState> aircraftStateIterator = aircraftStates.iterator();
+        while(aircraftStateIterator.hasNext()){
+            addAnnotated(aircraftStateIterator.next());
         }
+        /*for (ObservableAircraftState aircraftState : aircraftStates) {
+            addAnnotated(aircraftState);
+        }*/
     }
 
     private void addAnnotated(ObservableAircraftState aircraftState) {
@@ -166,7 +171,8 @@ public final class AircraftController {
         });
         aircraftState.altitudeProperty().addListener((observable)-> setLabel(aircraftState));
         aircraftState.velocityProperty().addListener((observable -> setLabel(aircraftState)));
-        mapParameters.zoomProperty().addListener((observable -> changeVisibility(label)));
+        mapParameters.zoomProperty().addListener((observable -> changeVisibility(label ,aircraftState)));
+        selected.addListener((observable -> changeVisibility(label, aircraftState)));
 
         return aircraftInfo;
     }
@@ -277,17 +283,22 @@ public final class AircraftController {
         rectangle.heightProperty().bind(t2.layoutBoundsProperty().map(b -> b.getHeight() + 4));
         Group label = new Group(rectangle, t1, t2);
         label.getStyleClass().add("label");
-        changeVisibility(label);
+        changeVisibility(label, aircraftState);
         selected.addListener((observable, oldValue, newValue) -> {
-            changeVisibility(label);
+            changeVisibility(label, aircraftState);
         });
 
 
         return label;
     }
 
-    private void changeVisibility(Group label){
-        label.setVisible(mapParameters.zoomProperty().get()>= 11 || selected == aircraftStates); //todo add label visibility when selected
+    private void changeVisibility(Group label, ObservableAircraftState aircraftState){
+        if (selected.get() != null){
+            label.setVisible(mapParameters.zoomProperty().get()>= 11 || selected.get().equals(aircraftState));
+        }else{
+            label.setVisible(mapParameters.zoomProperty().get()>= 11);
+        }
+        //todo hacer q se pueda salir del selected
     }
 
 

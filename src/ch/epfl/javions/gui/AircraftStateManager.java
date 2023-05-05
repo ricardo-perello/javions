@@ -66,15 +66,13 @@ public final class AircraftStateManager {
      */
 
     public void purge() {
-        Collection<AircraftStateAccumulator<ObservableAircraftState>> values = aircraftStateAccumulatorMap.values();
-        Iterator<AircraftStateAccumulator<ObservableAircraftState>> iterator = values.iterator();
-        //noinspection WhileLoopReplaceableByForEach
+        Iterator<AircraftStateAccumulator<ObservableAircraftState>> iterator = aircraftStateAccumulatorMap.values().iterator();
         while (iterator.hasNext()) {
-            ObservableAircraftState statePlane = iterator.next().stateSetter();
-            if (lastTimeStampNs - statePlane.getLastMessageTimeStampNs()
-                    >= MAX_DIFFERENCE_TIME) {
-                values.remove(statePlane);
-                statePlaneSet.remove(statePlane);
+            AircraftStateAccumulator<ObservableAircraftState> aircraftStateAircraftStateAccumulator = iterator.next();
+            if (lastTimeStampNs - aircraftStateAircraftStateAccumulator.stateSetter().getLastMessageTimeStampNs()
+                    >= MAX_DIFFERENCE_TIME){
+                statePlaneSet.remove(aircraftStateAircraftStateAccumulator.stateSetter());
+                iterator.remove();
             }
         }
     }
