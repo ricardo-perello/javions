@@ -1,5 +1,6 @@
 package ch.epfl.javions.gui;
 
+import ch.epfl.javions.Math2;
 import ch.epfl.javions.Preconditions;
 import javafx.scene.paint.Color;
 
