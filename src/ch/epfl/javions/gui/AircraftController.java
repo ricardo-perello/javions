@@ -35,17 +35,17 @@ import static ch.epfl.javions.Units.Angle.DEGREE;
 import static javafx.beans.binding.Bindings.negate;
 
 public final class AircraftController {
-    Scene scene;
-    Pane pane = new Pane();
+
+    private final Pane pane = new Pane();
 
 
-    MapParameters mapParameters;
-    ObservableSet<ObservableAircraftState> aircraftStates;
-    ObjectProperty<ObservableAircraftState> selected;
-    IntegerProperty zoomProperty;
-    DoubleProperty minXProperty;
-    DoubleProperty minYProperty;
-    ColorRamp colorRamp;
+    private final MapParameters mapParameters;
+    private final ObservableSet<ObservableAircraftState> aircraftStates;
+    private final ObjectProperty<ObservableAircraftState> selected;
+    private final IntegerProperty zoomProperty;
+    private final DoubleProperty minXProperty;
+    private final DoubleProperty minYProperty;
+    private final ColorRamp colorRamp;
 
 
 
@@ -63,9 +63,7 @@ public final class AircraftController {
         zoomProperty = (IntegerProperty) mapParameters.zoomProperty();
         colorRamp = ColorRamp.PLASMA;
         addAnnotatedGroups();
-
         pane.setPickOnBounds(false);
-        scene = new Scene(pane);
         pane.getStylesheets().add("aircraft.css");
         addListenerToSet();
         eventHandlers();

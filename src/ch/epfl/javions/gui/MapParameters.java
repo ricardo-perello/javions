@@ -18,8 +18,8 @@ public final class MapParameters {
     private final DoubleProperty minY;
 
 
-    static final int MIN_ZOOM_LEVEL = 6;
-    static final int MAX_ZOOM_LEVEL = 19;
+    public static final int MIN_ZOOM_LEVEL = 6;
+    public static final int MAX_ZOOM_LEVEL = 19;
 
     /**
      * constructor for MapParameters
