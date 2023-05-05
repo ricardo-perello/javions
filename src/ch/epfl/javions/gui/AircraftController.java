@@ -80,17 +80,14 @@ public final class AircraftController {
                 });
     }
     private void eventHandlers() {
-        pane.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent mouseEvent) {
-                Node clicked = ((Node) mouseEvent.getTarget()).getParent().getParent();
+        pane.setOnMouseClicked(mouseEvent -> {
+            Node clicked = ((Node) mouseEvent.getTarget()).getParent().getParent();
 
-                for (ObservableAircraftState state : aircraftStates) {
-                    if (pane.lookup("#" + state.getIcaoAddress().toString()).equals(clicked)) {
-                        selected.set(state);
-                        System.out.println(selected.get().getIcaoAddress().toString());
-                        break;
-                    }
+            for (ObservableAircraftState state : aircraftStates) {
+                if (pane.lookup("#" + state.getIcaoAddress().toString()).equals(clicked)) {
+                    selected.set(state);
+                    System.out.println(selected.get().getIcaoAddress().toString());
+                    break;
                 }
             }
         });
