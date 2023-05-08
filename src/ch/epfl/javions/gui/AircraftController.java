@@ -88,8 +88,8 @@ public final class AircraftController {
     }
 
     private void updateTrajectory(ObservableAircraftState aircraftState, Group trajectory) {
+        trajectory.getChildren().clear();
         if (trajectory.isVisible()) {
-            trajectory.getChildren().clear();
             //ObservableList<ObservableAircraftState.AirbornePos> trajectoryPlane = aircraftState.getTrajectory();
             for (int i = 1; i < aircraftState.getTrajectory().size(); i++) {
                 GeoPos start = aircraftState.getTrajectory().get(i - 1).position();
