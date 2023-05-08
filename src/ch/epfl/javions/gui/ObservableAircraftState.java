@@ -20,8 +20,8 @@ public final class ObservableAircraftState implements AircraftStateSetter {
     private final ObjectProperty<GeoPos> positionProperty = new SimpleObjectProperty<>();
     private final ObservableList<AirbornePos> trajectory;
     private final ObservableList<AirbornePos> trajectoryProperty;
-    private final DoubleProperty altitudeProperty = new SimpleDoubleProperty();
-    private final DoubleProperty velocityProperty = new SimpleDoubleProperty();
+    private final DoubleProperty altitudeProperty = new SimpleDoubleProperty(Double.NaN);
+    private final DoubleProperty velocityProperty = new SimpleDoubleProperty(Double.NaN) ;
     private final DoubleProperty trackOrHeadingProperty = new SimpleDoubleProperty();
 
     //******************************* CONSTRUCTOR *******************************

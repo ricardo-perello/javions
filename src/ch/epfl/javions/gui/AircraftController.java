@@ -88,8 +88,9 @@ public final class AircraftController {
     }
 
     private void updateTrajectory(ObservableAircraftState aircraftState, Group trajectory) {
-        trajectory.getChildren().clear();
+
         if (trajectory.isVisible()) {
+            trajectory.getChildren().clear();
             //ObservableList<ObservableAircraftState.AirbornePos> trajectoryPlane = aircraftState.getTrajectory();
             for (int i = 1; i < aircraftState.getTrajectory().size(); i++) {
                 GeoPos start = aircraftState.getTrajectory().get(i - 1).position();
@@ -215,20 +216,19 @@ public final class AircraftController {
         } else if (!Double.isNaN(aircraftState.velocityProperty().get()) &&
                 Double.isNaN(aircraftState.altitudeProperty().get())) {
             t2.textProperty().bind(Bindings.createStringBinding(() ->
-                    String.format("\n%.0f\u2002km/h,\u2002%?\u2002m",
+                    String.format("\n%.0f\u2002km/h,\u2002?\u2002m",
                             Units.convertTo(aircraftState.getVelocity(), Units.Speed.KILOMETER_PER_HOUR),
                             aircraftState.velocityProperty())));
         } else if (Double.isNaN(aircraftState.velocityProperty().get()) &&
                 !Double.isNaN(aircraftState.altitudeProperty().get())) {
             t2.textProperty().bind(Bindings.createStringBinding(() ->
-                            String.format("\n%?\u2002km/h,\u2002%.0f\u2002m",
-                                    aircraftState.getAltitude()),
-                    aircraftState.altitudeProperty()
+                            String.format("\n?\u2002km/h,\u2002%.0f\u2002m",
+                            aircraftState.getAltitude()),
+                            aircraftState.altitudeProperty()
             ));
         } else {
             t2.textProperty().bind(Bindings.createStringBinding(() ->
-                    "\n%?\u2002km/h,\u2002%?\u2002m"));
-        }
+                    "\n?\u2002km/h,\u2002?\u2002m"));        }
 
         Rectangle rectangle = new Rectangle();
         rectangle.widthProperty().bind(t2.layoutBoundsProperty().map(b -> b.getWidth() + 4));
