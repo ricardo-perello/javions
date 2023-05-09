@@ -1,5 +1,6 @@
 package ch.epfl.javions.gui;
 
+import ch.epfl.javions.Units;
 import ch.epfl.javions.adsb.CallSign;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
@@ -24,8 +25,8 @@ public final class AircraftTableController {
     private final ObservableSet<ObservableAircraftState> aircraftStates;
     private final ObjectProperty<ObservableAircraftState> selected;
     private final TableView<ObservableAircraftState> table; //todo ns si es de este tipo
-    private NumberFormat numberFormatPosition;
-    private NumberFormat numberFormat;
+    private static NumberFormat numberFormatPosition;
+    private static NumberFormat numberFormat;
     private final Pane pane;
 
     private TableColumn<ObservableAircraftState, String> column_ICAO, column_CallSign,
@@ -62,7 +63,6 @@ public final class AircraftTableController {
                     }
                 });
     }
-
 
     private void setNumberFormatters() {
         numberFormatPosition = NumberFormat.getInstance();
@@ -144,42 +144,56 @@ public final class AircraftTableController {
 
         column_Longitude = new TableColumn<>();
         column_Longitude.setPrefWidth(PREFERRED_WIDTH_NUMERIC);
-        column_Longitude.setText("Longitude");
+        column_Longitude.setText("Longitude (º)");
         column_Longitude.getStyleClass().add("numeric");
         column_Longitude.setCellValueFactory(newRow ->
-            new ReadOnlyObjectWrapper<>(numberFormatPosition.format(
-                    newRow.getValue().positionProperty().getValue().longitude())));
+                newRow.getValue().positionProperty().map(pos ->
+                        numberFormatPosition.format(
+                                Units.convertTo((pos.longitude()),
+                                        Units.Angle.DEGREE))));
         table.getColumns().add(column_Longitude);
 
         //****************************************** LATITUDE ******************************************
 
         column_Latitude = new TableColumn<>();
         column_Latitude.setPrefWidth(PREFERRED_WIDTH_NUMERIC);
-        column_Latitude.setText("Latitude");
+        column_Latitude.setText("Latitude (º)");
         column_Latitude.getStyleClass().add("numeric");
         column_Latitude.setCellValueFactory(newRow ->
+                newRow.getValue().positionProperty().map(pos ->
+                        numberFormatPosition.format(
+                        Units.convertTo((pos.latitude()),
+                        Units.Angle.DEGREE))));
+                /*
                 new ReadOnlyObjectWrapper<>(numberFormatPosition.format(
-                        newRow.getValue().positionProperty().getValue().latitude())));
+                        Units.convertTo(newRow.getValue().positionProperty().getValue().latitude(),
+                                Units.Angle.DEGREE))));
+
+                 */
         table.getColumns().add(column_Latitude);
 
         //****************************************** ALTITUDE ******************************************
 
         column_Altitude = new TableColumn<>();
         column_Altitude.setPrefWidth(PREFERRED_WIDTH_NUMERIC);
-        column_Altitude.setText("Altitude");
+        column_Altitude.setText("Altitude (m)");
         column_Altitude.getStyleClass().add("numeric");
         column_Altitude.setCellValueFactory(newRow ->
-                new ReadOnlyObjectWrapper<>(numberFormat.format(newRow.getValue().altitudeProperty().getValue())));
+                newRow.getValue().altitudeProperty().map(
+                        alt -> numberFormat.format(alt.doubleValue())));
         table.getColumns().add(column_Altitude);
+
 
         //****************************************** VELOCITY ******************************************
 
         column_Velocity = new TableColumn<>();
         column_Velocity.setPrefWidth(PREFERRED_WIDTH_NUMERIC);
-        column_Velocity.setText("Velocity");
+        column_Velocity.setText("Velocity (km/h)");
         column_Velocity.getStyleClass().add("numeric");
         column_Velocity.setCellValueFactory(newRow ->
-                new ReadOnlyObjectWrapper<>(numberFormat.format(newRow.getValue().velocityProperty().getValue())));
+                new ReadOnlyObjectWrapper<>(numberFormat.format(
+                        Units.convertTo(newRow.getValue().velocityProperty().getValue(),
+                                Units.Speed.KILOMETER_PER_HOUR))));
         table.getColumns().add(column_Velocity);
 
         //****************************************** HEADING ******************************************
@@ -190,7 +204,8 @@ public final class AircraftTableController {
         column_Heading.getStyleClass().add("numeric");
         column_Heading.setCellValueFactory(newRow ->
                 new ReadOnlyObjectWrapper<>(numberFormat.format(
-                        newRow.getValue().trackOrHeadingProperty().getValue())));
+                        Units.convertTo(newRow.getValue().trackOrHeadingProperty().getValue(),
+                                Units.Angle.DEGREE))));
         table.getColumns().add(column_Heading);
     }
 
