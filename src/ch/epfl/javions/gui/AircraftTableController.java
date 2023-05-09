@@ -15,6 +15,8 @@ public final class AircraftTableController {
     private ObjectProperty<ObservableAircraftState> selectedPlane;
     private TableView<ObservableAircraftState> table; //todo ns si es de este tipo
 
+    private TableColumn<ObservableAircraftState, String> column_O
+
 
     public AircraftTableController(ObservableSet<ObservableAircraftState> aircraftStates,
                               ObjectProperty<ObservableAircraftState> selectedPlane){
@@ -24,6 +26,8 @@ public final class AircraftTableController {
         table.styleProperty().set("resources/table.css");
         table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_SUBSEQUENT_COLUMNS);
         table.setTableMenuButtonVisible(true);
+        TableColumn<ObservableAircraftState, String> columnString = new TableColumn<>();
+
     }
 
     public void pane(){
