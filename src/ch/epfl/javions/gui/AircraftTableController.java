@@ -1,6 +1,9 @@
 package ch.epfl.javions.gui;
 
+import ch.epfl.javions.adsb.CallSign;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableSet;
 
 import javafx.scene.control.TableColumn;
@@ -30,8 +33,55 @@ public final class AircraftTableController {
         table.styleProperty().set("table.css");
         table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_SUBSEQUENT_COLUMNS);
         table.setTableMenuButtonVisible(true);
-        TableColumn<ObservableAircraftState, String> columnString = new TableColumn<>();
+        createColumns();
+        setColumnsValue();
+        setPreferredWidths();
 
+        table.getColumns().addAll(column_ICAO, column_CallSign, column_Registration,column_Model,column_Type,column_Description);
+        addRows();
+    }
+
+    private void addRows() {
+        for (ObservableAircraftState aircraftState : aircraftStates) {
+            table.getItems().add(aircraftState);
+        }
+    }
+
+    private void setPreferredWidths() {
+        column_ICAO.setPrefWidth(PREFERRED_WIDTH_ICAO);
+        column_CallSign.setPrefWidth(PREFERRED_WIDTH_CALLSIGN);
+        column_Registration.setPrefWidth(PREFERRED_WIDTH_REGISTRATION);
+        column_Model.setPrefWidth(PREFERRED_WIDTH_MODEL);
+        column_Type.setPrefWidth(PREFERRED_WIDTH_TYPE);
+        column_Description.setPrefWidth(PREFERRED_WIDTH_DESCRIPTION);
+    }
+
+    private void setColumnsValue(){
+        column_ICAO.setCellValueFactory(newRow ->
+                new ReadOnlyObjectWrapper<>(newRow.getValue().getIcaoAddress().string()));
+
+        column_CallSign.setCellValueFactory(newRow -> newRow.getValue().callSignProperty().map(CallSign::string));
+
+        column_Registration.setCellValueFactory(newRow ->
+                new ReadOnlyObjectWrapper<String>(newRow.getValue()
+                        .getAircraftData().registration().string()));
+
+        column_Model.setCellValueFactory(newRow ->
+                new ReadOnlyObjectWrapper<>(newRow.getValue().getAircraftData().model()));
+
+        column_Type.setCellValueFactory(newRow ->
+                new ReadOnlyObjectWrapper<>(newRow.getValue().getAircraftData().typeDesignator().string()));
+
+        column_Description.setCellValueFactory(newRow -> new ReadOnlyObjectWrapper<>(newRow.getValue().getAircraftData().description().string()));
+    }
+
+    private void createColumns() {
+        column_ICAO = new TableColumn<>();
+        column_CallSign = new TableColumn<>();
+        column_Registration = new TableColumn<>();
+        column_Model = new TableColumn<>();
+        column_Type = new TableColumn<>();
+        column_Description = new TableColumn<>();
     }
 
     public void pane(){
