@@ -9,8 +9,10 @@ import javafx.collections.SetChangeListener;
 import javafx.scene.Node;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.Pane;
 
+import java.awt.event.MouseEvent;
 import java.text.NumberFormat;
 import java.util.function.Consumer;
 
@@ -218,6 +220,13 @@ public final class AircraftTableController {
     }
 
     public void setOnDoubleClick(Consumer<ObservableAircraftState> consumer) {
+        table.setOnMouseClicked((observable, oldValue, newValue) ->{
+            if(observable.getButton() == MouseButton.PRIMARY){
+                if(observable.getClickCount() == 1){
+                    selected.set(newValue);
+                }
+            }
+        });
         table.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue!= null) {
                 selected.set(newValue);
