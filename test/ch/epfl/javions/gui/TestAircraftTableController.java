@@ -9,9 +9,8 @@ import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.collections.ObservableSet;
 import javafx.scene.Scene;
-import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
@@ -19,12 +18,11 @@ import java.io.*;
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import static ch.epfl.javions.gui.AircraftStateManagerTest.getDatabase;
 
-public  final  class  TestAircraftController  extends Application {
+public  final  class TestAircraftTableController extends Application {
     public  static  void  main (String[] args) { launch(args); }
 
 
@@ -36,7 +34,6 @@ public  final  class  TestAircraftController  extends Application {
                 new  TileManager (tileCache, "tile.openstreetmap.org" );
         MapParameters  mp  =
                 new  MapParameters ( 17 , 17_389_327 , 11_867_430 );
-        BaseMapController  bmc  =  new  BaseMapController (tm,mp);
         //BorderPane root  =  new BorderPane (bmc.pane());
         //primaryStage.setScene( new Scene(root));
 
@@ -52,13 +49,14 @@ public  final  class  TestAircraftController  extends Application {
 
         AircraftStateManager  asm  =  new  AircraftStateManager (db);
         ObjectProperty<ObservableAircraftState> sap= new SimpleObjectProperty<>();
-        AircraftController  ac  = new  AircraftController (mp, asm.states(), sap);
-        var  root  =  new StackPane(bmc.pane(), ac.pane());
+        AircraftTableController  atc  = new  AircraftTableController (asm.states(), sap);
+        var  root  =  new Pane(atc.pane());
         primaryStage.setScene( new Scene(root));
         primaryStage.show();
 
         var  mi  = readAllMessages( "messages_20230318_0915.bin" ).iterator();
         primaryStage.show();
+
         // Aircraft animation
         new  AnimationTimer() {
             @Override
@@ -72,7 +70,6 @@ public  final  class  TestAircraftController  extends Application {
                 } catch (IOException e) {
                     throw  new UncheckedIOException(e);
                 }
-
             }
         }.start();
     }
