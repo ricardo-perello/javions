@@ -259,6 +259,7 @@ public final class AircraftController {
                     } else {
                         pane.getChildren().remove(pane.lookup("#" +
                                 change.getElementRemoved().getIcaoAddress().toString()));
+                        // TODO: 9/5/23 remove all listeners of the removed element
                     }
                 });
     }

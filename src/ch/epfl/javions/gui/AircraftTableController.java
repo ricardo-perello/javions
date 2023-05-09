@@ -3,8 +3,8 @@ package ch.epfl.javions.gui;
 import ch.epfl.javions.adsb.CallSign;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.ObservableSet;
+import javafx.collections.SetChangeListener;
 import javafx.scene.Node;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -22,7 +22,7 @@ public final class AircraftTableController {
     private static final int PREFERRED_WIDTH_TYPE = 50;
     private static final int PREFERRED_WIDTH_NUMERIC = 85;
     private final ObservableSet<ObservableAircraftState> aircraftStates;
-    private final ObjectProperty<ObservableAircraftState> selectedPlane;
+    private final ObjectProperty<ObservableAircraftState> selected;
     private final TableView<ObservableAircraftState> table; //todo ns si es de este tipo
     private NumberFormat numberFormatPosition;
     private NumberFormat numberFormat;
@@ -36,9 +36,9 @@ public final class AircraftTableController {
             column_Heading;
 
     public AircraftTableController(ObservableSet<ObservableAircraftState> aircraftStates,
-                                   ObjectProperty<ObservableAircraftState> selectedPlane) {
+                                   ObjectProperty<ObservableAircraftState> selected) {
         this.aircraftStates = aircraftStates;
-        this.selectedPlane = selectedPlane;
+        this.selected = selected;
         table = new TableView<>();
         this.pane = new Pane(table);
         table.getStylesheets().add("table.css");
@@ -47,8 +47,22 @@ public final class AircraftTableController {
         setNumberFormatters();
         createColumns();
         addRows();
+        addListenerToSet();
 
     }
+
+    private void addListenerToSet() {
+        aircraftStates.addListener((SetChangeListener<ObservableAircraftState>)
+                change -> {
+                    if (change.wasAdded()) {
+                        table.getItems().add(change.getElementAdded());
+                    } else {
+                        table.getItems().remove(change.getElementRemoved());
+                        // TODO: 9/5/23 remove all listeners of the removed element
+                    }
+                });
+    }
+
 
     private void setNumberFormatters() {
         numberFormatPosition = NumberFormat.getInstance();
@@ -187,9 +201,9 @@ public final class AircraftTableController {
     public void setOnDoubleClick(Consumer<ObservableAircraftState> consumer) {
         table.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue!= null) {
-                selectedPlane.set(newValue);
+                selected.set(newValue);
             }
         });
-        consumer.accept(selectedPlane.get());
+        consumer.accept(selected.get());
     }
 }
