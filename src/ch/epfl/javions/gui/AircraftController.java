@@ -217,8 +217,8 @@ public final class AircraftController {
                 Double.isNaN(aircraftState.altitudeProperty().get())) {
             t2.textProperty().bind(Bindings.createStringBinding(() ->
                     String.format("\n%.0f\u2002km/h,\u2002?\u2002m",
-                            Units.convertTo(aircraftState.getVelocity(), Units.Speed.KILOMETER_PER_HOUR),
-                            aircraftState.velocityProperty())));
+                            Units.convertTo(aircraftState.getVelocity(), Units.Speed.KILOMETER_PER_HOUR)),
+                            aircraftState.velocityProperty()));
         } else if (Double.isNaN(aircraftState.velocityProperty().get()) &&
                 !Double.isNaN(aircraftState.altitudeProperty().get())) {
             t2.textProperty().bind(Bindings.createStringBinding(() ->
