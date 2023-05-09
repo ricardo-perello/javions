@@ -149,8 +149,8 @@ public final class AircraftTableController {
         column_Longitude.setCellValueFactory(newRow ->
                 newRow.getValue().positionProperty().map(pos ->
                         numberFormatPosition.format(
-                                Units.convertTo((pos.longitude()),
-                                        Units.Angle.DEGREE))));
+                        Units.convertTo((pos.longitude()),
+                        Units.Angle.DEGREE))));
         table.getColumns().add(column_Longitude);
 
         //****************************************** LATITUDE ******************************************
@@ -164,12 +164,7 @@ public final class AircraftTableController {
                         numberFormatPosition.format(
                         Units.convertTo((pos.latitude()),
                         Units.Angle.DEGREE))));
-                /*
-                new ReadOnlyObjectWrapper<>(numberFormatPosition.format(
-                        Units.convertTo(newRow.getValue().positionProperty().getValue().latitude(),
-                                Units.Angle.DEGREE))));
 
-                 */
         table.getColumns().add(column_Latitude);
 
         //****************************************** ALTITUDE ******************************************
@@ -191,9 +186,17 @@ public final class AircraftTableController {
         column_Velocity.setText("Velocity (km/h)");
         column_Velocity.getStyleClass().add("numeric");
         column_Velocity.setCellValueFactory(newRow ->
+                newRow.getValue().velocityProperty().map(
+                        vel -> numberFormat.format(
+                                Units.convertTo(vel.doubleValue(),
+                                Units.Speed.KILOMETER_PER_HOUR))));
+
+                /*
                 new ReadOnlyObjectWrapper<>(numberFormat.format(
                         Units.convertTo(newRow.getValue().velocityProperty().getValue(),
                                 Units.Speed.KILOMETER_PER_HOUR))));
+
+                 */
         table.getColumns().add(column_Velocity);
 
         //****************************************** HEADING ******************************************
@@ -203,9 +206,10 @@ public final class AircraftTableController {
         column_Heading.setText("Heading");
         column_Heading.getStyleClass().add("numeric");
         column_Heading.setCellValueFactory(newRow ->
-                new ReadOnlyObjectWrapper<>(numberFormat.format(
-                        Units.convertTo(newRow.getValue().trackOrHeadingProperty().getValue(),
-                                Units.Angle.DEGREE))));
+                newRow.getValue().trackOrHeadingProperty().map(
+                        hea -> numberFormat.format(
+                                Units.convertTo(hea.doubleValue(),
+                                        Units.Angle.DEGREE))));
         table.getColumns().add(column_Heading);
     }
 
