@@ -55,12 +55,19 @@ public final class AircraftController {
         eventHandlers();
     }
 
+    /**
+     * private method that allows to create a new annotated group for every plane
+     */
     private void addAnnotatedGroups() {
         for (ObservableAircraftState aircraftState : aircraftStates) {
             addAnnotated(aircraftState);
         }
     }
 
+    /**
+     * private method that allows to create a new annotated group for a specific plane
+     * @param aircraftState ObservableAircraftState of the plane we wish to create a new annotated group
+     */
     private void addAnnotated(ObservableAircraftState aircraftState) {
         Group aircraftInfo = setAircraftInfo(aircraftState);
         Group trajectory = setTrajectory(aircraftState);
@@ -72,33 +79,46 @@ public final class AircraftController {
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Trajectory~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+    /**
+     * private method that allows to create a group for the trajectory
+     * @param aircraftState, ObservableAircraftState, the plane we wish to create its trajectory
+     * @return a Group with the trajectory
+     */
     private Group setTrajectory(ObservableAircraftState aircraftState) {
         Group trajectory = new Group();
         trajectory.getStyleClass().add("trajectory");
         trajectory.setVisible(false);
-
+        //todo comentario de esta linea
         aircraftState.getTrajectory().addListener((ListChangeListener<ObservableAircraftState.AirbornePos>)
                 observable -> updateTrajectory(aircraftState, trajectory));
-
+        //if change in the zoom level we calculate the trajectory again
         zoomProperty.addListener((observable -> updateTrajectory(aircraftState, trajectory)));
-
+        //if the plane that is selected changes we update the trajectory
         selected.addListener((observable, oldValue, newValue) -> trajectory.setVisible(newValue == aircraftState));
 
         return trajectory;
     }
 
+    /**
+     * private method that allows to update the trajectory of a given plane
+     * @param aircraftState, ObservableAircraftState, plane we wish update the trajectory
+     * @param trajectory, Group, the trajectory that needs updating
+     */
     private void updateTrajectory(ObservableAircraftState aircraftState, Group trajectory) {
         trajectory.getChildren().clear();
         if (trajectory.isVisible()) {
             for (int i = 1; i < aircraftState.getTrajectory().size(); i++) {
+
                 GeoPos start = aircraftState.getTrajectory().get(i - 1).position();
                 GeoPos end = aircraftState.getTrajectory().get(i).position();
-
+                //creating a line between the two positions
                 Line line = new Line(WebMercator.x(zoomProperty.get(), start.longitude()),
                         WebMercator.y(zoomProperty.get(), start.latitude()),
                         WebMercator.x(zoomProperty.get(), end.longitude()),
                         WebMercator.y(zoomProperty.get(), end.latitude()));
-                colorTrajectory(aircraftState.getTrajectory().get(i - 1).altitude(), aircraftState.getTrajectory().get(i).altitude(), line);
+                //coloring in the trajectory
+                colorTrajectory(aircraftState.getTrajectory().get(i - 1).altitude(),
+                        aircraftState.getTrajectory().get(i).altitude(), line);
                 line.layoutXProperty().bind(mapParameters.minXProperty().negate());
                 line.layoutYProperty().bind(mapParameters.minYProperty().negate());
                 trajectory.getChildren().add(line);
@@ -106,8 +126,13 @@ public final class AircraftController {
         }
     }
 
+    /**
+     * private method that allows to color in the trajectory depending on the altitude
+     * @param altitude1, double altitude of the beginning of the line we wish to color in
+     * @param altitude2 double, altitude of the end of the line we wish to color in
+     * @param line, the line we want to color
+     */
     private void colorTrajectory(double altitude1, double altitude2, Line line) {
-
         if (altitude1 == altitude2) {
             line.setStroke(ColorRamp.PLASMA.at(altitude1));
         } else {
