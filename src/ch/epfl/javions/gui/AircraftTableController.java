@@ -51,7 +51,6 @@ public final class AircraftTableController {
         createColumns();
         addRows();
         addListenerToSet();
-
     }
 
     private void addListenerToSet() {
@@ -219,19 +218,26 @@ public final class AircraftTableController {
        return pane;
     }
 
+    //todo cambiar nombres de observable2, ...
+    //todo no se como utilizar lo
     public void setOnDoubleClick(Consumer<ObservableAircraftState> consumer) {
-        table.setOnMouseClicked((observable, oldValue, newValue) ->{
+        table.setOnMouseClicked((observable) ->{
             if(observable.getButton() == MouseButton.PRIMARY){
                 if(observable.getClickCount() == 1){
-                    selected.set(newValue);
+                    table.getSelectionModel().selectedItemProperty().addListener((observable2, oldValue2, newValue2) -> {
+                        if (newValue2!= null) {
+                            selected.set(newValue2);
+                        }
+                    });
                 }
             }
         });
-        table.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+        consumer.accept(selected.get());
+        /*table.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue!= null) {
                 selected.set(newValue);
             }
         });
-        consumer.accept(selected.get());
+        consumer.accept(selected.get());*/
     }
 }
