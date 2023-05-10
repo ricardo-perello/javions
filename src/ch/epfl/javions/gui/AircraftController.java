@@ -40,7 +40,7 @@ public final class AircraftController {
                               ObservableSet<ObservableAircraftState> aircraftStates,
                               ObjectProperty<ObservableAircraftState> selected) {
 
-
+// TODO: 10/5/23 add comments 
         this.mapParameters = mapParameters;
         this.aircraftStates = aircraftStates;
         this.selected = selected;
@@ -272,6 +272,7 @@ public final class AircraftController {
                 if (pane.lookup("#" + state.getIcaoAddress().toString()).equals(clicked)) {
                     selected.set(state);
                     break;
+                    // TODO: 10/5/23 ask tota to make clean 
                 }
             }
         });

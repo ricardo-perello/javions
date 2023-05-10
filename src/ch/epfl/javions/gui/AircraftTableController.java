@@ -9,6 +9,7 @@ import javafx.collections.SetChangeListener;
 import javafx.scene.Node;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.Pane;
 
 import java.text.NumberFormat;
@@ -24,7 +25,7 @@ public final class AircraftTableController {
     private static final int PREFERRED_WIDTH_NUMERIC = 85;
     private final ObservableSet<ObservableAircraftState> aircraftStates;
     private final ObjectProperty<ObservableAircraftState> selected;
-    private final TableView<ObservableAircraftState> table; //todo ns si es de este tipo
+    private final TableView<ObservableAircraftState> table;
     private static NumberFormat numberFormatPosition;
     private static NumberFormat numberFormat;
     private final Pane pane;
@@ -45,6 +46,28 @@ public final class AircraftTableController {
         table.getStylesheets().add("table.css");
         table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_SUBSEQUENT_COLUMNS);
         table.setTableMenuButtonVisible(true);
+
+        table.setOnMouseClicked(event -> {
+            if (event.getClickCount() == 2 && event.getButton() == MouseButton.PRIMARY) {
+                setOnDoubleClick(selected::set);
+            }
+        });
+
+        selected.addListener((observable, oldValue, newValue) -> {
+            if(newValue != table.getSelectionModel().getSelectedItem()){
+                table.getSelectionModel().select(newValue);
+                table.scrollTo(table.getSelectionModel().getSelectedIndex());
+                System.out.println("new table selection: " + newValue.getIcaoAddress().string());
+            }
+        });
+
+        table.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if(newValue != selected.get()){
+                selected.set(newValue);
+                System.out.println("new selected: " + newValue.getIcaoAddress().string());
+            }
+        });
+
         setNumberFormatters();
         createColumns();
         addRows();
@@ -57,6 +80,7 @@ public final class AircraftTableController {
                 change -> {
                     if (change.wasAdded()) {
                         table.getItems().add(change.getElementAdded());
+                        table.sort();
                     } else {
                         table.getItems().remove(change.getElementRemoved());
                         // TODO: 9/5/23 remove all listeners of the removed element
@@ -190,20 +214,13 @@ public final class AircraftTableController {
                         vel -> numberFormat.format(
                                 Units.convertTo(vel.doubleValue(),
                                 Units.Speed.KILOMETER_PER_HOUR))));
-
-                /*
-                new ReadOnlyObjectWrapper<>(numberFormat.format(
-                        Units.convertTo(newRow.getValue().velocityProperty().getValue(),
-                                Units.Speed.KILOMETER_PER_HOUR))));
-
-                 */
         table.getColumns().add(column_Velocity);
 
         //****************************************** HEADING ******************************************
 
         column_Heading = new TableColumn<>();
         column_Heading.setPrefWidth(PREFERRED_WIDTH_NUMERIC);
-        column_Heading.setText("Heading");
+        column_Heading.setText("Heading (°)");
         column_Heading.getStyleClass().add("numeric");
         column_Heading.setCellValueFactory(newRow ->
                 newRow.getValue().trackOrHeadingProperty().map(
@@ -218,11 +235,9 @@ public final class AircraftTableController {
     }
 
     public void setOnDoubleClick(Consumer<ObservableAircraftState> consumer) {
-        table.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue!= null) {
-                selected.set(newValue);
-            }
-        });
-        consumer.accept(selected.get());
+
+        consumer.accept(table.getSelectionModel().getSelectedItem());
+        //BaseMapController.centerOn(selected.get().getPosition());
+        System.out.println(selected.get().getIcaoAddress().string());
     }
 }
