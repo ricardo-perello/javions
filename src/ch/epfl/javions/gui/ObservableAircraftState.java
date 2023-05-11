@@ -249,6 +249,7 @@ public final class ObservableAircraftState implements AircraftStateSetter {
         if(!p && !(position == null)){
             if(trajectory.isEmpty()){
                 trajectory.add(new AirbornePos(position, altitude));
+                trajectoryTimeStampNs = getLastMessageTimeStampNs();
             }
             else if (getLastMessageTimeStampNs() == trajectoryTimeStampNs) {
                 trajectory.remove(trajectory.size() - 1);
