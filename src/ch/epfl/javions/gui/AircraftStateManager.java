@@ -44,7 +44,7 @@ public final class AircraftStateManager {
     public void updateWithMessage(Message message) throws IOException {
         requireNonNull(message);
         IcaoAddress icaoAddress = message.icaoAddress();
-        if ((icaoAddress == null) || (aircraftDatabase.get(icaoAddress) == null)) return; // TODO: 3/5/23 tota dice que le han dicho que esta condicion no va aqui, va despues en otra clase
+        if ((icaoAddress == null) || (aircraftDatabase.get(icaoAddress) == null)) return; //todo : 3/5/23 tota dice que le han dicho que esta condicion no va aqui, va despues en otra clase
 
         lastTimeStampNs = message.timeStampNs();
         if (!aircraftStateAccumulatorMap.containsKey(icaoAddress)) {
