@@ -8,7 +8,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableSet;
 
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.Map;
 
 import static ch.epfl.javions.Units.Time.MINUTE;
@@ -20,6 +19,7 @@ public final class AircraftStateManager {
     private final ObservableSet<ObservableAircraftState> statePlaneSet;
     private final AircraftDatabase aircraftDatabase;
     private long lastTimeStampNs;
+    private IcaoAddress lastIcaoAddress;
     private final long MAX_DIFFERENCE_TIME = (long) (MINUTE * Math.pow(10, 9));
 
     /**
@@ -43,18 +43,19 @@ public final class AircraftStateManager {
      */
     public void updateWithMessage(Message message) throws IOException {
         requireNonNull(message);
-        IcaoAddress icaoAddress = message.icaoAddress();
-        if ((icaoAddress == null) || (aircraftDatabase.get(icaoAddress) == null)) return; //todo : 3/5/23 tota dice que le han dicho que esta condicion no va aqui, va despues en otra clase
+        if ((lastIcaoAddress == null) || (aircraftDatabase.get(lastIcaoAddress) == null))
+            return; //todo : 3/5/23 tota dice que le han dicho que esta condicion no va aqui, va despues en otra clase
 
+        lastIcaoAddress = message.icaoAddress();
         lastTimeStampNs = message.timeStampNs();
-        if (!aircraftStateAccumulatorMap.containsKey(icaoAddress)) {
-            aircraftStateAccumulatorMap.put(icaoAddress, new AircraftStateAccumulator<>(
-                    new ObservableAircraftState(icaoAddress, aircraftDatabase.get(icaoAddress))));
+        if (!aircraftStateAccumulatorMap.containsKey(lastIcaoAddress)) {
+            aircraftStateAccumulatorMap.put(lastIcaoAddress, new AircraftStateAccumulator<>(
+                    new ObservableAircraftState(lastIcaoAddress, aircraftDatabase.get(lastIcaoAddress))));
         }
-        aircraftStateAccumulatorMap.get(icaoAddress).update(message);
+        aircraftStateAccumulatorMap.get(lastIcaoAddress).update(message);
 
-        if (aircraftStateAccumulatorMap.get(icaoAddress).stateSetter().getPosition() != null) {
-            statePlaneSet.add(aircraftStateAccumulatorMap.get(icaoAddress).stateSetter());
+        if (aircraftStateAccumulatorMap.get(lastIcaoAddress).stateSetter().getPosition() != null) {
+            statePlaneSet.add(aircraftStateAccumulatorMap.get(lastIcaoAddress).stateSetter());
 
         }
     }
@@ -65,13 +66,16 @@ public final class AircraftStateManager {
      */
 
     public void purge() {
-        Iterator<AircraftStateAccumulator<ObservableAircraftState>> iterator = aircraftStateAccumulatorMap.values().iterator();
-        while (iterator.hasNext()) {
-            AircraftStateAccumulator<ObservableAircraftState> aircraftStateAircraftStateAccumulator = iterator.next();
-            if (lastTimeStampNs - aircraftStateAircraftStateAccumulator.stateSetter().getLastMessageTimeStampNs()
-                    >= MAX_DIFFERENCE_TIME){
-                statePlaneSet.remove(aircraftStateAircraftStateAccumulator.stateSetter());
-                iterator.remove();
+        statePlaneSet.removeIf(observableAircraftState ->
+                lastTimeStampNs - observableAircraftState.getLastMessageTimeStampNs()
+                        >= MAX_DIFFERENCE_TIME);
+        IcaoAddress removeIcaoAddress = lastIcaoAddress;
+        if (aircraftStateAccumulatorMap.get(removeIcaoAddress) != null) {
+            if (lastTimeStampNs -
+                    aircraftStateAccumulatorMap.get(removeIcaoAddress).stateSetter().getLastMessageTimeStampNs()
+                    >= MAX_DIFFERENCE_TIME) {
+                aircraftStateAccumulatorMap.remove(removeIcaoAddress);
+
             }
         }
     }

@@ -232,6 +232,7 @@ public final class AircraftTableController {
         column_Heading.setPrefWidth(PREFERRED_WIDTH_NUMERIC);
         column_Heading.setText("Heading (°)");
         column_Heading.getStyleClass().add("numeric");
+        column_Heading.setVisible(false);
         column_Heading.setCellValueFactory(newRow ->
                 newRow.getValue().trackOrHeadingProperty().map(
                         hea -> numberFormat.format(
