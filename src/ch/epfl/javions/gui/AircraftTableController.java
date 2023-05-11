@@ -31,6 +31,7 @@ public final class AircraftTableController {
     private static NumberFormat numberFormat;
     private final Pane pane;
 
+    //todo add comments
     public AircraftTableController(ObservableSet<ObservableAircraftState> aircraftStates,
                                    ObjectProperty<ObservableAircraftState> selected) {
         this.aircraftStates = aircraftStates;
