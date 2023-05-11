@@ -13,12 +13,9 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.layout.Pane;
 
 import java.text.NumberFormat;
-import java.text.ParseException;
-import java.util.Comparator;
 import java.util.function.Consumer;
 
 import static java.lang.Double.compare;
-import static java.lang.Math.signum;
 
 public final class AircraftTableController {
     private static final int PREFERRED_WIDTH_ICAO = 60;
@@ -29,7 +26,6 @@ public final class AircraftTableController {
     private static final int PREFERRED_WIDTH_TYPE = 50;
     private static final int PREFERRED_WIDTH_NUMERIC = 85;
     private final ObservableSet<ObservableAircraftState> aircraftStates;
-    private final ObjectProperty<ObservableAircraftState> selected;
     private final TableView<ObservableAircraftState> table;
     private static NumberFormat numberFormatPosition;
     private static NumberFormat numberFormat;
@@ -38,7 +34,6 @@ public final class AircraftTableController {
     public AircraftTableController(ObservableSet<ObservableAircraftState> aircraftStates,
                                    ObjectProperty<ObservableAircraftState> selected) {
         this.aircraftStates = aircraftStates;
-        this.selected = selected;
         table = new TableView<>();
         this.pane = new Pane(table);
         table.getStylesheets().add("table.css");
@@ -52,7 +47,7 @@ public final class AircraftTableController {
         });
 
         selected.addListener((observable, oldValue, newValue) -> {
-            if(newValue != table.getSelectionModel().getSelectedItem()){
+            if (newValue != table.getSelectionModel().getSelectedItem()) {
                 table.getSelectionModel().select(newValue);
                 table.scrollTo(table.getSelectionModel().getSelectedIndex());
                 //System.out.println("new table selection: " + newValue.getIcaoAddress().string());
@@ -60,7 +55,7 @@ public final class AircraftTableController {
         });
 
         table.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            if(newValue != selected.get()){
+            if (newValue != selected.get()) {
                 selected.set(newValue);
                 //System.out.println("new selected: " + newValue.getIcaoAddress().string());
             }
@@ -175,7 +170,7 @@ public final class AircraftTableController {
                     String s = numberFormatPosition.format(
                             Units.convertTo((pos.longitude()),
                                     Units.Angle.DEGREE));
-                    return s.replace(",",".");
+                    return s.replace(",", ".");
                 }));
 
         column_Longitude.setComparator(AircraftTableController::parser);
@@ -189,12 +184,12 @@ public final class AircraftTableController {
         column_Latitude.getStyleClass().add("numeric");
         column_Latitude.setCellValueFactory(newRow ->
                 newRow.getValue().positionProperty().map(pos ->
-                        {
-                            String s = numberFormatPosition.format(
+                {
+                    String s = numberFormatPosition.format(
                             Units.convertTo((pos.latitude()),
-                            Units.Angle.DEGREE));
-                            return s.replace(",",".");
-                        }));
+                                    Units.Angle.DEGREE));
+                    return s.replace(",", ".");
+                }));
 
         column_Latitude.setComparator(AircraftTableController::parser);
         table.getColumns().add(column_Latitude);
@@ -208,7 +203,8 @@ public final class AircraftTableController {
         column_Altitude.setCellValueFactory(newRow ->
                 newRow.getValue().altitudeProperty().map(
                         alt ->
-                        {String s = numberFormat.format(alt.doubleValue());
+                        {
+                            String s = numberFormat.format(alt.doubleValue());
                             return s.replace(".", "");
                         }));
         column_Altitude.setComparator(AircraftTableController::parser);
@@ -225,7 +221,7 @@ public final class AircraftTableController {
                 newRow.getValue().velocityProperty().map(
                         vel -> numberFormat.format(
                                 Units.convertTo(vel.doubleValue(),
-                                Units.Speed.KILOMETER_PER_HOUR))));
+                                        Units.Speed.KILOMETER_PER_HOUR))));
         column_Velocity.setComparator(AircraftTableController::parser);
         table.getColumns().add(column_Velocity);
 
@@ -244,14 +240,14 @@ public final class AircraftTableController {
         table.getColumns().add(column_Heading);
     }
 
-    private static int parser(String o1, String o2){
+    private static int parser(String o1, String o2) {
         double v1 = Double.parseDouble(o1);
         double v2 = Double.parseDouble(o2);
-        return compare(v1,v2);
+        return compare(v1, v2);
     }
 
     public Node pane() {
-       return pane;
+        return pane;
     }
 
     public void setOnDoubleClick(Consumer<ObservableAircraftState> consumer) {
