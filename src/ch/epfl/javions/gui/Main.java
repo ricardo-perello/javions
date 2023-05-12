@@ -20,7 +20,9 @@ import java.io.*;
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public final class Main extends Application {
     private static final int INITIAL_ZOOM = 8;
