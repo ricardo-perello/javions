@@ -7,7 +7,6 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.scene.Node;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 
 public final class StatusLineController {
@@ -30,7 +29,7 @@ public final class StatusLineController {
         //MESSAGE COUNT TEXT
         Text visibleMessageCountText = new Text();
         visibleMessageCountText.textProperty().bind(Bindings.createStringBinding(
-                () -> "Received messages: "+messageCountProperty.get(), messageCountProperty));
+                () -> "Received messages: " + messageCountProperty.get(), messageCountProperty));
         pane.setRight(visibleMessageCountText);
 
         pane.getChildren().addAll(visibleAircraftCountText, visibleMessageCountText);
