@@ -1,0 +1,112 @@
+package ch.epfl.javions.gui;
+
+import ch.epfl.javions.ByteString;
+import ch.epfl.javions.adsb.Message;
+import ch.epfl.javions.adsb.MessageParser;
+import ch.epfl.javions.adsb.RawMessage;
+import ch.epfl.javions.aircraft.AircraftDatabase;
+import javafx.animation.AnimationTimer;
+import javafx.application.Application;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.geometry.Orientation;
+import javafx.scene.Node;
+import javafx.scene.Scene;
+import javafx.scene.control.SplitPane;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
+
+import java.io.*;
+import java.net.URL;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+
+public final class Main extends Application {
+    private static final int INITIAL_ZOOM = 8;
+    private static final int INITIAL_MIN_X = 33_530;
+    private static final int INITIAL_MIN_Y = 23_070;
+    private static final int MIN_WIDTH = 800;
+    private static final int MIN_HEIGHT = 600;
+    private static String fileName;
+
+    public static void main(String[] args) {
+        launch(args);
+    }
+
+
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+        Path tileCache  = Path.of( "tile-cache" );
+        TileManager  tm  =
+                new  TileManager (tileCache, "tile.openstreetmap.org" );
+        MapParameters  mp  =
+                new  MapParameters ( INITIAL_ZOOM , INITIAL_MIN_X , INITIAL_MIN_Y );
+        BaseMapController  bmc  =  new  BaseMapController (tm,mp);
+        //fileName = getParameters().getRaw().get(0);
+
+        // Create database
+        URL  u  = getClass().getResource( "/aircraft.zip" );
+        assert u!= null ;
+        Path  p  = Path.of(u.toURI());
+        AircraftDatabase  db  =  new  AircraftDatabase (p.toString());
+
+        AircraftStateManager  asm  =  new  AircraftStateManager (db);
+        ObjectProperty<ObservableAircraftState> sap= new SimpleObjectProperty<>();
+        AircraftController  ac  = new  AircraftController (mp, asm.states(), sap);
+        AircraftTableController atc = new AircraftTableController(asm.states(), sap);
+        StatusLineController slc = new StatusLineController();
+
+
+        var stackPane = new StackPane(bmc.pane(), ac.pane());
+        var borderPane = new BorderPane(atc.pane(), slc.pane(), null, null, null);
+        var root = new SplitPane(stackPane, borderPane);
+        root.setOrientation(Orientation.VERTICAL);
+        primaryStage.setScene(new Scene(root));
+        primaryStage.setTitle("Javions");
+        primaryStage.setMinWidth(MIN_WIDTH);
+        primaryStage.setMinHeight(MIN_HEIGHT);
+        primaryStage.show();
+
+
+
+
+
+       /* if (fileName != null){
+            URL dbUrl  = getClass().getResource( "/aircraft.zip" );
+            assert dbUrl != null ;
+            String  f;
+            f = Path.of(dbUrl.toURI()).toString();
+            var  db  =  new AircraftDatabase(f);
+        }else{
+            var db = readAllMessages(System.in);
+        }
+        System.in*/
+
+
+    }
+
+
+
+
+    static List<RawMessage> readAllMessages (InputStream inputStream) throws IOException {
+        ArrayList<RawMessage> rm = new ArrayList<>();
+        DataInputStream s = new DataInputStream(new BufferedInputStream(inputStream));
+        byte[] bytes = new byte[RawMessage.LENGTH];
+
+        while (s.available() > 0) {
+            long timeStampNs = s.readLong();
+            int bytesRead = s.readNBytes(bytes, 0, bytes.length);
+            assert bytesRead == RawMessage.LENGTH;
+            ByteString message = new ByteString(bytes);
+
+            rm.add(new RawMessage(timeStampNs, message));
+        }
+        return rm;
+    }
+}
+
+
+

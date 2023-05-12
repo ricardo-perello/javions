@@ -32,8 +32,6 @@ public final class StatusLineController {
                 () -> "Received messages: " + messageCountProperty.get(), messageCountProperty));
         pane.setRight(visibleMessageCountText);
 
-        pane.getChildren().addAll(visibleAircraftCountText, visibleMessageCountText);
-
     }
 
     public Node pane() {
