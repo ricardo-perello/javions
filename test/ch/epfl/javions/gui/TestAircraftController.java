@@ -77,16 +77,11 @@ public  final  class  TestAircraftController  extends Application {
         }.start();
     }
     static List<RawMessage> readAllMessages (String fileName) throws IOException { /* … to do */
-        AircraftStateManager manager = new AircraftStateManager(getDatabase());
-        long startTime = System.nanoTime();
         ArrayList<RawMessage> rm = new ArrayList<>();
         try (DataInputStream s = new DataInputStream(
                 new BufferedInputStream(
                         new FileInputStream("resources/"+fileName)))) {
             byte[] bytes = new byte[RawMessage.LENGTH];
-
-            int length = s.available();
-
             while (s.available() > 0) {
                 long timeStampNs = s.readLong();
                 int bytesRead = s.readNBytes(bytes, 0, bytes.length);

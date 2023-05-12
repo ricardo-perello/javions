@@ -10,11 +10,9 @@ import javafx.application.Application;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Orientation;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
@@ -30,8 +28,7 @@ public final class Main extends Application {
     private static final int INITIAL_MIN_Y = 23_070;
     private static final int MIN_WIDTH = 800;
     private static final int MIN_HEIGHT = 600;
-    private static String fileName;
-
+    private ConcurrentLinkedQueue<RawMessage> rawMessageQueue;
     public static void main(String[] args) {
         launch(args);
     }
@@ -39,23 +36,24 @@ public final class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        Path tileCache  = Path.of( "tile-cache" );
-        TileManager  tm  =
-                new  TileManager (tileCache, "tile.openstreetmap.org" );
-        MapParameters  mp  =
-                new  MapParameters ( INITIAL_ZOOM , INITIAL_MIN_X , INITIAL_MIN_Y );
-        BaseMapController  bmc  =  new  BaseMapController (tm,mp);
+
+        Path tileCache = Path.of("tile-cache");
+        TileManager tm =
+                new TileManager(tileCache, "tile.openstreetmap.org");
+        MapParameters mp =
+                new MapParameters(INITIAL_ZOOM, INITIAL_MIN_X, INITIAL_MIN_Y);
+        BaseMapController bmc = new BaseMapController(tm, mp);
         //fileName = getParameters().getRaw().get(0);
 
         // Create database
-        URL  u  = getClass().getResource( "/aircraft.zip" );
-        assert u!= null ;
-        Path  p  = Path.of(u.toURI());
-        AircraftDatabase  db  =  new  AircraftDatabase (p.toString());
+        URL u = getClass().getResource("/aircraft.zip");
+        assert u != null;
+        Path p = Path.of(u.toURI());
+        AircraftDatabase db = new AircraftDatabase(p.toString());
 
-        AircraftStateManager  asm  =  new  AircraftStateManager (db);
-        ObjectProperty<ObservableAircraftState> sap= new SimpleObjectProperty<>();
-        AircraftController  ac  = new  AircraftController (mp, asm.states(), sap);
+        AircraftStateManager asm = new AircraftStateManager(db);
+        ObjectProperty<ObservableAircraftState> sap = new SimpleObjectProperty<>();
+        AircraftController ac = new AircraftController(mp, asm.states(), sap);
         AircraftTableController atc = new AircraftTableController(asm.states(), sap);
         StatusLineController slc = new StatusLineController();
 
@@ -70,39 +68,39 @@ public final class Main extends Application {
         primaryStage.setMinHeight(MIN_HEIGHT);
         primaryStage.show();
 
+        rawMessageQueue = new ConcurrentLinkedQueue<>();
 
-
-
-
-       /* if (fileName != null){
-            URL dbUrl  = getClass().getResource( "/aircraft.zip" );
-            assert dbUrl != null ;
-            String  f;
-            f = Path.of(dbUrl.toURI()).toString();
-            var  db  =  new AircraftDatabase(f);
-        }else{
-            var db = readAllMessages(System.in);
-        }
-        System.in*/
-
-
+        new Thread(() -> {
+            try {
+                long startTime = System.nanoTime();
+                if (!getParameters().getRaw().get(0).isEmpty()) {
+                    var mi = readAllMessages(getParameters().getRaw().get(0)).iterator();
+                    //rawMessageQueue.addAll( mi);
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
-
-
-
-    static List<RawMessage> readAllMessages (InputStream inputStream) throws IOException {
+    static List<RawMessage> readAllMessages (String fileName) throws IOException {
         ArrayList<RawMessage> rm = new ArrayList<>();
-        DataInputStream s = new DataInputStream(new BufferedInputStream(inputStream));
-        byte[] bytes = new byte[RawMessage.LENGTH];
+        long startTime = System.nanoTime();
+        try (DataInputStream s = new DataInputStream(
+                new BufferedInputStream(
+                        new FileInputStream("resources/"+fileName)))) {
+            byte[] bytes = new byte[RawMessage.LENGTH];
 
-        while (s.available() > 0) {
-            long timeStampNs = s.readLong();
-            int bytesRead = s.readNBytes(bytes, 0, bytes.length);
-            assert bytesRead == RawMessage.LENGTH;
-            ByteString message = new ByteString(bytes);
+            while (s.available() > 0) {
+                long timeStampNs = s.readLong();
+                int bytesRead = s.readNBytes(bytes, 0, bytes.length);
+                assert bytesRead == RawMessage.LENGTH;
+                ByteString message = new ByteString(bytes);
 
-            rm.add(new RawMessage(timeStampNs, message));
+                rm.add(new RawMessage(timeStampNs, message));
+            }
+        }catch (EOFException e) { /* nothing to do */ } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
         }
         return rm;
     }
