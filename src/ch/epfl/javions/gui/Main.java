@@ -5,6 +5,7 @@ import ch.epfl.javions.adsb.Message;
 import ch.epfl.javions.adsb.MessageParser;
 import ch.epfl.javions.adsb.RawMessage;
 import ch.epfl.javions.aircraft.AircraftDatabase;
+import ch.epfl.javions.demodulation.AdsbDemodulator;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.beans.property.ObjectProperty;
@@ -23,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.function.Supplier;
 
 public final class Main extends Application {
     private static final int INITIAL_ZOOM = 8;
@@ -45,7 +47,6 @@ public final class Main extends Application {
         MapParameters mp =
                 new MapParameters(INITIAL_ZOOM, INITIAL_MIN_X, INITIAL_MIN_Y);
         BaseMapController bmc = new BaseMapController(tm, mp);
-        //fileName = getParameters().getRaw().get(0);
 
         // Create database
         URL u = getClass().getResource("/aircraft.zip");
@@ -70,23 +71,52 @@ public final class Main extends Application {
         primaryStage.setMinHeight(MIN_HEIGHT);
         primaryStage.show();
 
+        AnimationTimer animationTimer;
         rawMessageQueue = new ConcurrentLinkedQueue<>();
-
-        new Thread(() -> {
+        Thread threadMessage = new Thread(() -> {
             try {
                 long startTime = System.nanoTime();
                 if (!getParameters().getRaw().get(0).isEmpty()) {
                     var mi = readAllMessages(getParameters().getRaw().get(0)).iterator();
-                    //rawMessageQueue.addAll( mi);
+                    while(mi.hasNext()){
+                        if (mi.next().timeStampNs() <= startTime){
+                            rawMessageQueue.add(mi.next());
+                            System.out.println(rawMessageQueue.iterator().next());
+                        }
+                    }
+                }else{
+                    var mi = new AdsbDemodulator(System.in);
+                    while(mi.nextMessage() != null){
+                        rawMessageQueue.add(mi.nextMessage());
+                    }
                 }
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         });
+        threadMessage.setDaemon(true);
+
+        Thread thread_readMessages= new Thread(()->{
+
+        });
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     static List<RawMessage> readAllMessages (String fileName) throws IOException {
         ArrayList<RawMessage> rm = new ArrayList<>();
+        //todo quitar este startTime
         long startTime = System.nanoTime();
         try (DataInputStream s = new DataInputStream(
                 new BufferedInputStream(

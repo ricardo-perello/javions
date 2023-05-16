@@ -41,6 +41,7 @@ class AircraftDatabaseTest {
         var aircraftData = aircraftDatabase.get(new IcaoAddress("0086AB"));
         assertNotNull(aircraftData);
         assertEquals(new AircraftRegistration("ZS-CNA"), aircraftData.registration());
+
     }
 
     @Test
