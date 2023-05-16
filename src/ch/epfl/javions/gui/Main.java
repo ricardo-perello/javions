@@ -22,6 +22,7 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Supplier;
@@ -40,7 +41,7 @@ public final class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-
+        long startTime = System.nanoTime();
         Path tileCache = Path.of("tile-cache");
         TileManager tm =
                 new TileManager(tileCache, "tile.openstreetmap.org");
@@ -75,19 +76,26 @@ public final class Main extends Application {
         rawMessageQueue = new ConcurrentLinkedQueue<>();
         Thread threadMessage = new Thread(() -> {
             try {
-                long startTime = System.nanoTime();
+
                 if (!getParameters().getRaw().get(0).isEmpty()) {
-                    var mi = readAllMessages(getParameters().getRaw().get(0)).iterator();
+                     Iterator<RawMessage> mi = readAllMessages(getParameters().getRaw().get(0)).iterator();
                     while(mi.hasNext()){
-                        if (mi.next().timeStampNs() <= startTime){
-                            rawMessageQueue.add(mi.next());
-                            System.out.println(rawMessageQueue.iterator().next());
-                        }
+                        RawMessage message = mi.next();
+                        boolean valid = false;
+                        do {
+                            if (message.timeStampNs() <= System.nanoTime() - startTime){
+                                rawMessageQueue.add(message);
+                                valid = true;
+                            }
+                        }while (!valid);
+
                     }
                 }else{
-                    var mi = new AdsbDemodulator(System.in);
-                    while(mi.nextMessage() != null){
-                        rawMessageQueue.add(mi.nextMessage());
+                    AdsbDemodulator mi = new AdsbDemodulator(System.in);
+                    RawMessage message = mi.nextMessage();
+                    while(message != null){
+                        rawMessageQueue.add(message);
+                        message = mi.nextMessage();
                     }
                 }
             } catch (IOException e) {
