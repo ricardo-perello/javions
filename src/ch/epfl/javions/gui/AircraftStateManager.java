@@ -43,7 +43,7 @@ public final class AircraftStateManager {
      */
     public void updateWithMessage(Message message) throws IOException {
         requireNonNull(message);
-        if ((lastIcaoAddress == null) || (aircraftDatabase.get(lastIcaoAddress) == null))
+        if ((message.icaoAddress() == null) || (aircraftDatabase.get(message.icaoAddress()) == null))
             return; //todo : 3/5/23 tota dice que le han dicho que esta condicion no va aqui, va despues en otra clase
 
         lastIcaoAddress = message.icaoAddress();
