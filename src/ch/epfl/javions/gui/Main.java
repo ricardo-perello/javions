@@ -93,7 +93,7 @@ public final class Main extends Application {
                     if (nanoTime - lastPurgeTimeStamp >= ONE_SECOND_IN_NANO) {
                         lastPurgeTimeStamp = nanoTime;
                         asm.purge();
-                        System.out.println("purging");
+
                     }
 
                 } catch (IOException e) {
