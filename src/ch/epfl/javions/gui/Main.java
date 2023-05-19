@@ -75,9 +75,28 @@ public final class Main extends Application {
 
         AnimationTimer animationTimer;
         rawMessageQueue = new ConcurrentLinkedQueue<>();
+
+        new  AnimationTimer() {
+            @Override
+            public  void  handle (long now) {
+                try {
+                    for ( int  i  =  0 ; i < 10 ; i += 1 ) {
+                        if (rawMessageQueue.peek() != null){
+                            Message m  = MessageParser.parse(rawMessageQueue.poll());
+                            if (m != null ) asm.updateWithMessage(m);
+                        }
+                        if (i == 9) asm.purge();
+                    }
+                } catch (IOException e) {
+                    throw  new UncheckedIOException(e);
+                }
+
+            }
+        }.start();
+                //read as a file
         Thread threadMessage = new Thread(() -> {
             try {
-                if (!getParameters().getRaw().get(0).isEmpty()) {
+                if (!getParameters().getRaw().isEmpty()) {
                     Iterator<RawMessage> mi = readAllMessages(getParameters().getRaw().get(0)).iterator();
                     while(mi.hasNext()){
                         RawMessage message = mi.next();
@@ -106,19 +125,6 @@ public final class Main extends Application {
         threadMessage.setDaemon(true);
         threadMessage.start();
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     static List<RawMessage> readAllMessages (String fileName) throws IOException {
         ArrayList<RawMessage> rm = new ArrayList<>();
