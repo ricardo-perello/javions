@@ -9,10 +9,8 @@ import ch.epfl.javions.aircraft.WakeTurbulenceCategory;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
 import javafx.collections.ListChangeListener;
-import javafx.collections.ObservableList;
 import javafx.collections.ObservableSet;
 import javafx.collections.SetChangeListener;
-import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
@@ -29,6 +27,7 @@ import static ch.epfl.javions.gui.AircraftIcon.iconFor;
 
 public final class AircraftController {
 
+    private static final int ZOOM_VISIBILITY_THRESHOLD = 11;
     private final Pane pane = new Pane();
     private final MapParameters mapParameters;
     private final ObservableSet<ObservableAircraftState> aircraftStates;
@@ -38,12 +37,18 @@ public final class AircraftController {
     private final DoubleProperty minYProperty;
     private final ColorRamp colorRamp;
 
-
+    /**
+     * Constructor for AircraftController, creates instance of AircraftController
+     * which manages all the visible aircraft.
+     *
+     * @param mapParameters  instance of mapParameters.
+     * @param aircraftStates instance of aircraftStates.
+     * @param selected       selected aircraft, label and trajectory will show.
+     */
     public AircraftController(MapParameters mapParameters,
                               ObservableSet<ObservableAircraftState> aircraftStates,
                               ObjectProperty<ObservableAircraftState> selected) {
 
-// TODO: 10/5/23 add comments 
         this.mapParameters = mapParameters;
         this.aircraftStates = aircraftStates;
         this.selected = selected;
@@ -69,6 +74,7 @@ public final class AircraftController {
 
     /**
      * private method that allows to create a new annotated group for a specific plane
+     *
      * @param aircraftState ObservableAircraftState of the plane we wish to create a new annotated group
      */
     private void addAnnotated(ObservableAircraftState aircraftState) {
@@ -76,7 +82,7 @@ public final class AircraftController {
         Group trajectory = setTrajectory(aircraftState);
         Group annotated = new Group(trajectory, aircraftInfo);
         annotated.setId(aircraftState.getIcaoAddress().toString());
-        annotated.viewOrderProperty().bind(aircraftState.altitudeProperty().negate());
+        annotated.viewOrderProperty().bind(aircraftState.altitudeProperty().negate()); // TODO: 19/5/23 when selected, should be on top of planes with higher altitude
         pane.getChildren().add(annotated);
     }
 
@@ -84,6 +90,7 @@ public final class AircraftController {
 
     /**
      * private method that allows to create a group for the trajectory
+     *
      * @param aircraftState, ObservableAircraftState, the plane we wish to create its trajectory
      * @return a Group with the trajectory
      */
@@ -97,15 +104,18 @@ public final class AircraftController {
         //if change in the zoom level we calculate the trajectory again
         zoomProperty.addListener((observable -> updateTrajectory(aircraftState, trajectory)));
         //if the plane that is selected changes we update the trajectory
-        selected.addListener((observable, oldValue, newValue) -> trajectory.setVisible(newValue == aircraftState));
-
+        selected.addListener((observable, oldValue, newValue) -> {
+            trajectory.setVisible(newValue == aircraftState);
+            updateTrajectory(aircraftState, trajectory);
+        });
         return trajectory;
     }
 
     /**
      * private method that allows to update the trajectory of a given plane
+     *
      * @param aircraftState, ObservableAircraftState, plane we wish update the trajectory
-     * @param trajectory, Group, the trajectory that needs updating
+     * @param trajectory,    Group, the trajectory that needs updating
      */
     private void updateTrajectory(ObservableAircraftState aircraftState, Group trajectory) {
         trajectory.getChildren().clear();
@@ -131,9 +141,10 @@ public final class AircraftController {
 
     /**
      * private method that allows to color in the trajectory depending on the altitude
+     *
      * @param altitude1, double altitude of the beginning of the line we wish to color in
-     * @param altitude2 double, altitude of the end of the line we wish to color in
-     * @param line, the line we want to color
+     * @param altitude2  double, altitude of the end of the line we wish to color in
+     * @param line,      the line we want to color
      */
     private void colorTrajectory(double altitude1, double altitude2, Line line) {
         if (altitude1 == altitude2) {
@@ -142,10 +153,17 @@ public final class AircraftController {
             line.setStroke(new LinearGradient(0, 0, 1, 0,
                     true, CycleMethod.NO_CYCLE,
                     new Stop(0, ColorRamp.PLASMA.at(altitude1)),
-                            new Stop(1, ColorRamp.PLASMA.at(altitude2))));
+                    new Stop(1, ColorRamp.PLASMA.at(altitude2))));
         }
     }
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Aircraft info ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    /**
+     * private method that creates and sets the icon and label for an airplane group
+     *
+     * @param aircraftState aircraftState of the plane we want to create icon and label for.
+     * @return group containing the icon and label.
+     */
     private Group setAircraftInfo(ObservableAircraftState aircraftState) {
         SVGPath icon = setIcon(aircraftState);
         Group label = setLabel(aircraftState);
@@ -163,19 +181,24 @@ public final class AircraftController {
         return aircraftInfo;
     }
 
+    /**
+     * private method that creates the icon of the aircraft.
+     *
+     * @param aircraftState aircraftState of the plane we want to create icon.
+     * @return the icon of the aircraft.
+     */
     private SVGPath setIcon(ObservableAircraftState aircraftState) {
 //todo hay q mirar si esto puede ser null
         AircraftIcon aircraftIcon;
-        if (aircraftState.getAircraftData() == null){
+        if (aircraftState.getAircraftData() == null) {
 
             aircraftIcon = iconFor(new AircraftTypeDesignator(""),
                     new AircraftDescription(""), aircraftState.getCategory(), WakeTurbulenceCategory.of(""));
-        }else{
+        } else {
             aircraftIcon = iconFor(aircraftState.getAircraftData().typeDesignator(),
                     aircraftState.getAircraftData().description(),
                     aircraftState.getCategory(),
                     aircraftState.getAircraftData().wakeTurbulenceCategory());
-
         }
 
         SVGPath icon = new SVGPath();
@@ -196,44 +219,77 @@ public final class AircraftController {
         return icon;
     }
 
+    /**
+     * private method that sets the filling color of the icon depending on the altitude of the aircraft.
+     *
+     * @param icon          icon of the aircraft.
+     * @param aircraftState aircraftState of the plane we want to set icon colour for.
+     */
     private void altitudeColorFill(SVGPath icon, ObservableAircraftState aircraftState) {
         icon.setFill(colorRamp.at(aircraftState.getAltitude()));
     }
 
+    /**
+     * private method that sets the rotation of the icon depending on the heading of the aircraft.
+     *
+     * @param icon          icon of the aircraft.
+     * @param aircraftState aircraftState of the plane we want to set rotation for.
+     */
     private void setIconRotation(SVGPath icon, ObservableAircraftState aircraftState) {
         icon.setRotate(Units.convertTo(aircraftState.getTrackOrHeading(), DEGREE));
     }
 
-
+    /**
+     * private method that repositions an aircraft on the map, which is called when user moves the map
+     * or when the aircraft position changes.
+     *
+     * @param aircraftState aircraftState of the aircraft we want to reposition.
+     * @param aircraftInfo  group containing the icon and label of the aircraft to reposition.
+     */
     private void repositionAircraft(ObservableAircraftState aircraftState, Group aircraftInfo) {
         SimpleObjectProperty<GeoPos> aircraftPositionProperty = new SimpleObjectProperty<>();
         aircraftPositionProperty.bind(aircraftState.positionProperty());
-        aircraftInfo.setLayoutX(xOnScreen(aircraftPositionProperty.getValue()).doubleValue());
+        aircraftInfo.setLayoutX(xOnScreen(aircraftPositionProperty.getValue()).doubleValue()); //todo limpiar para usar menos propiedades
         aircraftInfo.setLayoutY(yOnScreen(aircraftPositionProperty.getValue()).doubleValue());
-
     }
 
+    /**
+     * X projection on the WebMercator map depending on the mapParameters and the position of the aircraft.
+     *
+     * @param aircraftPositionProperty property of the aircraft position.
+     * @return the x projection on the WebMercator map.
+     */
     private ReadOnlyDoubleProperty xOnScreen(GeoPos aircraftPositionProperty) {
         double x = WebMercator.x(zoomProperty.get(), aircraftPositionProperty.longitude())
                 - minXProperty.get();
         return new SimpleDoubleProperty(x);
     }
 
+    /**
+     * Y projection on the WebMercator map depending on the mapParameters and the position of the aircraft.
+     *
+     * @param aircraftPositionProperty property of the aircraft position.
+     * @return the y projection on the WebMercator map.
+     */
     private ReadOnlyDoubleProperty yOnScreen(GeoPos aircraftPositionProperty) {
         double y = WebMercator.y(zoomProperty.get(), aircraftPositionProperty.latitude())
                 - minYProperty.get();
         return new SimpleDoubleProperty(y);
     }
 
-
+    /**
+     * private method that sets the creates and sets the label for an aircraft.
+     *
+     * @param aircraftState aircraftState of the plane we want to create label for.
+     * @return group containing the label.
+     */
     private Group setLabel(ObservableAircraftState aircraftState) {
         //todo zac dice q hace un listener pq si derepente aparece el registration deberiamos actualizar pero no sabe como
         Text t1 = new Text();
-        if (aircraftState.getAircraftData() == null){
+        if (aircraftState.getAircraftData() == null) {
             t1.textProperty().bind(Bindings.createStringBinding(
                     () -> aircraftState.getIcaoAddress().string()));
-        }
-        else if (aircraftState.getAircraftData().registration() != null) {
+        } else if (aircraftState.getAircraftData().registration() != null) {
             t1.textProperty().bind(Bindings.createStringBinding(
                     () -> aircraftState.getAircraftData().registration().string()));
         } else if (aircraftState.getCallSign() != null) {
@@ -245,7 +301,7 @@ public final class AircraftController {
         }
 
         Text t2 = new Text();
-
+//todo update with time. first message could be NaN but next message could be fine and still displays ?.
         if (!Double.isNaN(aircraftState.velocityProperty().get()) &&
                 !Double.isNaN(aircraftState.altitudeProperty().get())) {
             t2.textProperty().bind(Bindings.createStringBinding(() ->
@@ -257,19 +313,20 @@ public final class AircraftController {
         } else if (!Double.isNaN(aircraftState.velocityProperty().get()) &&
                 Double.isNaN(aircraftState.altitudeProperty().get())) {
             t2.textProperty().bind(Bindings.createStringBinding(() ->
-                    String.format("\n%.0f\u2002km/h,\u2002?\u2002m",
-                            Units.convertTo(aircraftState.getVelocity(), Units.Speed.KILOMETER_PER_HOUR)),
-                            aircraftState.velocityProperty()));
+                            String.format("\n%.0f\u2002km/h,\u2002?\u2002m",
+                                    Units.convertTo(aircraftState.getVelocity(), Units.Speed.KILOMETER_PER_HOUR)),
+                    aircraftState.velocityProperty()));
         } else if (Double.isNaN(aircraftState.velocityProperty().get()) &&
                 !Double.isNaN(aircraftState.altitudeProperty().get())) {
             t2.textProperty().bind(Bindings.createStringBinding(() ->
                             String.format("\n?\u2002km/h,\u2002%.0f\u2002m",
-                            aircraftState.getAltitude()),
-                            aircraftState.altitudeProperty()
+                                    aircraftState.getAltitude()),
+                    aircraftState.altitudeProperty()
             ));
         } else {
             t2.textProperty().bind(Bindings.createStringBinding(() ->
-                    "\n?\u2002km/h,\u2002?\u2002m"));        }
+                    "\n?\u2002km/h,\u2002?\u2002m"));
+        }
 
         Rectangle rectangle = new Rectangle();
         rectangle.widthProperty().bind(t2.layoutBoundsProperty().map(b -> b.getWidth() + 4));
@@ -279,21 +336,31 @@ public final class AircraftController {
         changeVisibility(label, aircraftState);
         selected.addListener((observable, oldValue, newValue) -> changeVisibility(label, aircraftState));
 
-
         return label;
     }
 
+    /**
+     * private method that changes the visibility of the label depending on the zoom level of the map and
+     * the selected aircraft.
+     *
+     * @param label         label of an aircraft.
+     * @param aircraftState aircraftState of the plane we update the visibility of.
+     */
     private void changeVisibility(Group label, ObservableAircraftState aircraftState) {
         if (selected.get() != null) {
-            label.setVisible(mapParameters.zoomProperty().get() >= 11 || selected.get().equals(aircraftState));
+            label.setVisible(mapParameters.zoomProperty().get() >= ZOOM_VISIBILITY_THRESHOLD
+                    || selected.get().equals(aircraftState));
         } else {
-            label.setVisible(mapParameters.zoomProperty().get() >= 11);
+            label.setVisible(mapParameters.zoomProperty().get() >= ZOOM_VISIBILITY_THRESHOLD);
         }
         //todo hacer q se pueda salir del selected
     }
 
 
-
+    /**
+     * private method that adds a listener to the set of observable aircraft states that
+     * adds/removes the group of a plane that has been added/removed from the set.
+     */
     private void addListenerToSet() {
         aircraftStates.addListener((SetChangeListener<ObservableAircraftState>)
                 change -> {
@@ -304,13 +371,16 @@ public final class AircraftController {
                                 change.getElementRemoved().getIcaoAddress().toString()));
                         // TODO: 9/5/23 remove all listeners of the removed element
                     }
-                });
+                }
+        );
     }
 
+    /**
+     * private method that adds the handler for a mouse click which turns the clicked aircraft into the "selected".
+     */
     private void eventHandlers() {
         pane.setOnMouseClicked(mouseEvent -> {
             Node clicked = ((Node) mouseEvent.getTarget()).getParent().getParent();
-
             for (ObservableAircraftState state : aircraftStates) {
                 if (pane.lookup("#" + state.getIcaoAddress().toString()).equals(clicked)) {
                     selected.set(state);
@@ -321,7 +391,11 @@ public final class AircraftController {
         });
     }
 
-
+    /**
+     * Pane method which returns the pane of the AircraftController.
+     *
+     * @return Pane of the aircraft controller.
+     */
     public Pane pane() {
         return pane;
     }
