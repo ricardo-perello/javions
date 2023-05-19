@@ -20,14 +20,9 @@ import javafx.stage.Stage;
 import java.io.*;
 import java.net.URL;
 import java.nio.file.Path;
-import java.sql.SQLOutput;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 public final class Main extends Application {
     private static final int INITIAL_ZOOM = 8;
@@ -36,7 +31,9 @@ public final class Main extends Application {
     private static final int MIN_WIDTH = 800;
     private static final int MIN_HEIGHT = 600;
     private static final double NANO_TO_MILLI = 1e-6;
+    private static final double MEGA = 1e6;
     private ConcurrentLinkedQueue<RawMessage> rawMessageQueue;
+
     public static void main(String[] args) {
         launch(args);
     }
@@ -65,7 +62,6 @@ public final class Main extends Application {
         StatusLineController slc = new StatusLineController();
 
 
-
         var stackPane = new StackPane(bmc.pane(), ac.pane());
         var borderPane = new BorderPane(atc.pane(), slc.pane(), null, null, null);
         var root = new SplitPane(stackPane, borderPane);
@@ -77,30 +73,29 @@ public final class Main extends Application {
         primaryStage.show();
 
         rawMessageQueue = new ConcurrentLinkedQueue<>();
-        atc.setOnDoubleClick(selected ->bmc.centerOn(selected.getPosition()));
+        atc.setOnDoubleClick(selected -> bmc.centerOn(selected.getPosition()));
 
-        new  AnimationTimer() {
+        new AnimationTimer() {
             @Override
-            public  void  handle (long now) {
+            public void handle(long now) {
                 try {
-                        if (rawMessageQueue.peek() != null){
-                            Message m  = MessageParser.parse(rawMessageQueue.poll());
-                            if (m != null ) {
-                                asm.updateWithMessage(m);
-                                slc.setAircraftCount(asm.states().size());
-                                slc.setMessageCount(slc.getMessageCount() + 1);
-
-                            }
+                    if (rawMessageQueue.peek() != null) {
+                        Message m = MessageParser.parse(rawMessageQueue.poll());
+                        if (m != null) {
+                            asm.updateWithMessage(m);
+                            slc.setAircraftCount(asm.states().size());
+                            slc.setMessageCount(slc.getMessageCount() + 1);
                         }
-                        if (System.nanoTime() % 1e6 == 1000) asm.purge();
+                    }
+                    if (System.nanoTime() % MEGA == 1000) asm.purge();
 
                 } catch (IOException e) {
-                    throw  new UncheckedIOException(e);
+                    throw new UncheckedIOException(e);
                 }
 
             }
         }.start();
-                //read as a file
+        //read as a file
         Thread threadMessage = new Thread(() -> {
             try {
                 if (!getParameters().getRaw().isEmpty()) {
@@ -110,10 +105,10 @@ public final class Main extends Application {
                         }
                         rawMessageQueue.add(message);
                     }
-                }else{
+                } else {
                     AdsbDemodulator mi = new AdsbDemodulator(System.in);
                     RawMessage message = mi.nextMessage();
-                    while(message != null){
+                    while (message != null) {
                         rawMessageQueue.add(message);
                         message = mi.nextMessage();
                     }
@@ -126,7 +121,7 @@ public final class Main extends Application {
         threadMessage.start();
     }
 
-    static List<RawMessage> readAllMessages (String fileName) throws IOException {
+    static List<RawMessage> readAllMessages(String fileName) throws IOException {
         ArrayList<RawMessage> rm = new ArrayList<>();
         //todo quitar este startTime
         try (DataInputStream s = new DataInputStream(
@@ -142,7 +137,7 @@ public final class Main extends Application {
 
                 rm.add(new RawMessage(timeStampNs, message));
             }
-        }catch (EOFException e) { /* nothing to do */ } catch (FileNotFoundException e) {
+        } catch (EOFException e) { /* nothing to do */ } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
         return rm;
