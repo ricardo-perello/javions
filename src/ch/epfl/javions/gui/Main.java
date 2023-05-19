@@ -20,6 +20,7 @@ import javafx.stage.Stage;
 import java.io.*;
 import java.net.URL;
 import java.nio.file.Path;
+import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -76,18 +77,22 @@ public final class Main extends Application {
         rawMessageQueue = new ConcurrentLinkedQueue<>();
         Thread threadMessage = new Thread(() -> {
             try {
-
                 if (!getParameters().getRaw().get(0).isEmpty()) {
-                     Iterator<RawMessage> mi = readAllMessages(getParameters().getRaw().get(0)).iterator();
+                    Iterator<RawMessage> mi = readAllMessages(getParameters().getRaw().get(0)).iterator();
                     while(mi.hasNext()){
                         RawMessage message = mi.next();
                         boolean valid = false;
-                        do {
+
+                        while (!valid){
+
                             if (message.timeStampNs() <= System.nanoTime() - startTime){
                                 rawMessageQueue.add(message);
+                                //todo quitar sout
+                                System.out.println(rawMessageQueue.size());
                                 valid = true;
                             }
-                        }while (!valid);
+                        }
+                        System.out.println("HJHJHHHHHHHHHHHHHHHHH");
 
                     }
                 }else{
@@ -102,11 +107,31 @@ public final class Main extends Application {
                 throw new RuntimeException(e);
             }
         });
+        threadMessage.start();
         threadMessage.setDaemon(true);
 
         Thread thread_readMessages= new Thread(()->{
+            System.out.println("SSSSSSSSSSSS");
+            new  AnimationTimer() {
+                @Override
+                public  void  handle (long now) {
+                    try {
+                        System.out.println("KKKKKKKKKKKKKKKKKKKK");
+                        Iterator<RawMessage> rawMessageQueueIterator = rawMessageQueue.iterator();
+                        for ( int  i  =  0 ; i < 10 ; i += 1 ) {
+                            Message m  = MessageParser.parse(rawMessageQueueIterator.next());
+                            if (m != null ) asm.updateWithMessage(m);
+                            if (i == 9) asm.purge();
+                        }
+                    } catch (IOException e) {
+                        throw  new UncheckedIOException(e);
+                    }
 
+                }
+            }.start();
         });
+        thread_readMessages.start();
+        thread_readMessages.setDaemon(true);
     }
 
 
@@ -125,7 +150,6 @@ public final class Main extends Application {
     static List<RawMessage> readAllMessages (String fileName) throws IOException {
         ArrayList<RawMessage> rm = new ArrayList<>();
         //todo quitar este startTime
-        long startTime = System.nanoTime();
         try (DataInputStream s = new DataInputStream(
                 new BufferedInputStream(
                         new FileInputStream("resources/"+fileName)))) {
