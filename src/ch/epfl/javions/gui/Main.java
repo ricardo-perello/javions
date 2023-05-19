@@ -34,6 +34,7 @@ public final class Main extends Application {
     private static final int INITIAL_MIN_Y = 23_070;
     private static final int MIN_WIDTH = 800;
     private static final int MIN_HEIGHT = 600;
+    private static final double NANO_TO_MILLI = 1e-6;
     private ConcurrentLinkedQueue<RawMessage> rawMessageQueue;
     public static void main(String[] args) {
         launch(args);
@@ -73,20 +74,25 @@ public final class Main extends Application {
         primaryStage.setMinHeight(MIN_HEIGHT);
         primaryStage.show();
 
-        AnimationTimer animationTimer;
         rawMessageQueue = new ConcurrentLinkedQueue<>();
 
         new  AnimationTimer() {
             @Override
             public  void  handle (long now) {
                 try {
-                    for ( int  i  =  0 ; i < 10 ; i += 1 ) {
+
+
                         if (rawMessageQueue.peek() != null){
                             Message m  = MessageParser.parse(rawMessageQueue.poll());
-                            if (m != null ) asm.updateWithMessage(m);
+                            if (m != null ) {
+                                asm.updateWithMessage(m);
+                                slc.setAircraftCount(asm.states().size());
+                                slc.setMessageCount(slc.getMessageCount() + 1);
+
+                            }
                         }
-                        if (i == 9) asm.purge();
-                    }
+                        if (System.nanoTime() % 1e6 == 1000) asm.purge();
+
                 } catch (IOException e) {
                     throw  new UncheckedIOException(e);
                 }
@@ -104,7 +110,7 @@ public final class Main extends Application {
 
                         //todo change to sleep
                         if (message.timeStampNs() > System.nanoTime() - startTime){
-                            Thread.sleep((long) ((message.timeStampNs() - (System.nanoTime() - startTime)) / 1e6));
+                            Thread.sleep((long) ((message.timeStampNs() - (System.nanoTime() - startTime)) * NANO_TO_MILLI));
                         }
                         rawMessageQueue.add(message);
                     }

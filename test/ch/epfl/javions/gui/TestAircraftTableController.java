@@ -60,7 +60,7 @@ public  final  class TestAircraftTableController extends Application {
         // Aircraft animation
         new  AnimationTimer() {
             @Override
-            public  void  handle ( long now) {
+            public  void  handle (long now) {
                 try {
                     for ( int  i  =  0 ; i < 10 ; i += 1 ) {
                         Message m  = MessageParser.parse(mi.next( ));

@@ -121,9 +121,14 @@ public final class AircraftTableController {
         TableColumn<ObservableAircraftState, String> column_Registration = new TableColumn<>();
         column_Registration.setPrefWidth(PREFERRED_WIDTH_REGISTRATION);
         column_Registration.setText("Registration");
-        column_Registration.setCellValueFactory(newRow ->
-                new ReadOnlyObjectWrapper<>(newRow.getValue()
-                        .getAircraftData().registration().string()));
+        column_Registration.setCellValueFactory(newRow -> {
+            if(newRow.getValue().getAircraftData() == null){
+                return new ReadOnlyObjectWrapper<>("");
+            }else{
+                return new ReadOnlyObjectWrapper<>(newRow.getValue().getAircraftData().registration().string());
+            }
+        });
+
         table.getColumns().add(column_Registration);
 
         //****************************************** MODEL ******************************************
@@ -131,8 +136,13 @@ public final class AircraftTableController {
         TableColumn<ObservableAircraftState, String> column_Model = new TableColumn<>();
         column_Model.setPrefWidth(PREFERRED_WIDTH_MODEL);
         column_Model.setText("Model");
-        column_Model.setCellValueFactory(newRow ->
-                new ReadOnlyObjectWrapper<>(newRow.getValue().getAircraftData().model()));
+        column_Model.setCellValueFactory(newRow -> {
+            if (newRow.getValue().getAircraftData() == null) {
+                return new ReadOnlyObjectWrapper<>("");
+            } else {
+                return new ReadOnlyObjectWrapper<>(newRow.getValue().getAircraftData().model());
+            }
+        });
         table.getColumns().add(column_Model);
 
         //****************************************** TYPE ******************************************
@@ -140,9 +150,14 @@ public final class AircraftTableController {
         TableColumn<ObservableAircraftState, String> column_Type = new TableColumn<>();
         column_Type.setPrefWidth(PREFERRED_WIDTH_TYPE);
         column_Type.setText("Type");
-        column_Type.setCellValueFactory(newRow ->
-                new ReadOnlyObjectWrapper<>(newRow.getValue().getAircraftData()
-                        .typeDesignator().string()));
+        column_Type.setCellValueFactory(newRow -> {
+            if (newRow.getValue().getAircraftData() == null) {
+                return new ReadOnlyObjectWrapper<>("");
+            } else {
+                return new ReadOnlyObjectWrapper<>(newRow.getValue().getAircraftData().typeDesignator().string());
+            }
+        });
+
         table.getColumns().add(column_Type);
 
         //****************************************** DESCRIPTION ******************************************
@@ -150,8 +165,14 @@ public final class AircraftTableController {
         TableColumn<ObservableAircraftState, String> column_Description = new TableColumn<>();
         column_Description.setPrefWidth(PREFERRED_WIDTH_DESCRIPTION);
         column_Description.setText("Description");
-        column_Description.setCellValueFactory(newRow ->
-                new ReadOnlyObjectWrapper<>(newRow.getValue().getAircraftData().description().string()));
+        column_Description.setCellValueFactory(newRow -> {
+            if (newRow.getValue().getAircraftData() == null) {
+                return new ReadOnlyObjectWrapper<>("");
+            } else {
+                return new ReadOnlyObjectWrapper<>(newRow.getValue().getAircraftData().description().string());
+            }
+        });
+
         table.getColumns().add(column_Description);
 
         //**********************************************************************************************

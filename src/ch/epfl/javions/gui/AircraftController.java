@@ -3,6 +3,9 @@ package ch.epfl.javions.gui;
 import ch.epfl.javions.GeoPos;
 import ch.epfl.javions.Units;
 import ch.epfl.javions.WebMercator;
+import ch.epfl.javions.aircraft.AircraftDescription;
+import ch.epfl.javions.aircraft.AircraftTypeDesignator;
+import ch.epfl.javions.aircraft.WakeTurbulenceCategory;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
 import javafx.collections.ListChangeListener;
@@ -162,14 +165,24 @@ public final class AircraftController {
 
     private SVGPath setIcon(ObservableAircraftState aircraftState) {
 //todo hay q mirar si esto puede ser null
-        AircraftIcon aircraftIcon = iconFor(aircraftState.getAircraftData().typeDesignator(),
-                aircraftState.getAircraftData().description(),
-                aircraftState.getCategory(),
-                aircraftState.getAircraftData().wakeTurbulenceCategory());
+        AircraftIcon aircraftIcon;
+        if (aircraftState.getAircraftData() == null){
+            aircraftIcon = iconFor(new AircraftTypeDesignator(""),
+                    new AircraftDescription(""), 0, WakeTurbulenceCategory.of(""));
+        }else{
+            aircraftIcon = iconFor(aircraftState.getAircraftData().typeDesignator(),
+                    aircraftState.getAircraftData().description(),
+                    aircraftState.getCategory(),
+                    aircraftState.getAircraftData().wakeTurbulenceCategory());
+
+        }
 
         SVGPath icon = new SVGPath();
         icon.setContent(aircraftIcon.svgPath());
         altitudeColorFill(icon, aircraftState);
+        if (aircraftIcon.canRotate()) {
+            setIconRotation(icon, aircraftState);
+        }
         aircraftState.trackOrHeadingProperty().addListener((observable, oldValue, newValue) -> {
             if (aircraftIcon.canRotate()) {
                 setIconRotation(icon, aircraftState);
@@ -215,7 +228,11 @@ public final class AircraftController {
     private Group setLabel(ObservableAircraftState aircraftState) {
 
         Text t1 = new Text();
-        if (aircraftState.getAircraftData().registration() != null) {
+        if (aircraftState.getAircraftData() == null){
+            t1.textProperty().bind(Bindings.createStringBinding(
+                    () -> aircraftState.getIcaoAddress().string()));
+        }
+        else if (aircraftState.getAircraftData().registration() != null) {
             t1.textProperty().bind(Bindings.createStringBinding(
                     () -> aircraftState.getAircraftData().registration().string()));
         } else if (aircraftState.getCallSign() != null) {
