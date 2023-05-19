@@ -25,6 +25,7 @@ public final class AircraftTableController {
     private static final int PREFERRED_WIDTH_MODEL = 230;
     private static final int PREFERRED_WIDTH_TYPE = 50;
     private static final int PREFERRED_WIDTH_NUMERIC = 85;
+    private Consumer<ObservableAircraftState> consumer;
     private final ObservableSet<ObservableAircraftState> aircraftStates;
     private final TableView<ObservableAircraftState> table;
     private static NumberFormat numberFormatPosition;
@@ -43,7 +44,10 @@ public final class AircraftTableController {
 
         table.setOnMouseClicked(event -> {
             if (event.getClickCount() == 2 && event.getButton() == MouseButton.PRIMARY) {
-                setOnDoubleClick(selected::set);
+                if(table.getSelectionModel().getSelectedItem() != null){
+                    consumer.accept(table.getSelectionModel().getSelectedItem());
+                }
+
             }
         });
 
@@ -274,9 +278,6 @@ public final class AircraftTableController {
     }
 
     public void setOnDoubleClick(Consumer<ObservableAircraftState> consumer) {
-
-        consumer.accept(table.getSelectionModel().getSelectedItem());
-        //BaseMapController.centerOn(selected.get().getPosition());
-        //System.out.println(selected.get().getIcaoAddress().string());
+        this.consumer = consumer;
     }
 }

@@ -167,8 +167,9 @@ public final class AircraftController {
 //todo hay q mirar si esto puede ser null
         AircraftIcon aircraftIcon;
         if (aircraftState.getAircraftData() == null){
+
             aircraftIcon = iconFor(new AircraftTypeDesignator(""),
-                    new AircraftDescription(""), 0, WakeTurbulenceCategory.of(""));
+                    new AircraftDescription(""), aircraftState.getCategory(), WakeTurbulenceCategory.of(""));
         }else{
             aircraftIcon = iconFor(aircraftState.getAircraftData().typeDesignator(),
                     aircraftState.getAircraftData().description(),
@@ -226,7 +227,7 @@ public final class AircraftController {
 
 
     private Group setLabel(ObservableAircraftState aircraftState) {
-
+        //todo zac dice q hace un listener pq si derepente aparece el registration deberiamos actualizar pero no sabe como
         Text t1 = new Text();
         if (aircraftState.getAircraftData() == null){
             t1.textProperty().bind(Bindings.createStringBinding(

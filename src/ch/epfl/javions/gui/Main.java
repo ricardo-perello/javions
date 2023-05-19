@@ -26,6 +26,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public final class Main extends Application {
@@ -64,6 +65,7 @@ public final class Main extends Application {
         StatusLineController slc = new StatusLineController();
 
 
+
         var stackPane = new StackPane(bmc.pane(), ac.pane());
         var borderPane = new BorderPane(atc.pane(), slc.pane(), null, null, null);
         var root = new SplitPane(stackPane, borderPane);
@@ -75,13 +77,12 @@ public final class Main extends Application {
         primaryStage.show();
 
         rawMessageQueue = new ConcurrentLinkedQueue<>();
+        atc.setOnDoubleClick(selected ->bmc.centerOn(selected.getPosition()));
 
         new  AnimationTimer() {
             @Override
             public  void  handle (long now) {
                 try {
-
-
                         if (rawMessageQueue.peek() != null){
                             Message m  = MessageParser.parse(rawMessageQueue.poll());
                             if (m != null ) {
