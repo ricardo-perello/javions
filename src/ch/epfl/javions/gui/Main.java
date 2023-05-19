@@ -81,19 +81,13 @@ public final class Main extends Application {
                     Iterator<RawMessage> mi = readAllMessages(getParameters().getRaw().get(0)).iterator();
                     while(mi.hasNext()){
                         RawMessage message = mi.next();
-                        boolean valid = false;
 
-                        while (!valid){
 
-                            if (message.timeStampNs() <= System.nanoTime() - startTime){
-                                rawMessageQueue.add(message);
-                                //todo quitar sout
-                                System.out.println(rawMessageQueue.size());
-                                valid = true;
-                            }
+                        //todo change to sleep
+                        if (message.timeStampNs() > System.nanoTime() - startTime){
+                            Thread.sleep((long) ((message.timeStampNs() - (System.nanoTime() - startTime)) / 1e6));
                         }
-                        System.out.println("HJHJHHHHHHHHHHHHHHHHH");
-
+                        rawMessageQueue.add(message);
                     }
                 }else{
                     AdsbDemodulator mi = new AdsbDemodulator(System.in);
@@ -105,33 +99,12 @@ public final class Main extends Application {
                 }
             } catch (IOException e) {
                 throw new RuntimeException(e);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
             }
         });
-        threadMessage.start();
         threadMessage.setDaemon(true);
-
-        Thread thread_readMessages= new Thread(()->{
-            System.out.println("SSSSSSSSSSSS");
-            new  AnimationTimer() {
-                @Override
-                public  void  handle (long now) {
-                    try {
-                        System.out.println("KKKKKKKKKKKKKKKKKKKK");
-                        Iterator<RawMessage> rawMessageQueueIterator = rawMessageQueue.iterator();
-                        for ( int  i  =  0 ; i < 10 ; i += 1 ) {
-                            Message m  = MessageParser.parse(rawMessageQueueIterator.next());
-                            if (m != null ) asm.updateWithMessage(m);
-                            if (i == 9) asm.purge();
-                        }
-                    } catch (IOException e) {
-                        throw  new UncheckedIOException(e);
-                    }
-
-                }
-            }.start();
-        });
-        thread_readMessages.start();
-        thread_readMessages.setDaemon(true);
+        threadMessage.start();
     }
 
 
@@ -152,7 +125,7 @@ public final class Main extends Application {
         //todo quitar este startTime
         try (DataInputStream s = new DataInputStream(
                 new BufferedInputStream(
-                        new FileInputStream("resources/"+fileName)))) {
+                        new FileInputStream(fileName)))) {
             byte[] bytes = new byte[RawMessage.LENGTH];
 
             while (s.available() > 0) {
