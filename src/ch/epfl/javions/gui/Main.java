@@ -31,7 +31,9 @@ public final class Main extends Application {
     private static final int MIN_WIDTH = 800;
     private static final int MIN_HEIGHT = 600;
     private static final double NANO_TO_MILLI = 1e-6;
-    private static final double MEGA = 1e6;
+    private static final double ONE_SECOND_IN_NANO = 1e9;
+    private static double lastPurgeTimeStamp = ONE_SECOND_IN_NANO;
+
     private ConcurrentLinkedQueue<RawMessage> rawMessageQueue;
 
     public static void main(String[] args) {
@@ -87,7 +89,12 @@ public final class Main extends Application {
                             slc.setMessageCount(slc.getMessageCount() + 1);
                         }
                     }
-                    if (System.nanoTime() % MEGA == 1000) asm.purge();
+                    long nanoTime = System.nanoTime();
+                    if (nanoTime - lastPurgeTimeStamp >= ONE_SECOND_IN_NANO) {
+                        lastPurgeTimeStamp = nanoTime;
+                        asm.purge();
+                        System.out.println("purging");
+                    }
 
                 } catch (IOException e) {
                     throw new UncheckedIOException(e);
@@ -123,7 +130,6 @@ public final class Main extends Application {
 
     static List<RawMessage> readAllMessages(String fileName) throws IOException {
         ArrayList<RawMessage> rm = new ArrayList<>();
-        //todo quitar este startTime
         try (DataInputStream s = new DataInputStream(
                 new BufferedInputStream(
                         new FileInputStream(fileName)))) {

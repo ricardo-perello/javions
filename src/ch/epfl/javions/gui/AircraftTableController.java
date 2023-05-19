@@ -45,7 +45,7 @@ public final class AircraftTableController {
         pane.heightProperty().addListener((observable, oldValue, newValue) -> table.setPrefHeight((Double) newValue));
         table.setOnMouseClicked(event -> {
             if (event.getClickCount() == 2 && event.getButton() == MouseButton.PRIMARY) {
-                if(table.getSelectionModel().getSelectedItem() != null){
+                if (table.getSelectionModel().getSelectedItem() != null) {
                     consumer.accept(table.getSelectionModel().getSelectedItem());
                 }
 
@@ -56,14 +56,14 @@ public final class AircraftTableController {
             if (newValue != table.getSelectionModel().getSelectedItem()) {
                 table.getSelectionModel().select(newValue);
                 table.scrollTo(table.getSelectionModel().getSelectedIndex());
-                //System.out.println("new table selection: " + newValue.getIcaoAddress().string());
+
             }
         });
 
         table.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != selected.get()) {
                 selected.set(newValue);
-                //System.out.println("new selected: " + newValue.getIcaoAddress().string());
+
             }
         });
 
@@ -127,9 +127,9 @@ public final class AircraftTableController {
         column_Registration.setPrefWidth(PREFERRED_WIDTH_REGISTRATION);
         column_Registration.setText("Registration");
         column_Registration.setCellValueFactory(newRow -> {
-            if(newRow.getValue().getAircraftData() == null){
+            if (newRow.getValue().getAircraftData() == null) {
                 return new ReadOnlyObjectWrapper<>("");
-            }else{
+            } else {
                 return new ReadOnlyObjectWrapper<>(newRow.getValue().getAircraftData().registration().string());
             }
         });

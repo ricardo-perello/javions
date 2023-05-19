@@ -13,7 +13,7 @@ public final class StatusLineController {
     private final BorderPane pane;
     private final IntegerProperty aircraftCountProperty;
     private final LongProperty messageCountProperty;
-
+//todo comentarios
     public StatusLineController() {
         pane = new BorderPane();
         pane.getStylesheets().add("status.css");

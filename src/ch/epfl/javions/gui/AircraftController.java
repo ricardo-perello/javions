@@ -7,7 +7,9 @@ import ch.epfl.javions.aircraft.AircraftDescription;
 import ch.epfl.javions.aircraft.AircraftTypeDesignator;
 import ch.epfl.javions.aircraft.WakeTurbulenceCategory;
 import javafx.beans.binding.Bindings;
-import javafx.beans.property.*;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.ObjectProperty;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableSet;
 import javafx.collections.SetChangeListener;
@@ -98,7 +100,7 @@ public final class AircraftController {
         Group trajectory = new Group();
         trajectory.getStyleClass().add("trajectory");
         trajectory.setVisible(false);
-        //todo comentario de esta linea
+        //if trajectory changes, it gets updated
         aircraftState.getTrajectory().addListener((ListChangeListener<ObservableAircraftState.AirbornePos>)
                 observable -> updateTrajectory(aircraftState, trajectory));
         //if change in the zoom level we calculate the trajectory again
@@ -247,10 +249,8 @@ public final class AircraftController {
      * @param aircraftInfo  group containing the icon and label of the aircraft to reposition.
      */
     private void repositionAircraft(ObservableAircraftState aircraftState, Group aircraftInfo) {
-        SimpleObjectProperty<GeoPos> aircraftPositionProperty = new SimpleObjectProperty<>();
-        aircraftPositionProperty.bind(aircraftState.positionProperty());
-        aircraftInfo.setLayoutX(xOnScreen(aircraftPositionProperty.getValue()).doubleValue()); //todo limpiar para usar menos propiedades
-        aircraftInfo.setLayoutY(yOnScreen(aircraftPositionProperty.getValue()).doubleValue());
+        aircraftInfo.setLayoutX(xOnScreen(aircraftState.getPosition()));
+        aircraftInfo.setLayoutY(yOnScreen(aircraftState.getPosition()));
     }
 
     /**
@@ -259,10 +259,9 @@ public final class AircraftController {
      * @param aircraftPositionProperty property of the aircraft position.
      * @return the x projection on the WebMercator map.
      */
-    private ReadOnlyDoubleProperty xOnScreen(GeoPos aircraftPositionProperty) {
-        double x = WebMercator.x(zoomProperty.get(), aircraftPositionProperty.longitude())
+    private Double xOnScreen(GeoPos aircraftPositionProperty) {
+        return WebMercator.x(zoomProperty.get(), aircraftPositionProperty.longitude())
                 - minXProperty.get();
-        return new SimpleDoubleProperty(x);
     }
 
     /**
@@ -271,10 +270,9 @@ public final class AircraftController {
      * @param aircraftPositionProperty property of the aircraft position.
      * @return the y projection on the WebMercator map.
      */
-    private ReadOnlyDoubleProperty yOnScreen(GeoPos aircraftPositionProperty) {
-        double y = WebMercator.y(zoomProperty.get(), aircraftPositionProperty.latitude())
+    private Double yOnScreen(GeoPos aircraftPositionProperty) {
+        return WebMercator.y(zoomProperty.get(), aircraftPositionProperty.latitude())
                 - minYProperty.get();
-        return new SimpleDoubleProperty(y);
     }
 
     /**
@@ -301,7 +299,8 @@ public final class AircraftController {
         }
 
         Text t2 = new Text();
-//todo update with time. first message could be NaN but next message could be fine and still displays ?.
+//todo update with time. first message could be NaN but next message could be fine and still displays ?. use .map() instead
+        //t2.textProperty().map()
         if (!Double.isNaN(aircraftState.velocityProperty().get()) &&
                 !Double.isNaN(aircraftState.altitudeProperty().get())) {
             t2.textProperty().bind(Bindings.createStringBinding(() ->

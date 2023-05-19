@@ -73,7 +73,6 @@ public final class AircraftStateManager {
                     aircraftStateAccumulatorMap.get(removeIcaoAddress).stateSetter().getLastMessageTimeStampNs()
                     >= MAX_DIFFERENCE_TIME) {
                 aircraftStateAccumulatorMap.remove(removeIcaoAddress);
-
             }
         }
     }
