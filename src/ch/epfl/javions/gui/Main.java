@@ -104,13 +104,8 @@ public final class Main extends Application {
         Thread threadMessage = new Thread(() -> {
             try {
                 if (!getParameters().getRaw().isEmpty()) {
-                    Iterator<RawMessage> mi = readAllMessages(getParameters().getRaw().get(0)).iterator();
-                    while(mi.hasNext()){
-                        RawMessage message = mi.next();
-
-
-                        //todo change to sleep
-                        if (message.timeStampNs() > System.nanoTime() - startTime){
+                    for (RawMessage message : readAllMessages(getParameters().getRaw().get(0))) {
+                        if (message.timeStampNs() > System.nanoTime() - startTime) {
                             Thread.sleep((long) ((message.timeStampNs() - (System.nanoTime() - startTime)) * NANO_TO_MILLI));
                         }
                         rawMessageQueue.add(message);
@@ -123,9 +118,7 @@ public final class Main extends Application {
                         message = mi.nextMessage();
                     }
                 }
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            } catch (InterruptedException e) {
+            } catch (IOException | InterruptedException e) {
                 throw new RuntimeException(e);
             }
         });

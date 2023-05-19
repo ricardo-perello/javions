@@ -41,7 +41,8 @@ public final class AircraftTableController {
         table.getStylesheets().add("table.css");
         table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_SUBSEQUENT_COLUMNS);
         table.setTableMenuButtonVisible(true);
-
+        pane.widthProperty().addListener((observable, oldValue, newValue) -> table.setPrefWidth((Double) newValue));
+        pane.heightProperty().addListener((observable, oldValue, newValue) -> table.setPrefHeight((Double) newValue));
         table.setOnMouseClicked(event -> {
             if (event.getClickCount() == 2 && event.getButton() == MouseButton.PRIMARY) {
                 if(table.getSelectionModel().getSelectedItem() != null){
