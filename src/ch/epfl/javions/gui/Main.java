@@ -33,9 +33,9 @@ public final class Main extends Application {
     private static final double NANO_TO_MILLI = 1e-6;
     private static final double ONE_SECOND_IN_NANO = 1e9;
     private static double lastPurgeTimeStamp = ONE_SECOND_IN_NANO;
-
     private ConcurrentLinkedQueue<RawMessage> rawMessageQueue;
 
+    // TODO: 20/5/23 add comments
     public static void main(String[] args) {
         launch(args);
     }

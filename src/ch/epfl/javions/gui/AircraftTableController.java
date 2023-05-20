@@ -6,7 +6,6 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.ObservableSet;
 import javafx.collections.SetChangeListener;
-import javafx.scene.Node;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.input.MouseButton;
@@ -35,8 +34,9 @@ public final class AircraftTableController {
     /**
      * Constructor for AircraftTableController which is responsible for creating the table showing the
      * information of all the visible aircraft.
+     *
      * @param aircraftStates Observable set of all the aircraft states .
-     * @param selected AircraftState of the selected aircraft.
+     * @param selected       AircraftState of the selected aircraft.
      */
     public AircraftTableController(ObservableSet<ObservableAircraftState> aircraftStates,
                                    ObjectProperty<ObservableAircraftState> selected) {
@@ -291,6 +291,7 @@ public final class AircraftTableController {
     /**
      * this private static method parses both entries from strings to doubles
      * and then uses the default compare method between them.
+     *
      * @param o1 first string to compare
      * @param o2 second string to compare
      * @return compare both doubles and returns 0 if the entries are numerically equal,
@@ -305,6 +306,7 @@ public final class AircraftTableController {
 
     /**
      * method that returns the pane of the table.
+     *
      * @return the pane of the table.
      */
     public Pane pane() {
@@ -314,6 +316,7 @@ public final class AircraftTableController {
     /**
      * public sets a consumer which is responsible for centering the basemap on a row that has
      * double-clicked.
+     *
      * @param consumer lambda consumer which centers the basemap on the plane that is double-clicked.
      */
     public void setOnDoubleClick(Consumer<ObservableAircraftState> consumer) {
