@@ -84,7 +84,7 @@ public final class AircraftController {
         Group trajectory = setTrajectory(aircraftState);
         Group annotated = new Group(trajectory, aircraftInfo);
         annotated.setId(aircraftState.getIcaoAddress().toString());
-        annotated.viewOrderProperty().bind(aircraftState.altitudeProperty().negate()); // TODO: 19/5/23 when selected, should be on top of planes with higher altitude
+        annotated.viewOrderProperty().bind(aircraftState.altitudeProperty().negate());
         pane.getChildren().add(annotated);
     }
 
@@ -352,7 +352,6 @@ public final class AircraftController {
         } else {
             label.setVisible(mapParameters.zoomProperty().get() >= ZOOM_VISIBILITY_THRESHOLD);
         }
-        //todo hacer q se pueda salir del selected
     }
 
 
