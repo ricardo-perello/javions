@@ -32,7 +32,12 @@ public final class AircraftTableController {
     private static NumberFormat numberFormat;
     private final Pane pane;
 
-    //todo add comments
+    /**
+     * Constructor for AircraftTableController which is responsible for creating the table showing the
+     * information of all the visible aircraft.
+     * @param aircraftStates Observable set of all the aircraft states .
+     * @param selected AircraftState of the selected aircraft.
+     */
     public AircraftTableController(ObservableSet<ObservableAircraftState> aircraftStates,
                                    ObjectProperty<ObservableAircraftState> selected) {
         this.aircraftStates = aircraftStates;
@@ -74,6 +79,9 @@ public final class AircraftTableController {
 
     }
 
+    /**
+     * private method that adds a listener to be notified when the set of aircraft states changes.
+     */
     private void addListenerToSet() {
         aircraftStates.addListener((SetChangeListener<ObservableAircraftState>)
                 change -> {
@@ -87,6 +95,10 @@ public final class AircraftTableController {
                 });
     }
 
+    /**
+     * private method that initializes 2 number formatters that will be used
+     * in the numeric columns.
+     */
     private void initializeNumberFormatters() {
         numberFormatPosition = NumberFormat.getInstance();
         numberFormatPosition.setMinimumFractionDigits(4);
@@ -97,12 +109,20 @@ public final class AircraftTableController {
         numberFormat.setMaximumFractionDigits(0);
     }
 
+    /**
+     * this private method adds all the aircraft in aircraftStates to the table
+     */
     private void addRows() {
         for (ObservableAircraftState aircraftState : aircraftStates) {
             table.getItems().add(aircraftState);
         }
     }
 
+    /**
+     * this private method creates all the columns of the table.
+     * ICAO, CALLSIGN, REGISTRATION, MODEL, TYPE, DESCRIPTION.
+     * LONGITUDE, LATITUDE, ALTITUDE, VELOCITY, HEADING.
+     */
     private void createColumns() {
         //****************************************** ICAO ******************************************
         TableColumn<ObservableAircraftState, String> column_ICAO = new TableColumn<>();
@@ -200,7 +220,7 @@ public final class AircraftTableController {
                     return s.replace(",", ".");
                 }));
 
-        column_Longitude.setComparator(AircraftTableController::parser);
+        column_Longitude.setComparator(AircraftTableController::parserComparator);
         table.getColumns().add(column_Longitude);
 
         //****************************************** LATITUDE ******************************************
@@ -218,7 +238,7 @@ public final class AircraftTableController {
                     return s.replace(",", ".");
                 }));
 
-        column_Latitude.setComparator(AircraftTableController::parser);
+        column_Latitude.setComparator(AircraftTableController::parserComparator);
         table.getColumns().add(column_Latitude);
 
         //****************************************** ALTITUDE ******************************************
@@ -234,7 +254,7 @@ public final class AircraftTableController {
                             String s = numberFormat.format(alt.doubleValue());
                             return s.replace(".", "");
                         }));
-        column_Altitude.setComparator(AircraftTableController::parser);
+        column_Altitude.setComparator(AircraftTableController::parserComparator);
         table.getColumns().add(column_Altitude);
 
 
@@ -249,7 +269,7 @@ public final class AircraftTableController {
                         vel -> numberFormat.format(
                                 Units.convertTo(vel.doubleValue(),
                                         Units.Speed.KILOMETER_PER_HOUR))));
-        column_Velocity.setComparator(AircraftTableController::parser);
+        column_Velocity.setComparator(AircraftTableController::parserComparator);
         table.getColumns().add(column_Velocity);
 
         //****************************************** HEADING ******************************************
@@ -264,20 +284,38 @@ public final class AircraftTableController {
                         hea -> numberFormat.format(
                                 Units.convertTo(hea.doubleValue(),
                                         Units.Angle.DEGREE))));
-        column_Heading.setComparator(AircraftTableController::parser);
+        column_Heading.setComparator(AircraftTableController::parserComparator);
         table.getColumns().add(column_Heading);
     }
 
-    private static int parser(String o1, String o2) {
+    /**
+     * this private static method parses both entries from strings to doubles
+     * and then uses the default compare method between them.
+     * @param o1 first string to compare
+     * @param o2 second string to compare
+     * @return compare both doubles and returns 0 if the entries are numerically equal,
+     * positive if o1 is more than o2
+     * negative if o1 is less than o2.
+     */
+    private static int parserComparator(String o1, String o2) {
         double v1 = Double.parseDouble(o1);
         double v2 = Double.parseDouble(o2);
         return compare(v1, v2);
     }
 
-    public Node pane() {
+    /**
+     * method that returns the pane of the table.
+     * @return the pane of the table.
+     */
+    public Pane pane() {
         return pane;
     }
 
+    /**
+     * public sets a consumer which is responsible for centering the basemap on a row that has
+     * double-clicked.
+     * @param consumer lambda consumer which centers the basemap on the plane that is double-clicked.
+     */
     public void setOnDoubleClick(Consumer<ObservableAircraftState> consumer) {
         this.consumer = consumer;
     }
