@@ -23,7 +23,23 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
+/**
+ * The main class of the Javions application.
+ * It extends the JavaFX Application class and provides the entry point for launching the application.
+ * Javions is a program that visualizes aircraft data on a map.
+ *
+ * The application initializes the user interface components, such as the map, aircraft database, and controllers,
+ * and starts an animation timer to handle incoming messages and update the state of the aircraft.
+ *
+ * @author Ricardo Perelló Mas
+ * @author Alejandro Meredith Romero
+ * @version 1.0
+ * @since 2023-05-20
+ */
 
+/**
+ * The main class of the Javions application.
+ */
 public final class Main extends Application {
     private static final int INITIAL_ZOOM = 8;
     private static final int INITIAL_MIN_X = 33_530;
@@ -35,12 +51,20 @@ public final class Main extends Application {
     private static double lastPurgeTimeStamp = ONE_SECOND_IN_NANO;
     private ConcurrentLinkedQueue<RawMessage> rawMessageQueue;
 
-    // TODO: 20/5/23 add comments
-    public static void main(String[] args) {
+    /**
+     * The entry point of the Javions application.
+     *
+     * @param args the command-line arguments
+     */    public static void main(String[] args) {
         launch(args);
     }
 
-
+    /**
+     * Starts the Javions application.
+     *
+     * @param primaryStage the primary stage for the application
+     * @throws Exception if an error occurs during application startup
+     */
     @Override
     public void start(Stage primaryStage) throws Exception {
         long startTime = System.nanoTime();
@@ -101,9 +125,10 @@ public final class Main extends Application {
 
             }
         }.start();
-        //read as a file
+
         Thread threadMessage = new Thread(() -> {
             try {
+                //read as a file
                 if (!getParameters().getRaw().isEmpty()) {
                     for (RawMessage message : readAllMessages(getParameters().getRaw().get(0))) {
                         if (message.timeStampNs() > System.nanoTime() - startTime) {
@@ -111,7 +136,7 @@ public final class Main extends Application {
                         }
                         rawMessageQueue.add(message);
                     }
-                } else {
+                } else {//read with System.in
                     AdsbDemodulator mi = new AdsbDemodulator(System.in);
                     RawMessage message = mi.nextMessage();
                     while (message != null) {
@@ -127,6 +152,13 @@ public final class Main extends Application {
         threadMessage.start();
     }
 
+    /**
+     * Reads all raw messages from the specified file and returns them as a list of RawMessage objects.
+     *
+     * @param fileName the name of the file to read the raw messages from
+     * @return a list of RawMessage objects read from the file
+     * @throws IOException if an I/O error occurs while reading the file
+     */
     static List<RawMessage> readAllMessages(String fileName) throws IOException {
         ArrayList<RawMessage> rm = new ArrayList<>();
         try (DataInputStream s = new DataInputStream(
