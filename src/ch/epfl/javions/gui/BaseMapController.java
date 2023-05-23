@@ -12,7 +12,6 @@ import javafx.scene.layout.Pane;
 import java.io.IOException;
 
 public final class BaseMapController {
-    // TODO: 26/4/23 create centerOn method
     private static final int TILE_SIZE = 256;
     private static final int MIN_TIME_BETWEEN_SCROLLS_MS = 200;
 
@@ -163,7 +162,7 @@ public final class BaseMapController {
             previousMouseCoordsOnScreen.set(new Point2D(e.getX(), e.getY()));
         });
     }
-    //todo cambiar el metodo cuando haya aviones
+    //todo check if we need this
     private void addEventMouseClicking() {
         //canvas.setOnMouseClicked((e)-> );
     }
@@ -205,7 +204,11 @@ public final class BaseMapController {
         mapParametersProperty.set(mapParameters);
     }
 
-    //todo comentarios
+    /**
+     * centerOn changes the map parameters so that the center of the map is the GeoPos passed
+     * as parameter.
+     * @param geoPos new center of the map.
+     */
     public void centerOn(GeoPos geoPos){
         double x = WebMercator.x(mapParameters.getZoom(), geoPos.longitude())
                 - mapParameters.getMinX() - pane.getWidth()/2;
