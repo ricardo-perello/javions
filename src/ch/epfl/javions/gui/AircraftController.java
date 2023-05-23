@@ -284,24 +284,33 @@ public final class AircraftController {
     private Group setLabel(ObservableAircraftState aircraftState) {
         //todo zac dice q hace un listener pq si derepente aparece el registration deberiamos actualizar pero no sabe como
         Text t1 = new Text();
-        if (aircraftState.getAircraftData() == null) {
-            t1.textProperty().bind(Bindings.createStringBinding(
-                    () -> aircraftState.getIcaoAddress().string()));
-        } else if (aircraftState.getAircraftData().registration() != null) {
-            t1.textProperty().bind(Bindings.createStringBinding(
-                    () -> aircraftState.getAircraftData().registration().string()));
-        } else if (aircraftState.getCallSign() != null) {
-            t1.textProperty().bind(Bindings.createStringBinding(
-                    () -> aircraftState.getCallSign().string()));
-        } else {
-            t1.textProperty().bind(Bindings.createStringBinding(
-                    () -> aircraftState.getIcaoAddress().string()));
-        }
+
+        t1.textProperty().bind(Bindings.createStringBinding(()->
+                aircraftState.getAircraftData() != null ?
+                    aircraftState.getAircraftData().registration().string() :
+                    (aircraftState.getCallSign() != null ?
+                            aircraftState.getCallSign().string() :
+                            aircraftState.getIcaoAddress().string()),
+                aircraftState.callSignProperty()));
 
         Text t2 = new Text();
 //todo update with time. first message could be NaN but next message could be fine and still displays ?. use .map() instead
-        //t2.textProperty().map()
-        if (!Double.isNaN(aircraftState.velocityProperty().get()) &&
+
+        t2.textProperty().bind(Bindings.createStringBinding(() ->{
+
+            String velocityString = !Double.isNaN(aircraftState.velocityProperty().get()) ?
+                    String.format("%.0f",Units.convertTo(aircraftState.getVelocity(), Units.Speed.KILOMETER_PER_HOUR))
+                    : "?";
+
+            //we do not check if altitude is NaN since we would not accept it
+            String altitudeString = String.format("%.0f",aircraftState.getAltitude());
+
+            return String.format("\n%f\u2002km/h, \u2002%f\u2002m", velocityString, altitudeString);
+        },aircraftState.velocityProperty(), aircraftState.altitudeProperty()));
+
+
+
+        /*if (!Double.isNaN(aircraftState.velocityProperty().get()) &&
                 !Double.isNaN(aircraftState.altitudeProperty().get())) {
             t2.textProperty().bind(Bindings.createStringBinding(() ->
                             String.format("\n%.0f\u2002km/h,\u2002%.0f\u2002m",
@@ -325,7 +334,9 @@ public final class AircraftController {
         } else {
             t2.textProperty().bind(Bindings.createStringBinding(() ->
                     "\n?\u2002km/h,\u2002?\u2002m"));
-        }
+        }*/
+
+        //t2.textProperty().bind(aircraftState.velocityProperty().map());
 
         Rectangle rectangle = new Rectangle();
         rectangle.widthProperty().bind(t2.layoutBoundsProperty().map(b -> b.getWidth() + 4));
