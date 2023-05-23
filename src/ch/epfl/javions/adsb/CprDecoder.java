@@ -33,7 +33,7 @@ public class CprDecoder {
 
         //longitude
         double numberZonesLongitude0 = numberZonesLongitudeCalculator(latitudeTurn0, latitudeTurn1);
-        if(Double.isNaN(numberZonesLongitude0)){
+        if (Double.isNaN(numberZonesLongitude0)) {
             return null;
         }
         double numberZonesLongitude1 = numberZonesLongitude0 - 1;
@@ -43,7 +43,7 @@ public class CprDecoder {
 
 
         if (mostRecent == 0) {
-            return geoPosComputer(latitudeTurn0, zLongitude, numberZonesLongitude0,numberZonesLongitude0,
+            return geoPosComputer(latitudeTurn0, zLongitude, numberZonesLongitude0, numberZonesLongitude0,
                     widthZoneLongitude0, x0);
         } else {
             return geoPosComputer(latitudeTurn1, zLongitude, numberZonesLongitude0, numberZonesLongitude1,
@@ -76,6 +76,7 @@ public class CprDecoder {
 
     /**
      * private method that allows to calculate zA (number of zone for the longitude)
+     *
      * @param A, double, valued calculated in the previous method
      * @return int, return the number of zone for the longitude
      */
@@ -108,6 +109,7 @@ public class CprDecoder {
 
     /**
      * method that allows us to determine the width of the zone thanks to the number of zones
+     *
      * @param numberOfZones, double, number of zones in a given direction(longitude or latitude)
      * @return double the width
      */
@@ -117,14 +119,15 @@ public class CprDecoder {
 
     /**
      * private method that allows to calculate the final position of the plane
-     * @param latitudeTurn, double, the latitude in its turn form
-     * @param zLongitude, double, current longitude zone
-     * @param numberZonesLongitude0, double, the number of zones for the longitude for MostRecent = 0
+     *
+     * @param latitudeTurn,                  double, the latitude in its turn form
+     * @param zLongitude,                    double, current longitude zone
+     * @param numberZonesLongitude0,         double, the number of zones for the longitude for MostRecent = 0
      * @param numberZonesLongitudeMostRecent double, the number of zones for the longitude depending on the mostRecent
-     * @param widthZoneLongitude, double, the width of zones for the longitude depending on the mostRecent
-     * @param x, double, the coordinates for x depending on the mostRecent
+     * @param widthZoneLongitude,            double, the width of zones for the longitude depending on the mostRecent
+     * @param x,                             double, the coordinates for x depending on the mostRecent
      * @return null if the Latitude is not valid
-     *        new GeoPos of the plane (formula changes depending on the conditions)
+     * new GeoPos of the plane (formula changes depending on the conditions)
      */
     private static GeoPos geoPosComputer(double latitudeTurn, double zLongitude, double numberZonesLongitude0,
                                          double numberZonesLongitudeMostRecent, double widthZoneLongitude, double x) {
@@ -135,7 +138,7 @@ public class CprDecoder {
         if (!GeoPos.isValidLatitudeT32(latitudeT32)) {
             return null;
         }
-        if (numberZonesLongitude0 == 1){
+        if (numberZonesLongitude0 == 1) {
             return new GeoPos((int) Units.convert(x, Units.Angle.TURN, Units.Angle.T32), latitudeT32);
         }
 
@@ -149,11 +152,12 @@ public class CprDecoder {
 
     /**
      * private method that allows to calculate the number of zones for the longitude
+     *
      * @param latitudeTurn0, double the latitude in turns with Most Recent as 0
      * @param latitudeTurn1, double the latitude in turns with Most Recent as 1
      * @return NaN is zA1 and zA0 not equal, 1 if A0 is NaN or zA0
      */
-    private static double numberZonesLongitudeCalculator(double latitudeTurn0, double latitudeTurn1){
+    private static double numberZonesLongitudeCalculator(double latitudeTurn0, double latitudeTurn1) {
         double A0 = ACalculator(latitudeTurn0);
         double A1 = ACalculator(latitudeTurn1);
         double zA0 = zACalculator(A0);

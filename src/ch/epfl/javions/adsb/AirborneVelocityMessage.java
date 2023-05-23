@@ -94,7 +94,7 @@ public record AirborneVelocityMessage(long timeStampNs, IcaoAddress icaoAddress,
      * @param vel_multiplier   subsonic or supersonic aircraft
      * @return AirborneVelocityMessage of subtype 1 or 2
      */
-    private static AirborneVelocityMessage groundSpeed(RawMessage rawMessage,long contentOfMessage,int vel_multiplier){
+    private static AirborneVelocityMessage groundSpeed(RawMessage rawMessage, long contentOfMessage, int vel_multiplier) {
         //direction
         int Dew = Bits.extractUInt(contentOfMessage, DEW_START, DEW_LENGTH);
         int Dns = Bits.extractUInt(contentOfMessage, DNS_START, DNS_LENGTH);

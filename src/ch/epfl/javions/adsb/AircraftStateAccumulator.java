@@ -70,6 +70,7 @@ public class AircraftStateAccumulator<T extends AircraftStateSetter> {
 
     /**
      * private method that allows to determine if we can store the position and to store it
+     *
      * @param aim AirbornePositionMessage from where we are going to determine the coordinates
      */
     private void setPosition(AirbornePositionMessage aim) {
@@ -80,7 +81,7 @@ public class AircraftStateAccumulator<T extends AircraftStateSetter> {
                 xEven = aim.x();
                 yEven = aim.y();
                 lastMessageTimeStampNsEven = aim.timeStampNs();
-                calculateGeoPos(aim, parity,lastMessageTimeStampNsOdd);
+                calculateGeoPos(aim, parity, lastMessageTimeStampNsOdd);
 
             }
             //case where the parity is 1
@@ -88,28 +89,28 @@ public class AircraftStateAccumulator<T extends AircraftStateSetter> {
                 xOdd = aim.x();
                 yOdd = aim.y();
                 lastMessageTimeStampNsOdd = aim.timeStampNs();
-                calculateGeoPos(aim, parity,lastMessageTimeStampNsEven);
+                calculateGeoPos(aim, parity, lastMessageTimeStampNsEven);
             }
         }
     }
 
     /**
      * private method that allows us to determine the position of the plane
-     * @param aim AirbornePositionMessage, message sent by the plane
-     * @param parity, int, equivalent to the mostRecent in CprDecoder
+     *
+     * @param aim                                    AirbornePositionMessage, message sent by the plane
+     * @param parity,                                int, equivalent to the mostRecent in CprDecoder
      * @param lastMessageTimeStampsNsOppositeParity, long, the time stamps of the message of opposite parity
      */
-    private void calculateGeoPos(AirbornePositionMessage aim, int parity, long lastMessageTimeStampsNsOppositeParity){
-        if ((!Double.isNaN(xEven) && !Double.isNaN(yEven) && (parity==1)) ||
-        (!Double.isNaN(xOdd) && !Double.isNaN(yOdd) && (parity == 0)) ) {
+    private void calculateGeoPos(AirbornePositionMessage aim, int parity, long lastMessageTimeStampsNsOppositeParity) {
+        if ((!Double.isNaN(xEven) && !Double.isNaN(yEven) && (parity == 1)) ||
+                (!Double.isNaN(xOdd) && !Double.isNaN(yOdd) && (parity == 0))) {
             if (aim.timeStampNs() - lastMessageTimeStampsNsOppositeParity <= MAXIMUM_DISTANCE_BETWEEN_MESSAGES) {
                 GeoPos geoPos = CprDecoder.decodePosition(xEven, yEven, xOdd, yOdd, parity);
                 if (geoPos != null) {
                     state.setPosition(geoPos);
-                    if(parity == 0){
+                    if (parity == 0) {
                         lastMessageTimeStampNsEven = aim.timeStampNs();
-                    }
-                    else{
+                    } else {
                         lastMessageTimeStampNsOdd = aim.timeStampNs();
                     }
                 }
