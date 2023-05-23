@@ -120,6 +120,7 @@ public final class ObservableAircraftState implements AircraftStateSetter {
      * @return the value of categoryProperty.
      */
 
+    @SuppressWarnings("unused")
     public int getCategory() {
         return categoryProperty().get();
     }
