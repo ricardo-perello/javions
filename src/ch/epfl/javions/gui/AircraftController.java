@@ -15,6 +15,7 @@ import javafx.collections.ObservableSet;
 import javafx.collections.SetChangeListener;
 import javafx.scene.Group;
 import javafx.scene.Node;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
@@ -190,7 +191,6 @@ public final class AircraftController {
      * @return the icon of the aircraft.
      */
     private SVGPath setIcon(ObservableAircraftState aircraftState) {
-//todo hay q mirar si esto puede ser null
         AircraftIcon aircraftIcon;
         if (aircraftState.getAircraftData() == null) {
 
@@ -383,7 +383,6 @@ public final class AircraftController {
                 if (pane.lookup("#" + state.getIcaoAddress().toString()).equals(clicked)) {
                     selected.set(state);
                     break;
-                    // TODO: 10/5/23 ask tota to make clean 
                 }
             }
         });
