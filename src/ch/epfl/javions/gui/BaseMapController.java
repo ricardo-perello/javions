@@ -3,7 +3,10 @@ package ch.epfl.javions.gui;
 import ch.epfl.javions.GeoPos;
 import ch.epfl.javions.WebMercator;
 import javafx.application.Platform;
-import javafx.beans.property.*;
+import javafx.beans.property.LongProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleLongProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -100,7 +103,8 @@ public final class BaseMapController {
                     graphicsContext.drawImage(tileManager.imageForTileAt(new TileManager.TileId(zoomLevel, x, y)),
                             destX, destY);
 
-                } catch (IOException ignored) {}
+                } catch (IOException ignored) {
+                }
 
                 destX += TILE_SIZE;
             }
@@ -185,14 +189,15 @@ public final class BaseMapController {
     /**
      * centerOn changes the map parameters so that the center of the map is the GeoPos passed
      * as parameter.
+     *
      * @param geoPos new center of the map.
      */
-    public void centerOn(GeoPos geoPos){
+    public void centerOn(GeoPos geoPos) {
         double x = WebMercator.x(mapParameters.getZoom(), geoPos.longitude())
-                - mapParameters.getMinX() - pane.getWidth()/2;
+                - mapParameters.getMinX() - pane.getWidth() / 2;
         double y = WebMercator.y(mapParameters.getZoom(), geoPos.latitude())
-                - mapParameters.getMinY() - pane.getHeight()/2;
+                - mapParameters.getMinY() - pane.getHeight() / 2;
 
-        mapParameters.scroll(x,y);
+        mapParameters.scroll(x, y);
     }
 }

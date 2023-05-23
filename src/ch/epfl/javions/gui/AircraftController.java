@@ -3,7 +3,6 @@ package ch.epfl.javions.gui;
 import ch.epfl.javions.GeoPos;
 import ch.epfl.javions.Units;
 import ch.epfl.javions.WebMercator;
-import ch.epfl.javions.aircraft.AircraftData;
 import ch.epfl.javions.aircraft.AircraftDescription;
 import ch.epfl.javions.aircraft.AircraftTypeDesignator;
 import ch.epfl.javions.aircraft.WakeTurbulenceCategory;
@@ -17,7 +16,6 @@ import javafx.collections.ObservableSet;
 import javafx.collections.SetChangeListener;
 import javafx.scene.Group;
 import javafx.scene.Node;
-import javafx.scene.input.MouseButton;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
@@ -28,7 +26,6 @@ import javafx.scene.shape.SVGPath;
 import javafx.scene.text.Text;
 
 import static ch.epfl.javions.Units.Angle.DEGREE;
-import static ch.epfl.javions.gui.AircraftIcon.iconFor;
 
 public final class AircraftController {
 
@@ -195,7 +192,7 @@ public final class AircraftController {
     private SVGPath setIcon(ObservableAircraftState aircraftState) {
 
         ObservableValue<AircraftIcon> aircraftIcon = aircraftState.categoryProperty().map(category -> {
-            if(aircraftState.getAircraftData() != null){
+            if (aircraftState.getAircraftData() != null) {
                 return AircraftIcon.iconFor(
                         aircraftState.getAircraftData().typeDesignator() != null ?
                                 aircraftState.getAircraftData().typeDesignator() : new AircraftTypeDesignator(""),
@@ -205,8 +202,8 @@ public final class AircraftController {
                         aircraftState.getAircraftData().wakeTurbulenceCategory() != null ?
                                 aircraftState.getAircraftData().wakeTurbulenceCategory() :
                                 WakeTurbulenceCategory.of(""));
-            }else{
-                return   AircraftIcon.iconFor(new AircraftTypeDesignator(""),
+            } else {
+                return AircraftIcon.iconFor(new AircraftTypeDesignator(""),
                         new AircraftDescription(""), category.intValue(), WakeTurbulenceCategory.of(""));
             }
         });
@@ -293,26 +290,26 @@ public final class AircraftController {
     private Group setLabel(ObservableAircraftState aircraftState) {
         Text t1 = new Text();
 
-        t1.textProperty().bind(Bindings.createStringBinding(()->
-                aircraftState.getAircraftData() != null ?
-                    aircraftState.getAircraftData().registration().string() :
-                    (aircraftState.getCallSign() != null ?
-                            aircraftState.getCallSign().string() :
-                            aircraftState.getIcaoAddress().string()),
+        t1.textProperty().bind(Bindings.createStringBinding(() ->
+                        aircraftState.getAircraftData() != null ?
+                                aircraftState.getAircraftData().registration().string() :
+                                (aircraftState.getCallSign() != null ?
+                                        aircraftState.getCallSign().string() :
+                                        aircraftState.getIcaoAddress().string()),
                 aircraftState.callSignProperty()));
 
         Text t2 = new Text();
-        t2.textProperty().bind(Bindings.createStringBinding(() ->{
+        t2.textProperty().bind(Bindings.createStringBinding(() -> {
 
             String velocityString = !Double.isNaN(aircraftState.velocityProperty().get()) ?
-                    String.format("%.0f",Units.convertTo(aircraftState.getVelocity(), Units.Speed.KILOMETER_PER_HOUR))
+                    String.format("%.0f", Units.convertTo(aircraftState.getVelocity(), Units.Speed.KILOMETER_PER_HOUR))
                     : "?";
 
             //we do not check if altitude is NaN since we would not accept it
-            String altitudeString = String.format("%.0f",aircraftState.getAltitude());
+            String altitudeString = String.format("%.0f", aircraftState.getAltitude());
 
-            return String.format("\n" + velocityString + "\u2002km/h,\u2002" + altitudeString +"\u2002m");
-        },aircraftState.velocityProperty(), aircraftState.altitudeProperty()));
+            return String.format("\n" + velocityString + "\u2002km/h,\u2002" + altitudeString + "\u2002m");
+        }, aircraftState.velocityProperty(), aircraftState.altitudeProperty()));
 
 
         Rectangle rectangle = new Rectangle();

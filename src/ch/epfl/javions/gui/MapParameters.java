@@ -23,6 +23,7 @@ public final class MapParameters {
 
     /**
      * constructor for MapParameters
+     *
      * @param zoom int, initial value for zoom level
      * @param minX double, initial value for minX
      * @param minY double, initial value for minY
@@ -37,6 +38,7 @@ public final class MapParameters {
 
     /**
      * public method to get the zoom
+     *
      * @return int, the value of the IntegerProperty zoom
      */
     public int getZoom() {
@@ -45,6 +47,7 @@ public final class MapParameters {
 
     /**
      * public method to get the minX
+     *
      * @return double, the value stored in the DoubleProperty minX
      */
     public double getMinX() {
@@ -53,6 +56,7 @@ public final class MapParameters {
 
     /**
      * public method to get minY
+     *
      * @return double, the values stored in the DoubleProperty minY
      */
     public double getMinY() {
@@ -61,6 +65,7 @@ public final class MapParameters {
 
     /**
      * public method to get zoom
+     *
      * @return ReadOnlyIntegerProperty, the IntegerProperty zoom
      */
     public ReadOnlyIntegerProperty zoomProperty() {
@@ -69,6 +74,7 @@ public final class MapParameters {
 
     /**
      * public method to get minX
+     *
      * @return ReadOnlyDoubleProperty, the DoubleProperty minX
      */
     public ReadOnlyDoubleProperty minXProperty() {
@@ -77,6 +83,7 @@ public final class MapParameters {
 
     /**
      * public method to get minY
+     *
      * @return ReadOnlyDoubleProperty, the DoubleProperty minY
      */
     public ReadOnlyDoubleProperty minYProperty() {
@@ -85,6 +92,7 @@ public final class MapParameters {
 
     /**
      * public method that allows to change the position of the top left corner
+     *
      * @param x, double, the distance the corner has to be shifted in the x-axis
      * @param y, double, the distance the corner has to be shifted in the y-axis
      */
@@ -97,6 +105,7 @@ public final class MapParameters {
 
     /**
      * public method that allows to change the zoom level
+     *
      * @param zoomChange, the amount of we need to change the zoom by (can be negative, positive)
      */
     public void changeZoomLevel(int zoomChange) {
@@ -115,6 +124,7 @@ public final class MapParameters {
 
     /**
      * private method that allows to adjust the position of the top left corner using the zoom level
+     *
      * @param zoomChange, int the amount of change in the zoom level
      */
     private void adjustCoordinates(int zoomChange) {

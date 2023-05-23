@@ -10,7 +10,6 @@ import javafx.collections.SetChangeListener;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.input.MouseButton;
-import javafx.scene.layout.Pane;
 
 import java.text.NumberFormat;
 import java.util.function.Consumer;
@@ -30,6 +29,7 @@ public final class AircraftTableController {
     private final TableView<ObservableAircraftState> table;
     private static NumberFormat numberFormatPosition;
     private static NumberFormat numberFormat;
+
     /**
      * Constructor for AircraftTableController which is responsible for creating the table showing the
      * information of all the visible aircraft.

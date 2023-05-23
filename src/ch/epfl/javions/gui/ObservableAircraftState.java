@@ -21,7 +21,7 @@ public final class ObservableAircraftState implements AircraftStateSetter {
     private final ObservableList<AirbornePos> trajectory;
     private final ObservableList<AirbornePos> trajectoryProperty;
     private final DoubleProperty altitudeProperty = new SimpleDoubleProperty(Double.NaN);
-    private final DoubleProperty velocityProperty = new SimpleDoubleProperty(Double.NaN) ;
+    private final DoubleProperty velocityProperty = new SimpleDoubleProperty(Double.NaN);
     private final DoubleProperty trackOrHeadingProperty = new SimpleDoubleProperty();
 
     //******************************* CONSTRUCTOR *******************************
@@ -37,7 +37,7 @@ public final class ObservableAircraftState implements AircraftStateSetter {
         this.icaoAddress = icaoAddress;
         this.aircraftData = aircraftData;
         trajectory = FXCollections.observableArrayList();
-        trajectoryProperty =  FXCollections.unmodifiableObservableList(trajectory);
+        trajectoryProperty = FXCollections.unmodifiableObservableList(trajectory);
 
     }
 
@@ -240,19 +240,18 @@ public final class ObservableAircraftState implements AircraftStateSetter {
      *
      * @param position position we are going to use in the new entry of the list.
      * @param altitude altitude we are going to use in the new entry of the list.
-     * @param p boolean, true if setPosition called this method, false if setAltitude called this method.
+     * @param p        boolean, true if setPosition called this method, false if setAltitude called this method.
      */
     private void updateTrajectory(GeoPos position, double altitude, boolean p) {
-        if(p && !(Double.isNaN(altitude))){
+        if (p && !(Double.isNaN(altitude))) {
             trajectory.add(new AirbornePos(position, altitude));
             trajectoryTimeStampNs = getLastMessageTimeStampNs();
         }
-        if(!p && !(position == null)){
-            if(trajectory.isEmpty()){
+        if (!p && !(position == null)) {
+            if (trajectory.isEmpty()) {
                 trajectory.add(new AirbornePos(position, altitude));
                 trajectoryTimeStampNs = getLastMessageTimeStampNs();
-            }
-            else if (getLastMessageTimeStampNs() == trajectoryTimeStampNs) {
+            } else if (getLastMessageTimeStampNs() == trajectoryTimeStampNs) {
                 trajectory.remove(trajectory.size() - 1);
                 trajectory.add(new AirbornePos(position, altitude));
                 trajectoryTimeStampNs = getLastMessageTimeStampNs();
@@ -329,7 +328,7 @@ public final class ObservableAircraftState implements AircraftStateSetter {
     /**
      * AirbornePos record that includes GeoPos position and its altitude
      *
-     * @param position   position
+     * @param position position
      * @param altitude altitude
      */
     public record AirbornePos(GeoPos position, double altitude) {

@@ -82,6 +82,7 @@ public final class StatusLineController {
 
     /**
      * public method that returns the property of the current aircraftCount
+     *
      * @return property of the current aircraftCount.
      */
     public IntegerProperty aircraftCountProperty() {
@@ -90,6 +91,7 @@ public final class StatusLineController {
 
     /**
      * public method that returns the property of the current messageCount
+     *
      * @return property of the current messageCount.
      */
     public LongProperty messageCountProperty() {
