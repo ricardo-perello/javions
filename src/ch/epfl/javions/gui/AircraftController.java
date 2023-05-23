@@ -3,6 +3,7 @@ package ch.epfl.javions.gui;
 import ch.epfl.javions.GeoPos;
 import ch.epfl.javions.Units;
 import ch.epfl.javions.WebMercator;
+import ch.epfl.javions.aircraft.AircraftData;
 import ch.epfl.javions.aircraft.AircraftDescription;
 import ch.epfl.javions.aircraft.AircraftTypeDesignator;
 import ch.epfl.javions.aircraft.WakeTurbulenceCategory;
@@ -10,6 +11,7 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableSet;
 import javafx.collections.SetChangeListener;
@@ -191,26 +193,33 @@ public final class AircraftController {
      * @return the icon of the aircraft.
      */
     private SVGPath setIcon(ObservableAircraftState aircraftState) {
-        AircraftIcon aircraftIcon;
-        if (aircraftState.getAircraftData() == null) {
 
-            aircraftIcon = iconFor(new AircraftTypeDesignator(""),
-                    new AircraftDescription(""), aircraftState.getCategory(), WakeTurbulenceCategory.of(""));
-        } else {
-            aircraftIcon = iconFor(aircraftState.getAircraftData().typeDesignator(),
-                    aircraftState.getAircraftData().description(),
-                    aircraftState.getCategory(),
-                    aircraftState.getAircraftData().wakeTurbulenceCategory());
-        }
+        ObservableValue<AircraftIcon> aircraftIcon = aircraftState.categoryProperty().map(category -> {
+            if(aircraftState.getAircraftData() != null){
+                return AircraftIcon.iconFor(
+                        aircraftState.getAircraftData().typeDesignator() != null ?
+                                aircraftState.getAircraftData().typeDesignator() : new AircraftTypeDesignator(""),
+                        aircraftState.getAircraftData().description() != null ?
+                                aircraftState.getAircraftData().description() : new AircraftDescription(""),
+                        category.intValue(),
+                        aircraftState.getAircraftData().wakeTurbulenceCategory() != null ?
+                                aircraftState.getAircraftData().wakeTurbulenceCategory() :
+                                WakeTurbulenceCategory.of(""));
+            }else{
+                return   AircraftIcon.iconFor(new AircraftTypeDesignator(""),
+                        new AircraftDescription(""), category.intValue(), WakeTurbulenceCategory.of(""));
+            }
+        });
+
 
         SVGPath icon = new SVGPath();
-        icon.setContent(aircraftIcon.svgPath());
+        icon.contentProperty().bind(aircraftIcon.map(AircraftIcon::svgPath));
         altitudeColorFill(icon, aircraftState);
-        if (aircraftIcon.canRotate()) {
+        if (aircraftIcon.getValue().canRotate()) {
             setIconRotation(icon, aircraftState);
         }
         aircraftState.trackOrHeadingProperty().addListener((observable, oldValue, newValue) -> {
-            if (aircraftIcon.canRotate()) {
+            if (aircraftIcon.getValue().canRotate()) {
                 setIconRotation(icon, aircraftState);
             }
         });
@@ -282,7 +291,6 @@ public final class AircraftController {
      * @return group containing the label.
      */
     private Group setLabel(ObservableAircraftState aircraftState) {
-        //todo zac dice q hace un listener pq si derepente aparece el registration deberiamos actualizar pero no sabe como
         Text t1 = new Text();
 
         t1.textProperty().bind(Bindings.createStringBinding(()->
@@ -294,8 +302,6 @@ public final class AircraftController {
                 aircraftState.callSignProperty()));
 
         Text t2 = new Text();
-//todo update with time. first message could be NaN but next message could be fine and still displays ?. use .map() instead
-
         t2.textProperty().bind(Bindings.createStringBinding(() ->{
 
             String velocityString = !Double.isNaN(aircraftState.velocityProperty().get()) ?
@@ -308,35 +314,6 @@ public final class AircraftController {
             return String.format("\n" + velocityString + "\u2002km/h,\u2002" + altitudeString +"\u2002m");
         },aircraftState.velocityProperty(), aircraftState.altitudeProperty()));
 
-
-
-        /*if (!Double.isNaN(aircraftState.velocityProperty().get()) &&
-                !Double.isNaN(aircraftState.altitudeProperty().get())) {
-            t2.textProperty().bind(Bindings.createStringBinding(() ->
-                            String.format("\n%.0f\u2002km/h,\u2002%.0f\u2002m",
-                                    Units.convertTo(aircraftState.getVelocity(), Units.Speed.KILOMETER_PER_HOUR),
-                                    aircraftState.getAltitude()),
-                    aircraftState.velocityProperty(),
-                    aircraftState.altitudeProperty()));
-        } else if (!Double.isNaN(aircraftState.velocityProperty().get()) &&
-                Double.isNaN(aircraftState.altitudeProperty().get())) {
-            t2.textProperty().bind(Bindings.createStringBinding(() ->
-                            String.format("\n%.0f\u2002km/h,\u2002?\u2002m",
-                                    Units.convertTo(aircraftState.getVelocity(), Units.Speed.KILOMETER_PER_HOUR)),
-                    aircraftState.velocityProperty()));
-        } else if (Double.isNaN(aircraftState.velocityProperty().get()) &&
-                !Double.isNaN(aircraftState.altitudeProperty().get())) {
-            t2.textProperty().bind(Bindings.createStringBinding(() ->
-                            String.format("\n?\u2002km/h,\u2002%.0f\u2002m",
-                                    aircraftState.getAltitude()),
-                    aircraftState.altitudeProperty()
-            ));
-        } else {
-            t2.textProperty().bind(Bindings.createStringBinding(() ->
-                    "\n?\u2002km/h,\u2002?\u2002m"));
-        }*/
-
-        //t2.textProperty().bind(aircraftState.velocityProperty().map());
 
         Rectangle rectangle = new Rectangle();
         rectangle.widthProperty().bind(t2.layoutBoundsProperty().map(b -> b.getWidth() + 4));
