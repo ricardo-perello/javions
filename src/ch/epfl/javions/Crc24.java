@@ -6,6 +6,7 @@ public final class Crc24 {
     public final static int GENERATOR = 0xFFF409;
     private static final int mask = 0xFFFFFF;
     private static final int SIZE_TABLE = 256;
+    private static final int START = 16;
     private final int[] table;
     private final static int CRC_EXTRACT_START = 23;
 
@@ -24,10 +25,10 @@ public final class Crc24 {
     public int crc(byte[] bytes) {
         int crc = 0;
         for (byte b : bytes) {
-            crc = ((crc << 8) | Byte.toUnsignedInt(b)) ^ table[extractUInt(crc, 16, 8)];
+            crc = ((crc << 8) | Byte.toUnsignedInt(b)) ^ table[extractUInt(crc, START, 8)];
         }
         for (int i = 0; i < 3; ++i) {
-            crc = ((crc << 8)) ^ table[extractUInt(crc, 16, 8)];
+            crc = ((crc << 8)) ^ table[extractUInt(crc, START, 8)];
         }
         return crc & mask;
     }

@@ -11,14 +11,16 @@ public record AirbornePositionMessage(long timeStampNs, IcaoAddress icaoAddress,
                                       double altitude, int parity, double x, double y) implements Message {
 
     private static final double NORMALIZER = Math.pow(2, -17);
-    private static final int[] POSITIONS = {4, 2, 0, 10, 8, 6, 5, 3, 1, 11, 9, 7};
+    private static final int RAWM_OFFSET = 11;
+    private static final int[] POSITIONS = {4, 2, 0, 10, 8, 6, 5, 3, 1, RAWM_OFFSET, 9, 7};
     private static final int START_PARITY = 34;
     private static final int START_LATITUDE = 17;
     private static final int START_LONGITUDE = 0;
     private static final int SIZE_PARITY = 1;
     private static final int SIZE_COORDINATES = 17;
     private static final int START_ALTITUDE_IN_RAWMESSAGEME = 36;
-    private static final int SIZE_ALTITUDE_IN_RAWMESSAGEME = 12;
+    private static final int NUMBER_OF_REPS = 12;
+    private static final int SIZE_ALTITUDE_IN_RAWMESSAGEME = NUMBER_OF_REPS;
     private static final int MULTIPLIER_ALTITUDE1 = 25;
     private static final int SETBACK_ALTITUDE1 = 1000;
     private static final int SMALL_MULTIPLIER_ALTITUDE0 = 100;
@@ -136,8 +138,8 @@ public record AirbornePositionMessage(long timeStampNs, IcaoAddress icaoAddress,
      */
     private static long sortRawMessageAltitude(long rawMessageAltitude) {
         long sortedAltitude = 0;
-        for (int i = 0; i < 12; i++) {
-                sortedAltitude |= (long) Bits.extractUInt(rawMessageAltitude, POSITIONS[i], 1) << (11-i);
+        for (int i = 0; i < NUMBER_OF_REPS; i++) {
+                sortedAltitude |= (long) Bits.extractUInt(rawMessageAltitude, POSITIONS[i], 1) << (RAWM_OFFSET -i);
         }
         return sortedAltitude;
     }

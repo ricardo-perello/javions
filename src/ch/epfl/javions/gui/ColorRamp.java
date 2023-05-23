@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import static java.util.Objects.requireNonNull;
 
 public final class ColorRamp {
+    private static final double MAX_ALTITUDE = 12000.0;
+    private static final double COLOR_EXPONENT = 1.0/3.0;
     private ArrayList<Color> colors = new ArrayList<>();
 
     public  static  final  ColorRamp  PLASMA  =  new  ColorRamp (
@@ -42,7 +44,7 @@ public final class ColorRamp {
     }
 
     public Color at(double altitude){
-        double colorCode = Math.pow((altitude / 12000.0), 1.0/3.0);
+        double colorCode = Math.pow((altitude / MAX_ALTITUDE),  COLOR_EXPONENT);
         if(colorCode <= 0){
             return colors.get(0);
         } else if (colorCode >= 1) {
