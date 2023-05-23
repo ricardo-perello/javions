@@ -4,6 +4,7 @@ import ch.epfl.javions.Units;
 import ch.epfl.javions.adsb.CallSign;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableSet;
 import javafx.collections.SetChangeListener;
 import javafx.scene.control.TableColumn;
@@ -29,8 +30,6 @@ public final class AircraftTableController {
     private final TableView<ObservableAircraftState> table;
     private static NumberFormat numberFormatPosition;
     private static NumberFormat numberFormat;
-    private final Pane pane;
-
     /**
      * Constructor for AircraftTableController which is responsible for creating the table showing the
      * information of all the visible aircraft.
@@ -41,19 +40,17 @@ public final class AircraftTableController {
     public AircraftTableController(ObservableSet<ObservableAircraftState> aircraftStates,
                                    ObjectProperty<ObservableAircraftState> selected) {
         this.aircraftStates = aircraftStates;
-        table = new TableView<>();
-        this.pane = new Pane(table);
+        table = new TableView<>(FXCollections.observableArrayList(aircraftStates));
         table.getStylesheets().add("table.css");
         table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_SUBSEQUENT_COLUMNS);
         table.setTableMenuButtonVisible(true);
-        pane.widthProperty().addListener((observable, oldValue, newValue) -> table.setPrefWidth((Double) newValue));
-        pane.heightProperty().addListener((observable, oldValue, newValue) -> table.setPrefHeight((Double) newValue));
+        table.widthProperty().addListener((observable, oldValue, newValue) -> table.setPrefWidth((Double) newValue));
+        table.heightProperty().addListener((observable, oldValue, newValue) -> table.setPrefHeight((Double) newValue));
         table.setOnMouseClicked(event -> {
             if (event.getClickCount() == 2 && event.getButton() == MouseButton.PRIMARY) {
                 if (table.getSelectionModel().getSelectedItem() != null) {
                     consumer.accept(table.getSelectionModel().getSelectedItem());
                 }
-
             }
         });
 
@@ -68,7 +65,6 @@ public final class AircraftTableController {
         table.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != selected.get()) {
                 selected.set(newValue);
-
             }
         });
 
@@ -309,8 +305,8 @@ public final class AircraftTableController {
      *
      * @return the pane of the table.
      */
-    public Pane pane() {
-        return pane;
+    public TableView<ObservableAircraftState> pane() {
+        return table;
     }
 
     /**
