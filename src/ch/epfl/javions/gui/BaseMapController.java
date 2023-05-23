@@ -181,23 +181,6 @@ public final class BaseMapController {
 
     }
 
-    /**
-     * getMapParametersProperty method returns the value of mapParametersProperty.
-     *
-     * @return the value of mapParametersProperty.
-     */
-    public ReadOnlyObjectProperty<MapParameters> getMapParametersProperty() {
-        return mapParametersProperty;
-    }
-
-    /**
-     * setMapParameters sets the mapParametersProperty.
-     *
-     * @param mapParameters double, value we will change to.
-     */
-    public void setMapParameters(MapParameters mapParameters) {
-        mapParametersProperty.set(mapParameters);
-    }
 
     /**
      * centerOn changes the map parameters so that the center of the map is the GeoPos passed

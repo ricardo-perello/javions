@@ -11,7 +11,7 @@ import static java.util.Objects.requireNonNull;
 public final class ColorRamp {
     private static final double MAX_ALTITUDE = 12000.0;
     private static final double COLOR_EXPONENT = 1.0/3.0;
-    private ArrayList<Color> colors = new ArrayList<>();
+    private final ArrayList<Color> colors = new ArrayList<>();
 
     public  static  final  ColorRamp  PLASMA  =  new  ColorRamp (
             Color.valueOf( "0x0d0887ff" ), Color.valueOf( "0x220690ff" ),
@@ -31,10 +31,6 @@ public final class ColorRamp {
             Color.valueOf( "0xfccf25ff" ), Color.valueOf( "0xf9dd24ff" ),
             Color. valueOf( "0xf5eb27ff" ), Color. valueOf( "0xf0f921ff" ));
 
-    public ColorRamp(ArrayList<Color> colors){
-        Preconditions.checkArgument(colors.size() > 1);
-        this.colors = colors;
-    }
     public ColorRamp(Color ... colors1){
         Preconditions.checkArgument(colors1.length > 1);
         for (Color color : colors1) {

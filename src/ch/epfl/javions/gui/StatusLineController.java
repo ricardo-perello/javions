@@ -28,13 +28,13 @@ public final class StatusLineController {
         //AIRCRAFT COUNT TEXT
         Text visibleAircraftCountText = new Text();
         visibleAircraftCountText.textProperty().bind(Bindings.createStringBinding(
-                () -> "Visible aircraft: " + aircraftCountProperty.get(), aircraftCountProperty));
+                () -> "Visible aircraft: " + getAircraftCount(), aircraftCountProperty));
         pane.setLeft(visibleAircraftCountText);
 
         //MESSAGE COUNT TEXT
         Text visibleMessageCountText = new Text();
         visibleMessageCountText.textProperty().bind(Bindings.createStringBinding(
-                () -> "Received messages: " + messageCountProperty.get(), messageCountProperty));
+                () -> "Received messages: " + getMessageCount(), messageCountProperty));
         pane.setRight(visibleMessageCountText);
 
     }
@@ -70,14 +70,14 @@ public final class StatusLineController {
      * Gets the current AircraftCount.
      */
     public int getAircraftCount() {
-        return aircraftCountProperty.get();
+        return aircraftCountProperty().get();
     }
 
     /**
      * Gets the current messageCount.
      */
     public long getMessageCount() {
-        return messageCountProperty.get();
+        return messageCountProperty().get();
     }
 
     /**

@@ -58,17 +58,6 @@ public final class Crc24 {
     }
 
     /**
-     * Basic crc that uses crc_bitwise.
-     *
-     * @param generator crc generator
-     * @param bytes     byte array containing the bit string
-     * @return decoded crc
-     */
-    public int crc_Basic(int generator, byte[] bytes) {
-        return crc_bitwise(generator, bytes);
-    }
-
-    /**
      * Builds table with a given generator
      *
      * @param generator crc generator

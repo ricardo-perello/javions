@@ -79,7 +79,7 @@ public final class ObservableAircraftState implements AircraftStateSetter {
      *
      * @return lastMessageTimeStampNsProperty property
      */
-    public ReadOnlyLongProperty LastMessageTimeStampNsProperty() {
+    public ReadOnlyLongProperty lastMessageTimeStampNsProperty() {
         return lastMessageTimeStampNsProperty;
     }
 
@@ -89,7 +89,7 @@ public final class ObservableAircraftState implements AircraftStateSetter {
      * @return the value of lastMessageTimeStampNsProperty
      */
     public long getLastMessageTimeStampNs() {
-        return lastMessageTimeStampNsProperty.get();
+        return lastMessageTimeStampNsProperty().get();
     }
 
 
@@ -121,7 +121,7 @@ public final class ObservableAircraftState implements AircraftStateSetter {
      */
 
     public int getCategory() {
-        return categoryProperty.get();
+        return categoryProperty().get();
     }
 
 //******************************* CALLSIGN *******************************
