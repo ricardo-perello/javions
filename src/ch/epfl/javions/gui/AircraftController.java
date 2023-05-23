@@ -305,7 +305,7 @@ public final class AircraftController {
             //we do not check if altitude is NaN since we would not accept it
             String altitudeString = String.format("%.0f",aircraftState.getAltitude());
 
-            return String.format("\n%f\u2002km/h, \u2002%f\u2002m", velocityString, altitudeString);
+            return String.format("\n" + velocityString + "\u2002km/h,\u2002" + altitudeString +"\u2002m");
         },aircraftState.velocityProperty(), aircraftState.altitudeProperty()));
 
 
