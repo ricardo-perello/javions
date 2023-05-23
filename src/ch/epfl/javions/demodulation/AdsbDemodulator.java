@@ -30,6 +30,7 @@ public final class AdsbDemodulator {
     public AdsbDemodulator(InputStream samplesStream) throws IOException {
         powerWindow = new PowerWindow(samplesStream, LENGTH_OF_WINDOW);
     }
+
     /**
      * method that demodulates the stream
      *
@@ -63,7 +64,7 @@ public final class AdsbDemodulator {
                     byte[] bytes = new byte[LENGTH_RAWMESSAGE];
 
                     //this allows us to only calculate the length of the rawMessage
-                    byteDemodulator(0, 1,  bytes);
+                    byteDemodulator(0, 1, bytes);
 
                     if (RawMessage.size(bytes[0]) == LENGTH_RAWMESSAGE) {
                         //we put startFirstLoop at 1 because, we know already for 0 by the previous one
@@ -88,9 +89,9 @@ public final class AdsbDemodulator {
     /**
      * this private method allows to determine bits based on the power Window determine if the bit is a 0 or a 1
      *
-     * @param startFirstLoop,  int, beginning of the first for loop
-     * @param endFirstLoop,    int, end of the first for loop
-     * @param bytes,           byte[], table where we place the value of the signal
+     * @param startFirstLoop, int, beginning of the first for loop
+     * @param endFirstLoop,   int, end of the first for loop
+     * @param bytes,          byte[], table where we place the value of the signal
      */
     private void byteDemodulator(int startFirstLoop, int endFirstLoop, byte[] bytes) {
         for (int i = startFirstLoop; i < endFirstLoop; i++) {

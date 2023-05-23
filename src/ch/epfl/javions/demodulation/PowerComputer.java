@@ -9,7 +9,7 @@ public final class PowerComputer {
     private final short[] samplesDecoded;
     private final SamplesDecoder samplesDecoder;
 
-    private final short[]values=new short[8];
+    private final short[] values = new short[8];
     private int evenNumbers = 0;
     private int oddNumbers = 0;
 
@@ -29,7 +29,7 @@ public final class PowerComputer {
 
     public PowerComputer(InputStream stream, int batchSize) {
         Preconditions.checkArgument(batchSize > 0 &&
-                                    (batchSize % LENGTH_BYTE) == 0);
+                (batchSize % LENGTH_BYTE) == 0);
         samplesDecoded = new short[batchSize * 2];
         samplesDecoder = new SamplesDecoder(stream, 2 * batchSize);
 
@@ -48,20 +48,20 @@ public final class PowerComputer {
 
 
         for (int i = 0; i < batchSize; i += LENGTH_BYTE) {
-            evenNumbers += newNumbers(0,i);
-            oddNumbers += newNumbers(1,i);
+            evenNumbers += newNumbers(0, i);
+            oddNumbers += newNumbers(1, i);
             Batch[(i / 2)] = evenNumbers * evenNumbers + oddNumbers * oddNumbers;
 
-            evenNumbers -= newNumbers(2,i);
-            oddNumbers -= newNumbers(3,i);
-            Batch[(i / 2) +1] = evenNumbers * evenNumbers + oddNumbers * oddNumbers;
+            evenNumbers -= newNumbers(2, i);
+            oddNumbers -= newNumbers(3, i);
+            Batch[(i / 2) + 1] = evenNumbers * evenNumbers + oddNumbers * oddNumbers;
 
-            evenNumbers += newNumbers(4,i);
-            oddNumbers += newNumbers(5,i);
-            Batch[(i / 2)+2] = evenNumbers * evenNumbers + oddNumbers * oddNumbers;
+            evenNumbers += newNumbers(4, i);
+            oddNumbers += newNumbers(5, i);
+            Batch[(i / 2) + 2] = evenNumbers * evenNumbers + oddNumbers * oddNumbers;
 
-            evenNumbers -= newNumbers(6,i);
-            oddNumbers -= newNumbers(7,i);
+            evenNumbers -= newNumbers(6, i);
+            oddNumbers -= newNumbers(7, i);
             Batch[(i / 2) + 3] = evenNumbers * evenNumbers + oddNumbers * oddNumbers;
         }
         return batchSize / 2;
@@ -69,11 +69,12 @@ public final class PowerComputer {
 
     /**
      * private method that allows to determine the value we add or subtract from either evenNumbers or oddNumbers
-     * @param positionNumber int, position in the table values to find the previous number to eliminate it
+     *
+     * @param positionNumber  int, position in the table values to find the previous number to eliminate it
      * @param positionInLoop, position in loop that allows to find the value at the position in the table samplesDecoded
      * @return the new number we need to add to the sum we are interested in
      */
-    private int newNumbers(int positionNumber, int positionInLoop){
+    private int newNumbers(int positionNumber, int positionInLoop) {
         int nb = values[positionNumber] - samplesDecoded[positionInLoop + positionNumber];
         values[positionNumber] = samplesDecoded[positionInLoop + positionNumber];
         return nb;
