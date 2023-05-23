@@ -1,3 +1,15 @@
+/**
+ * The main class of the Javions application.
+ * It extends the JavaFX Application class and provides the entry point for launching the application.
+ * Javions is a program that visualizes aircraft data on a map.
+ * The application initializes the user interface components, such as the map, aircraft database, and controllers,
+ * and starts an animation timer to handle incoming messages and update the state of the aircraft.
+ *
+ * @author Ricardo Perelló Mas
+ * @author Alejandro Meredith Romero
+ * @version 1.0
+ * @since 2023-05-20
+ */
 package ch.epfl.javions.gui;
 
 import ch.epfl.javions.ByteString;
@@ -23,19 +35,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
-/**
- * The main class of the Javions application.
- * It extends the JavaFX Application class and provides the entry point for launching the application.
- * Javions is a program that visualizes aircraft data on a map.
- *
- * The application initializes the user interface components, such as the map, aircraft database, and controllers,
- * and starts an animation timer to handle incoming messages and update the state of the aircraft.
- *
- * @author Ricardo Perelló Mas
- * @author Alejandro Meredith Romero
- * @version 1.0
- * @since 2023-05-20
- */
+
 
 /**
  * The main class of the Javions application.
@@ -55,7 +55,8 @@ public final class Main extends Application {
      * The entry point of the Javions application.
      *
      * @param args the command-line arguments
-     */    public static void main(String[] args) {
+     */
+    public static void main(String[] args) {
         launch(args);
     }
 
@@ -88,9 +89,9 @@ public final class Main extends Application {
         StatusLineController slc = new StatusLineController();
 
 
-        var stackPane = new StackPane(bmc.pane(), ac.pane());
-        var borderPane = new BorderPane(atc.pane(), slc.pane(), null, null, null);
-        var root = new SplitPane(stackPane, borderPane);
+        StackPane stackPane = new StackPane(bmc.pane(), ac.pane());
+        BorderPane borderPane = new BorderPane(atc.pane(), slc.pane(), null, null, null);
+        SplitPane root = new SplitPane(stackPane, borderPane);
         root.setOrientation(Orientation.VERTICAL);
         primaryStage.setScene(new Scene(root));
         primaryStage.setTitle("Javions");
