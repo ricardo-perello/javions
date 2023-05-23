@@ -142,7 +142,6 @@ public final class BaseMapController {
      */
     private void eventHandler() {
         addEventMouseDragging();
-        addEventMouseClicking();
         addEventMouseScrolling();
     }
 
@@ -161,10 +160,6 @@ public final class BaseMapController {
             mapParameters.scroll(deltaX, deltaY);
             previousMouseCoordsOnScreen.set(new Point2D(e.getX(), e.getY()));
         });
-    }
-    //todo check if we need this
-    private void addEventMouseClicking() {
-        //canvas.setOnMouseClicked((e)-> );
     }
 
     /**
