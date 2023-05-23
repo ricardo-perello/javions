@@ -9,6 +9,7 @@ public record AircraftDescription(String string) {
 
     /**
      * this method allows to verify that the string passed has the correct size and type of characters
+     *
      * @param string, String, the Aircraft description we want to check
      */
     public AircraftDescription {

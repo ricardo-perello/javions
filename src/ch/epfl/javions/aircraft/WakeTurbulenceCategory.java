@@ -8,6 +8,7 @@ public enum WakeTurbulenceCategory {
 
     /**
      * method that allows to verify that the Wake turbulence Category belong to the enumeration
+     *
      * @param s, String, the Wake turbulence category of the plane in a single letter
      * @return the category from the enum above connected to the plane
      */
