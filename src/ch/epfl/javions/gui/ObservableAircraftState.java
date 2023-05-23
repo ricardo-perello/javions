@@ -257,20 +257,6 @@ public final class ObservableAircraftState implements AircraftStateSetter {
                 trajectoryTimeStampNs = getLastMessageTimeStampNs();
             }
         }
-
-        /*
-        if ((Double.isNaN(altitude)) || (position == null)) return;
-        if (trajectory.isEmpty()) {
-            trajectory.add(new AirbornePos(position, altitude));
-        } else if (!position.equals(getPosition())) {
-            trajectory.add(new AirbornePos(position, altitude));
-        } else if (getLastMessageTimeStampNs() == trajectoryTimeStampNs) {
-            trajectory.remove(trajectory.size() - 1);
-            trajectory.add(new AirbornePos(position, altitude));
-            trajectoryTimeStampNs = getLastMessageTimeStampNs();
-        }
-
-         */
     }
 //******************************* VELOCITY *******************************
 
