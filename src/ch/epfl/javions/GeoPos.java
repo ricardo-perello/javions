@@ -4,7 +4,7 @@ import static ch.epfl.javions.Units.Angle.*;
 import static ch.epfl.javions.Units.convert;
 
 public record GeoPos(int longitudeT32, int latitudeT32) {
-    private static final int MAXIMUM = (int) Math.scalb(1,30);
+    private static final int MAXIMUM = (int) Math.scalb(1, 30);
     private static final int MINIMUM = -MAXIMUM;
 
     public GeoPos {
