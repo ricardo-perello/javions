@@ -1,6 +1,6 @@
 package ch.epfl.javions;
 
-public final class Math2 {
+public class Math2 {
     private Math2() {
     }
 

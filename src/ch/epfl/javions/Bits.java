@@ -1,6 +1,6 @@
 package ch.epfl.javions;
 
-public class Bits {
+public final class Bits {
     private final static long FULL_LONG = -1;
     private static final int SIZE_LONG = 64;
 
