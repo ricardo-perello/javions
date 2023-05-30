@@ -21,7 +21,7 @@ import static java.lang.Double.compare;
  * a table that displays information about visible aircraft.
  *
  * @author Ricardo Perello Mas (357241)
- * @author  Alejandro Meredith Romero (360864)
+ * @author Alejandro Meredith Romero (360864)
  */
 
 public final class AircraftTableController {

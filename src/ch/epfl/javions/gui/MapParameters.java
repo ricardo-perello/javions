@@ -9,7 +9,7 @@ import javafx.beans.property.*;
  * It includes the zoom level and the coordinates of the top left corner of the window.
  *
  * @author Ricardo Perello Mas (357241)
- * @author  Alejandro Meredith Romero (360864)
+ * @author Alejandro Meredith Romero (360864)
  */
 
 

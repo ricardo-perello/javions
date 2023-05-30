@@ -6,13 +6,12 @@
  * and starts an animation timer to handle incoming messages and update the state of the aircraft.
  *
  * @author Ricardo Perello Mas (357241)
- * @author  Alejandro Meredith Romero (360864)
+ * @author Alejandro Meredith Romero (360864)
  * @version 1.0
  * @since 2023-05-20
  */
 package ch.epfl.javions.gui;
 
-import ch.epfl.javions.ByteString;
 import ch.epfl.javions.adsb.Message;
 import ch.epfl.javions.adsb.MessageParser;
 import ch.epfl.javions.adsb.RawMessage;

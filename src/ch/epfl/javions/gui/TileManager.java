@@ -20,7 +20,7 @@ import static ch.epfl.javions.gui.MapParameters.MIN_ZOOM_LEVEL;
  * and storing tiles on disk.
  *
  * @author Ricardo Perello Mas (357241)
- * @author  Alejandro Meredith Romero (360864)
+ * @author Alejandro Meredith Romero (360864)
  */
 
 public final class TileManager {

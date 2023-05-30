@@ -19,7 +19,7 @@ import java.io.IOException;
  * It manages the rendering of map tiles and handles user interactions such as scrolling and zooming.
  *
  * @author Ricardo Perello Mas (357241)
- * @author  Alejandro Meredith Romero (360864)
+ * @author Alejandro Meredith Romero (360864)
  */
 
 public final class BaseMapController {

@@ -12,7 +12,7 @@ import static java.util.Objects.requireNonNull;
  * It provides a collection of colors and a method to retrieve a color based on a given altitude.
  *
  * @author Ricardo Perello Mas (357241)
- * @author  Alejandro Meredith Romero (360864)
+ * @author Alejandro Meredith Romero (360864)
  */
 
 public final class ColorRamp {

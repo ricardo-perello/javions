@@ -15,7 +15,7 @@ import javafx.scene.text.Text;
  * It displays the number of received messages and the number of visible aircraft.
  *
  * @author Ricardo Perello Mas (357241)
- * @author  Alejandro Meredith Romero (360864)
+ * @author Alejandro Meredith Romero (360864)
  */
 
 public final class StatusLineController {
