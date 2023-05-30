@@ -11,8 +11,8 @@ import static java.util.Objects.requireNonNull;
  * ColorRamp represents a color ramp used for mapping altitudes to colors.
  * It provides a collection of colors and a method to retrieve a color based on a given altitude.
  *
- * @author Ricardo Perello Mas ()
- * @author Alejandro Meredith Romero (360864)
+ * @author Ricardo Perello Mas (357241)
+ * @author  Alejandro Meredith Romero (360864)
  */
 
 public final class ColorRamp {

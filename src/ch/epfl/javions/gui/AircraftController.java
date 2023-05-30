@@ -182,7 +182,8 @@ public final class AircraftController {
 
         minXProperty.addListener((observable, oldValue, newValue) -> repositionAircraft(aircraftState, aircraftInfo));
         minYProperty.addListener((observable, oldValue, newValue) -> repositionAircraft(aircraftState, aircraftInfo));
-        aircraftState.positionProperty().addListener((observable, oldValue, newValue) -> repositionAircraft(aircraftState, aircraftInfo));
+        aircraftState.positionProperty().addListener((observable, oldValue, newValue) ->
+                repositionAircraft(aircraftState, aircraftInfo));
         aircraftState.altitudeProperty().addListener((observable) -> setLabel(aircraftState));
         aircraftState.velocityProperty().addListener((observable -> setLabel(aircraftState)));
         mapParameters.zoomProperty().addListener((observable -> changeVisibility(label, aircraftState)));
@@ -360,7 +361,6 @@ public final class AircraftController {
                     } else {
                         pane.getChildren().remove(pane.lookup("#" +
                                 change.getElementRemoved().getIcaoAddress().toString()));
-                        // TODO: 9/5/23 remove all listeners of the removed element
                     }
                 }
         );

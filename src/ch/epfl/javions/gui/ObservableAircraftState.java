@@ -14,8 +14,8 @@ import javafx.collections.ObservableList;
  * It provides properties and methods to access and
  * update various attributes of the aircraft, such as position, altitude, velocity, etc.
  *
- * @author Ricardo Perello Mas ()
- * @author Alejandro Meredith Romero (360864)
+ * @author Ricardo Perello Mas (357241)
+ * @author  Alejandro Meredith Romero (360864)
  */
 
 public final class ObservableAircraftState implements AircraftStateSetter {

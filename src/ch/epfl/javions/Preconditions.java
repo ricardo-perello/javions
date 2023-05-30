@@ -2,8 +2,7 @@ package ch.epfl.javions;
 
 /**
  * verifies condition
- *todo poner sciper
- * @author Ricardo Perello Mas ()
+ * @author Ricardo Perello Mas (357241)
  * @author  Alejandro Meredith Romero (360864)
  */
 

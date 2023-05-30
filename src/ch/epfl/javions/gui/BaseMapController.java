@@ -18,8 +18,8 @@ import java.io.IOException;
  * BaseMapController is a controller class for a map-based graphical user interface.
  * It manages the rendering of map tiles and handles user interactions such as scrolling and zooming.
  *
- * @author Ricardo Perello Mas ()
- * @author Alejandro Meredith Romero (360864)
+ * @author Ricardo Perello Mas (357241)
+ * @author  Alejandro Meredith Romero (360864)
  */
 
 public final class BaseMapController {

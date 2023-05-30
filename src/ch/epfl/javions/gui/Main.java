@@ -51,6 +51,10 @@ public final class Main extends Application {
     private static final int MIN_HEIGHT = 600;
     private static final double NANO_TO_MILLI = 1e-6;
     private static final double ONE_SECOND_IN_NANO = 1e9;
+    private static final String TILE_REPOSITORY = "tile-cache";
+    private static final String SERVER_NAME = "tile.openstreetmap.org";
+    private static final String DATABASE_ZIP = "/aircraft.zip";
+    private static final String APPLICATION_NAME = "Javions";
     private static double lastPurgeTimeStamp = ONE_SECOND_IN_NANO;
     private ConcurrentLinkedQueue<RawMessage> rawMessageQueue;
 
@@ -72,15 +76,15 @@ public final class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         long startTime = System.nanoTime();
-        Path tileCache = Path.of("tile-cache");
+        Path tileCache = Path.of(TILE_REPOSITORY);
         TileManager tm =
-                new TileManager(tileCache, "tile.openstreetmap.org");
+                new TileManager(tileCache, SERVER_NAME);
         MapParameters mp =
                 new MapParameters(INITIAL_ZOOM, INITIAL_MIN_X, INITIAL_MIN_Y);
         BaseMapController bmc = new BaseMapController(tm, mp);
 
         // Create database
-        URL u = getClass().getResource("/aircraft.zip");
+        URL u = getClass().getResource(DATABASE_ZIP);
         assert u != null;
         Path p = Path.of(u.toURI());
         AircraftDatabase db = new AircraftDatabase(p.toString());
@@ -97,7 +101,7 @@ public final class Main extends Application {
         SplitPane root = new SplitPane(stackPane, borderPane);
         root.setOrientation(Orientation.VERTICAL);
         primaryStage.setScene(new Scene(root));
-        primaryStage.setTitle("Javions");
+        primaryStage.setTitle(APPLICATION_NAME);
         primaryStage.setMinWidth(MIN_WIDTH);
         primaryStage.setMinHeight(MIN_HEIGHT);
         primaryStage.show();
@@ -136,7 +140,8 @@ public final class Main extends Application {
                 if (!getParameters().getRaw().isEmpty()) {
                     for (RawMessage message : readAllMessages(getParameters().getRaw().get(0))) {
                         if (message.timeStampNs() > System.nanoTime() - startTime) {
-                            Thread.sleep((long) ((message.timeStampNs() - (System.nanoTime() - startTime)) * NANO_TO_MILLI));
+                            Thread.sleep((long) ((message.timeStampNs() - (System.nanoTime() - startTime))
+                                    * NANO_TO_MILLI));
                         }
                         rawMessageQueue.add(message);
                     }
@@ -173,10 +178,10 @@ public final class Main extends Application {
             while (s.available() > 0) {
                 long timeStampNs = s.readLong();
                 int bytesRead = s.readNBytes(bytes, 0, bytes.length);
-                assert bytesRead == RawMessage.LENGTH;
-                ByteString message = new ByteString(bytes);
 
-                rm.add(new RawMessage(timeStampNs, message));
+                RawMessage rawM = RawMessage.of(timeStampNs, bytes);
+                if (bytesRead == RawMessage.LENGTH && rawM != null) rm.add(rawM);
+
             }
         } catch (EOFException e) { /* nothing to do */ } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
