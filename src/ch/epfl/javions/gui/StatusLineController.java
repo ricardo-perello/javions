@@ -80,6 +80,7 @@ public final class StatusLineController {
 
     /**
      * Gets the current AircraftCount.
+     * @return aircraft count property.
      */
     public int getAircraftCount() {
         return aircraftCountProperty().get();
@@ -87,6 +88,7 @@ public final class StatusLineController {
 
     /**
      * Gets the current messageCount.
+     * @return message count property.
      */
     public long getMessageCount() {
         return messageCountProperty().get();

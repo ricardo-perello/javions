@@ -102,7 +102,7 @@ public final class AircraftTableController {
      * private method that initializes 2 number formatters that will be used
      * in the numeric columns.
      */
-    private void initializeNumberFormatters() {
+    private static void initializeNumberFormatters() {
         numberFormatPosition = NumberFormat.getInstance();
         numberFormatPosition.setMinimumFractionDigits(4);
         numberFormatPosition.setMaximumFractionDigits(4);

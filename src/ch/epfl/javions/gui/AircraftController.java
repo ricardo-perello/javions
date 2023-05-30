@@ -156,7 +156,7 @@ public final class AircraftController {
      * @param altitude2  double, altitude of the end of the line we wish to color in
      * @param line,      the line we want to color
      */
-    private void colorTrajectory(double altitude1, double altitude2, Line line) {
+    private static void colorTrajectory(double altitude1, double altitude2, Line line) {
         if (altitude1 == altitude2) {
             line.setStroke(ColorRamp.PLASMA.at(altitude1));
         } else {
@@ -252,7 +252,7 @@ public final class AircraftController {
      * @param icon          icon of the aircraft.
      * @param aircraftState aircraftState of the plane we want to set rotation for.
      */
-    private void setIconRotation(SVGPath icon, ObservableAircraftState aircraftState) {
+    private static void setIconRotation(SVGPath icon, ObservableAircraftState aircraftState) {
         icon.setRotate(Units.convertTo(aircraftState.getTrackOrHeading(), DEGREE));
     }
 

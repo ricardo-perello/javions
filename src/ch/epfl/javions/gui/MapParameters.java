@@ -26,7 +26,13 @@ public final class MapParameters {
     private final DoubleProperty minY;
 
 
+    /**
+     * min zoom level for mapParameters
+     */
     public static final int MIN_ZOOM_LEVEL = 6;
+    /**
+     * max zoom level for mapParameters
+     */
     public static final int MAX_ZOOM_LEVEL = 19;
 
     /**
@@ -119,13 +125,13 @@ public final class MapParameters {
     public void changeZoomLevel(int zoomChange) {
         //changes the value of zoom to -1 or 1
         //we do not check if it equals to 0 since we exclude that situation in addMouseScrolling from BaseMapController
-        zoomChange = zoomChange > 0 ? 1 : -1;
+        int zoomChange1 = zoomChange > 0 ? 1 : -1;
         // we make sure that it is between 6 (included) and 19 (included)
         int newZoomLevel = Math2.clamp(MIN_ZOOM_LEVEL, getZoom()
-                + (zoomChange), MAX_ZOOM_LEVEL);
+                + (zoomChange1), MAX_ZOOM_LEVEL);
         //we adjust the coordinates of the top left corner using adjustCoordinates
         if (zoom.getValue() != newZoomLevel) {
-            adjustCoordinates(zoomChange);
+            adjustCoordinates(zoomChange1);
             zoom.set(newZoomLevel);
         }
     }

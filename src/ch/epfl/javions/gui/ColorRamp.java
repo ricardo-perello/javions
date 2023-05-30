@@ -20,6 +20,7 @@ public final class ColorRamp {
     private static final double COLOR_EXPONENT = 1.0 / 3.0;
     private final ArrayList<Color> colors = new ArrayList<>();
 
+    @SuppressWarnings("MissingJavadoc")
     public static final ColorRamp PLASMA = new ColorRamp(
             Color.valueOf("0x0d0887ff"), Color.valueOf("0x220690ff"),
             Color.valueOf("0x320597ff"), Color.valueOf("0x40049dff"),

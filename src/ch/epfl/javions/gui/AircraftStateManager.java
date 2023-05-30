@@ -27,7 +27,7 @@ public final class AircraftStateManager {
     private final AircraftDatabase aircraftDatabase;
     private long lastTimeStampNs;
     private IcaoAddress lastIcaoAddress;
-    private final long MAX_DIFFERENCE_TIME = (long) (MINUTE * Math.pow(10, 9));
+    private static final long MAX_DIFFERENCE_TIME = (long) (MINUTE * Math.pow(10, 9));
 
     /**
      * constructor for AircraftStateManager

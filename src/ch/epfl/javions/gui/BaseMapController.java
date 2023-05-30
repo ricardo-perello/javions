@@ -126,7 +126,7 @@ public final class BaseMapController {
      * @param currentMapParameters map parameters at the moment the method is called.
      * @return Point2D of the position of the top left corner of the map.
      */
-    private Point2D findTopLeft(MapParameters currentMapParameters) {
+    private static Point2D findTopLeft(MapParameters currentMapParameters) {
         return new Point2D(currentMapParameters.getMinX(), currentMapParameters.getMinY());
     }
 
