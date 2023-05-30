@@ -27,6 +27,14 @@ import javafx.scene.text.Text;
 
 import static ch.epfl.javions.Units.Angle.DEGREE;
 
+/**
+ * The `AircraftController` class manages all the visible aircraft on a map.
+ * It creates and manages groups of aircraft, including their icons, labels, and trajectories.
+ *
+ * @author Ricardo Perello Mas ()
+ * @author Alejandro Meredith Romero (360864)
+ */
+
 public final class AircraftController {
 
     private static final int ZOOM_VISIBILITY_THRESHOLD = 11;

@@ -4,6 +4,14 @@ import ch.epfl.javions.Math2;
 import ch.epfl.javions.Preconditions;
 import javafx.beans.property.*;
 
+/**
+ * MapParameters represents the parameters used for mapping and displaying a map.
+ * It includes the zoom level and the coordinates of the top left corner of the window.
+ *
+ * @author Ricardo Perello Mas ()
+ * @author Alejandro Meredith Romero (360864)
+ */
+
 
 public final class MapParameters {
 

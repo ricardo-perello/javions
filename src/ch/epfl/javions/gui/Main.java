@@ -39,6 +39,9 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * The main class of the Javions application.
+ *
+ * @author Ricardo Perello Mas ()
+ * @author Alejandro Meredith Romero (360864)
  */
 public final class Main extends Application {
     private static final int INITIAL_ZOOM = 8;

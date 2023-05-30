@@ -14,6 +14,14 @@ import javafx.scene.layout.Pane;
 
 import java.io.IOException;
 
+/**
+ * BaseMapController is a controller class for a map-based graphical user interface.
+ * It manages the rendering of map tiles and handles user interactions such as scrolling and zooming.
+ *
+ * @author Ricardo Perello Mas ()
+ * @author Alejandro Meredith Romero (360864)
+ */
+
 public final class BaseMapController {
     private static final int TILE_SIZE = 256;
     private static final int MIN_TIME_BETWEEN_SCROLLS_MS = 200;

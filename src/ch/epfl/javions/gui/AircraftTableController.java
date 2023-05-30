@@ -16,6 +16,14 @@ import java.util.function.Consumer;
 
 import static java.lang.Double.compare;
 
+/**
+ * AircraftTableController is responsible for creating and managing
+ * a table that displays information about visible aircraft.
+ *
+ * @author Ricardo Perello Mas ()
+ * @author Alejandro Meredith Romero (360864)
+ */
+
 public final class AircraftTableController {
     private static final int PREFERRED_WIDTH_ICAO = 60;
     private static final int PREFERRED_WIDTH_DESCRIPTION = 70;

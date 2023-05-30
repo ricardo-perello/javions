@@ -13,6 +13,13 @@ import java.util.Map;
 import static ch.epfl.javions.Units.Time.MINUTE;
 import static java.util.Objects.requireNonNull;
 
+/**
+ * AircraftStateManager is responsible for managing the state of aircraft based on the messages received from them.
+ *
+ * @author Ricardo Perello Mas ()
+ * @author Alejandro Meredith Romero (360864)
+ */
+
 public final class AircraftStateManager {
 
     private final Map<IcaoAddress, AircraftStateAccumulator<ObservableAircraftState>> aircraftStateAccumulatorMap;
