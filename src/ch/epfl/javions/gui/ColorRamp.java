@@ -38,15 +38,28 @@ public final class ColorRamp {
             Color.valueOf("0xfccf25ff"), Color.valueOf("0xf9dd24ff"),
             Color.valueOf("0xf5eb27ff"), Color.valueOf("0xf0f921ff"));
 
-    public ColorRamp(Color... colors1) {
-        Preconditions.checkArgument(colors1.length > 1);
-        for (Color color : colors1) {
+    /**
+     * constructor of the class ColorRamp,
+     * it puts the parameters in an ArrayList
+     *
+     * @param colors ellipsis of type Color. They represent the colors we are interested in
+     */
+    public ColorRamp(Color... colors) {
+        Preconditions.checkArgument(colors.length > 1);
+        for (Color color : colors) {
             requireNonNull(color);
             this.colors.add(color);
         }
     }
 
+    /**
+     * public method at allows to find the color depending on the altitude
+     *
+     * @param altitude altitude of the plane
+     * @return the color of the altitude which can be a mix of the two closest one in the list from the constructor
+     */
     public Color at(double altitude) {
+        //we find the colorCode of the altitude
         double colorCode = Math.pow((altitude / MAX_ALTITUDE), COLOR_EXPONENT);
         if (colorCode <= 0) {
             return colors.get(0);
@@ -54,8 +67,11 @@ public final class ColorRamp {
             return colors.get(colors.size() - 1);
         } else {
             double space = 1.0 / (double) (colors.size() - 1);
+            //find the lower bound color
             int indexFirstColor = (int) Math.floor(colorCode / space);
+            //find the upperbound color
             int indexSecondColor = indexFirstColor + 1;
+            // we find the percentage for the mix of the colors
             double differencePercentage = (colorCode - space * indexFirstColor) / space;
             return colors.get(indexFirstColor).interpolate(colors.get(indexSecondColor), differencePercentage);
         }

@@ -5,8 +5,8 @@
  * The application initializes the user interface components, such as the map, aircraft database, and controllers,
  * and starts an animation timer to handle incoming messages and update the state of the aircraft.
  *
- * @author Ricardo Perelló Mas
- * @author Alejandro Meredith Romero
+ * @author Ricardo Perello Mas (357241)
+ * @author  Alejandro Meredith Romero (360864)
  * @version 1.0
  * @since 2023-05-20
  */

@@ -9,10 +9,22 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 
+
+/**
+ * StatusLineController class is responsible for controlling the status bar between the map and the table.
+ * It displays the number of received messages and the number of visible aircraft.
+ *
+ * @author Ricardo Perello Mas (357241)
+ * @author  Alejandro Meredith Romero (360864)
+ */
+
 public final class StatusLineController {
     private final BorderPane pane;
     private final IntegerProperty aircraftCountProperty;
     private final LongProperty messageCountProperty;
+    private static final String VISIBLE_AIRCRAFT = "Visible aircraft: ";
+    private static final String RECEIVED_MESSAGES = "Received messages: ";
+
 
     /**
      * Constructor for StatusLineController which is responsible for controlling
@@ -28,13 +40,13 @@ public final class StatusLineController {
         //AIRCRAFT COUNT TEXT
         Text visibleAircraftCountText = new Text();
         visibleAircraftCountText.textProperty().bind(Bindings.createStringBinding(
-                () -> "Visible aircraft: " + getAircraftCount(), aircraftCountProperty));
+                () -> VISIBLE_AIRCRAFT + getAircraftCount(), aircraftCountProperty));
         pane.setLeft(visibleAircraftCountText);
 
         //MESSAGE COUNT TEXT
         Text visibleMessageCountText = new Text();
         visibleMessageCountText.textProperty().bind(Bindings.createStringBinding(
-                () -> "Received messages: " + getMessageCount(), messageCountProperty));
+                () -> RECEIVED_MESSAGES + getMessageCount(), messageCountProperty));
         pane.setRight(visibleMessageCountText);
 
     }

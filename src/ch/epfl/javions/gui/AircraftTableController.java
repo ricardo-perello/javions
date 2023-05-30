@@ -20,8 +20,8 @@ import static java.lang.Double.compare;
  * AircraftTableController is responsible for creating and managing
  * a table that displays information about visible aircraft.
  *
- * @author Ricardo Perello Mas ()
- * @author Alejandro Meredith Romero (360864)
+ * @author Ricardo Perello Mas (357241)
+ * @author  Alejandro Meredith Romero (360864)
  */
 
 public final class AircraftTableController {
@@ -94,7 +94,6 @@ public final class AircraftTableController {
                         table.sort();
                     } else {
                         table.getItems().remove(change.getElementRemoved());
-                        // TODO: 9/5/23 remove all listeners of the removed element
                     }
                 });
     }

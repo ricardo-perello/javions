@@ -8,8 +8,8 @@ import javafx.beans.property.*;
  * MapParameters represents the parameters used for mapping and displaying a map.
  * It includes the zoom level and the coordinates of the top left corner of the window.
  *
- * @author Ricardo Perello Mas ()
- * @author Alejandro Meredith Romero (360864)
+ * @author Ricardo Perello Mas (357241)
+ * @author  Alejandro Meredith Romero (360864)
  */
 
 
@@ -99,16 +99,16 @@ public final class MapParameters {
     }
 
     /**
-     * public method that allows to change the position of the top left corner
+     * public method that allows to change the position of the top left corner i.e. change position on the map
      *
      * @param x, double, the distance the corner has to be shifted in the x-axis
      * @param y, double, the distance the corner has to be shifted in the y-axis
      */
     public void scroll(double x, double y) {
-        double newMinX = minX.getValue() + x;
-        double newMinY = minY.getValue() + y;
-        minX.set(newMinX);
-        minY.set(newMinY);
+        //finds new position of minX
+        minX.set(minX.getValue() + x);
+        //finds new position of minY
+        minY.set(minY.getValue() + y);
     }
 
     /**

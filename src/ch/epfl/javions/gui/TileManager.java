@@ -15,6 +15,13 @@ import java.util.LinkedHashMap;
 import static ch.epfl.javions.gui.MapParameters.MAX_ZOOM_LEVEL;
 import static ch.epfl.javions.gui.MapParameters.MIN_ZOOM_LEVEL;
 
+/**
+ * TileManager is responsible for managing the tiles of a map. It handles caching of tiles, fetching tiles from a server,
+ * and storing tiles on disk.
+ *
+ * @author Ricardo Perello Mas (357241)
+ * @author  Alejandro Meredith Romero (360864)
+ */
 
 public final class TileManager {
     private static final int CACHE_MAX_ENTRIES = 100;
