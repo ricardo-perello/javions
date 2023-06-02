@@ -54,7 +54,7 @@ public final class Main extends Application {
     private static final String SERVER_NAME = "tile.openstreetmap.org";
     private static final String DATABASE_ZIP = "/aircraft.zip";
     private static final String APPLICATION_NAME = "Javions";
-    private static double lastPurgeTimeStamp = ONE_SECOND_IN_NANO;
+    private double lastPurgeTimeStamp = ONE_SECOND_IN_NANO;
     private ConcurrentLinkedQueue<RawMessage> rawMessageQueue;
 
     /**
