@@ -19,6 +19,7 @@ import ch.epfl.javions.aircraft.AircraftDatabase;
 import ch.epfl.javions.demodulation.AdsbDemodulator;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Orientation;
@@ -54,9 +55,6 @@ public final class Main extends Application {
     private static final String SERVER_NAME = "tile.openstreetmap.org";
     private static final String DATABASE_ZIP = "/aircraft.zip";
     private static final String APPLICATION_NAME = "Javions";
-    private double lastPurgeTimeStamp = ONE_SECOND_IN_NANO;
-    private ConcurrentLinkedQueue<RawMessage> rawMessageQueue;
-
     /**
      * The entry point of the Javions application.
      *
@@ -104,11 +102,13 @@ public final class Main extends Application {
         primaryStage.setMinWidth(MIN_WIDTH);
         primaryStage.setMinHeight(MIN_HEIGHT);
         primaryStage.show();
+        slc.aircraftCountProperty().bind(Bindings.size((asm.states())));
+        ConcurrentLinkedQueue<RawMessage> rawMessageQueue = new ConcurrentLinkedQueue<>();
 
-        rawMessageQueue = new ConcurrentLinkedQueue<>();
         atc.setOnDoubleClick(selected -> bmc.centerOn(selected.getPosition()));
 
         new AnimationTimer() {
+            double lastPurgeTimeStamp = ONE_SECOND_IN_NANO;
             @Override
             public void handle(long now) {
                 try {
@@ -116,8 +116,8 @@ public final class Main extends Application {
                         Message m = MessageParser.parse(rawMessageQueue.poll());
                         if (m != null) {
                             asm.updateWithMessage(m);
-                            slc.setAircraftCount(asm.states().size());
-                            slc.setMessageCount(slc.getMessageCount() + 1);
+                            slc.messageCountProperty().set(slc.messageCountProperty().getValue() + 1);
+
                         }
                     }
                     long nanoTime = System.nanoTime();

@@ -22,8 +22,8 @@ public final class StatusLineController {
     private final BorderPane pane;
     private final IntegerProperty aircraftCountProperty;
     private final LongProperty messageCountProperty;
-    private static final String VISIBLE_AIRCRAFT = "Aéronefs visibles: ";
-    private static final String RECEIVED_MESSAGES = "Messages reçus: ";
+    private static final String VISIBLE_AIRCRAFT = "Aéronefs visibles : ";
+    private static final String RECEIVED_MESSAGES = "Messages reçus : ";
 
 
     /**
@@ -40,13 +40,13 @@ public final class StatusLineController {
         //AIRCRAFT COUNT TEXT
         Text visibleAircraftCountText = new Text();
         visibleAircraftCountText.textProperty().bind(Bindings.createStringBinding(
-                () -> VISIBLE_AIRCRAFT + getAircraftCount(), aircraftCountProperty));
+                () -> VISIBLE_AIRCRAFT + aircraftCountProperty.getValue(), aircraftCountProperty));
         pane.setLeft(visibleAircraftCountText);
 
         //MESSAGE COUNT TEXT
         Text visibleMessageCountText = new Text();
         visibleMessageCountText.textProperty().bind(Bindings.createStringBinding(
-                () -> RECEIVED_MESSAGES + getMessageCount(), messageCountProperty));
+                () -> RECEIVED_MESSAGES + messageCountProperty.getValue(), messageCountProperty));
         pane.setRight(visibleMessageCountText);
 
     }
@@ -58,40 +58,6 @@ public final class StatusLineController {
      */
     public Pane pane() {
         return pane;
-    }
-
-    /**
-     * Sets a new AircraftCount.
-     *
-     * @param aircraftCount new aircraft count.
-     */
-    public void setAircraftCount(int aircraftCount) {
-        this.aircraftCountProperty.set(aircraftCount);
-    }
-
-    /**
-     * Sets a new messageCount.
-     *
-     * @param messageCount new message count.
-     */
-    public void setMessageCount(long messageCount) {
-        this.messageCountProperty.set(messageCount);
-    }
-
-    /**
-     * Gets the current AircraftCount.
-     * @return aircraft count property.
-     */
-    public int getAircraftCount() {
-        return aircraftCountProperty().get();
-    }
-
-    /**
-     * Gets the current messageCount.
-     * @return message count property.
-     */
-    public long getMessageCount() {
-        return messageCountProperty().get();
     }
 
     /**
