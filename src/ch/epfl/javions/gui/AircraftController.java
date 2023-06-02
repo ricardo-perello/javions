@@ -38,6 +38,7 @@ import static ch.epfl.javions.Units.Angle.DEGREE;
 public final class AircraftController {
 
     private static final int ZOOM_VISIBILITY_THRESHOLD = 11;
+    private static final int MARGIN = 4;
     private final Pane pane = new Pane();
     private final MapParameters mapParameters;
     private final ObservableSet<ObservableAircraftState> aircraftStates;
@@ -322,8 +323,8 @@ public final class AircraftController {
 
 
         Rectangle rectangle = new Rectangle();
-        rectangle.widthProperty().bind(t2.layoutBoundsProperty().map(b -> b.getWidth() + 4));
-        rectangle.heightProperty().bind(t2.layoutBoundsProperty().map(b -> b.getHeight() + 4));
+        rectangle.widthProperty().bind(t2.layoutBoundsProperty().map(b -> b.getWidth() + MARGIN));
+        rectangle.heightProperty().bind(t2.layoutBoundsProperty().map(b -> b.getHeight() + MARGIN));
         Group label = new Group(rectangle, t1, t2);
         label.getStyleClass().add("label");
         changeVisibility(label, aircraftState);

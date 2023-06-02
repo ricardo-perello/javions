@@ -94,7 +94,7 @@ public final class Main extends Application {
         AircraftTableController atc = new AircraftTableController(asm.states(), sap);
         StatusLineController slc = new StatusLineController();
 
-
+        //Creates the gui
         StackPane stackPane = new StackPane(bmc.pane(), ac.pane());
         BorderPane borderPane = new BorderPane(atc.pane(), slc.pane(), null, null, null);
         SplitPane root = new SplitPane(stackPane, borderPane);

@@ -131,7 +131,7 @@ public final class AircraftTableController {
         //****************************************** ICAO ******************************************
         TableColumn<ObservableAircraftState, String> column_ICAO = new TableColumn<>();
         column_ICAO.setPrefWidth(PREFERRED_WIDTH_ICAO);
-        column_ICAO.setText("ICAO");
+        column_ICAO.setText("OACI");
         column_ICAO.setCellValueFactory(newRow ->
                 new ReadOnlyObjectWrapper<>(newRow.getValue().getIcaoAddress().string()));
         table.getColumns().add(column_ICAO);
@@ -140,7 +140,7 @@ public final class AircraftTableController {
 
         TableColumn<ObservableAircraftState, String> column_CallSign = new TableColumn<>();
         column_CallSign.setPrefWidth(PREFERRED_WIDTH_CALLSIGN);
-        column_CallSign.setText("Callsign");
+        column_CallSign.setText("Indicatif");
         column_CallSign.setCellValueFactory(newRow ->
                 newRow.getValue().callSignProperty().map(CallSign::string));
         table.getColumns().add(column_CallSign);
@@ -149,7 +149,7 @@ public final class AircraftTableController {
 
         TableColumn<ObservableAircraftState, String> column_Registration = new TableColumn<>();
         column_Registration.setPrefWidth(PREFERRED_WIDTH_REGISTRATION);
-        column_Registration.setText("Registration");
+        column_Registration.setText("Immatriculation");
         column_Registration.setCellValueFactory(newRow -> {
             if (newRow.getValue().getAircraftData() == null) {
                 return new ReadOnlyObjectWrapper<>("");
@@ -164,7 +164,7 @@ public final class AircraftTableController {
 
         TableColumn<ObservableAircraftState, String> column_Model = new TableColumn<>();
         column_Model.setPrefWidth(PREFERRED_WIDTH_MODEL);
-        column_Model.setText("Model");
+        column_Model.setText("Modèle");
         column_Model.setCellValueFactory(newRow -> {
             if (newRow.getValue().getAircraftData() == null) {
                 return new ReadOnlyObjectWrapper<>("");
@@ -266,7 +266,7 @@ public final class AircraftTableController {
 
         TableColumn<ObservableAircraftState, String> column_Velocity = new TableColumn<>();
         column_Velocity.setPrefWidth(PREFERRED_WIDTH_NUMERIC);
-        column_Velocity.setText("Velocity (km/h)");
+        column_Velocity.setText("Vitesse (km/h)");
         column_Velocity.getStyleClass().add("numeric");
         column_Velocity.setCellValueFactory(newRow ->
                 newRow.getValue().velocityProperty().map(

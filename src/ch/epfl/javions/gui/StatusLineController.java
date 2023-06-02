@@ -22,8 +22,8 @@ public final class StatusLineController {
     private final BorderPane pane;
     private final IntegerProperty aircraftCountProperty;
     private final LongProperty messageCountProperty;
-    private static final String VISIBLE_AIRCRAFT = "Visible aircraft: ";
-    private static final String RECEIVED_MESSAGES = "Received messages: ";
+    private static final String VISIBLE_AIRCRAFT = "Aéronefs visibles: ";
+    private static final String RECEIVED_MESSAGES = "Messages reçus: ";
 
 
     /**
