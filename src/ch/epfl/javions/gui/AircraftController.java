@@ -31,7 +31,7 @@ import static ch.epfl.javions.Units.Angle.DEGREE;
  * The `AircraftController` class manages all the visible aircraft on a map.
  * It creates and manages groups of aircraft, including their icons, labels, and trajectories.
  *
- * @author Ricardo Perello Mas ()
+ * @author Ricardo Perello Mas (357241)
  * @author Alejandro Meredith Romero (360864)
  */
 
