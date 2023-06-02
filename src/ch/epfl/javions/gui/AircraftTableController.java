@@ -32,6 +32,7 @@ public final class AircraftTableController {
     private static final int PREFERRED_WIDTH_MODEL = 230;
     private static final int PREFERRED_WIDTH_TYPE = 50;
     private static final int PREFERRED_WIDTH_NUMERIC = 85;
+    private static final int MINIMUM_FRACTION_DIGITS = 4;
     private Consumer<ObservableAircraftState> consumer;
     private final ObservableSet<ObservableAircraftState> aircraftStates;
     private final TableView<ObservableAircraftState> table;
@@ -104,8 +105,8 @@ public final class AircraftTableController {
      */
     private static void initializeNumberFormatters() {
         numberFormatPosition = NumberFormat.getInstance();
-        numberFormatPosition.setMinimumFractionDigits(4);
-        numberFormatPosition.setMaximumFractionDigits(4);
+        numberFormatPosition.setMinimumFractionDigits(MINIMUM_FRACTION_DIGITS);
+        numberFormatPosition.setMaximumFractionDigits(MINIMUM_FRACTION_DIGITS);
 
 
         numberFormat = NumberFormat.getInstance();
